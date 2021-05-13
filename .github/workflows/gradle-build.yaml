@@ -1,0 +1,76 @@
+name: github-actions/gradle/build
+on:
+  pull_request:
+    branches:
+      - develop
+
+  push:
+    branches:
+      - develop
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      G4B_CLIENT_ID: ${{ secrets.G4B_CLIENT_ID }}
+      G4B_CLIENT_SECRET: ${{ secrets.G4B_CLIENT_SECRET }}
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ''
+      MYSQL_USERNAME: moomark
+      MYSQL_PASSWORD: 1q2w3e4r
+      MYSQL_HOSTNAME: localhost
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: moomark-auth
+
+    services:
+      redis:
+        image: redis:6
+        ports:
+          - 6379:6379/tcp
+      mysql:
+        image: mysql:8.0.20
+        ports:
+          - 3306:3306/tcp
+        env:
+          MYSQL_DATABASE: moomark-auth
+          MYSQL_USER: moomark
+          MYSQL_PASSWORD: 1q2w3e4r
+          MYSQL_ROOT_PASSWORD: 1q2w3e4r
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Verify MySql connection
+        env:
+          PORT: ${{ job.services.mysql.ports[3306] }}
+        run: |
+          while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
+            sleep 1
+          done
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle
+          key: java-${{ hashFiles('.gradle') }}
+          restore-keys: java
+
+      - name: Run build
+        run: ./gradlew build -x checkstyleMain -x test --stacktrace
+
+      - name: Run test
+        run: ./gradlew test -x checkstyleMain --stacktrace
+
+      - name: Update artifact
+        uses: actions/upload-artifact@v2
+        if: ${{ failure() }}
+        with:
+          name: auth-result
+          path: build/reports

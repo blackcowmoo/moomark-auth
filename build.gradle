@@ -1,0 +1,59 @@
+plugins {
+	id 'org.springframework.boot' version '2.3.1.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+}
+
+group = 'com.blackcowmoo'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-devtools'
+	implementation 'org.projectlombok:lombok'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'com.h2database:h2'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.session:spring-session-data-redis'
+	implementation 'mysql:mysql-connector-java:8.0.20'
+  implementation 'org.modelmapper:modelmapper:2.3.8'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test' 
+  testImplementation 'org.springframework.security:spring-security-test'
+
+}
+
+test {
+	useJUnitPlatform()
+}
+
+apply plugin: 'checkstyle'
+
+checkstyle {
+	toolVersion = "8.26"
+	configFile = file("./checkstyle.xml") // 1.1.2 에서 작성한 checkstyle 파일 지정
+	reportsDir = file("${buildDir}/checkstyle-output") // 리포트 파일이 위치할 디렉토리 지정
+}
+
+checkstyleMain {
+	reports {
+		xml.destination = file("${checkstyle.reportsDir}/checkstyle-report.xml") // 리포트 파일의 위치 및 파일명 지정
+	}
+}
+
+ext.profile = (!project.hasProperty('profile') || !profile) ? 'development' : profile
+sourceSets {
+  main {
+   resources {     
+    srcDirs "src/main/resources", "src/main/resources-env/${profile}"
+   }
+  }
+}
