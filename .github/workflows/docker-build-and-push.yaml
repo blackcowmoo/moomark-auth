@@ -30,6 +30,9 @@ jobs:
           key: java-${{ hashFiles('.gradle') }}
           restore-keys: java
 
+      - name: test
+        run: ls -alh && env
+
       - name: Run build
         run: ./gradlew build -x checkstyleMain -x test --stacktrace
 
