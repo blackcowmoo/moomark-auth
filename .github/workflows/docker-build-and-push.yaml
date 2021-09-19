@@ -20,6 +20,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle
+          key: java-${{ hashFiles('.gradle') }}
+          restore-keys: java
+
+      - name: Run build
+        run: ./gradlew build -x checkstyleMain -x test --stacktrace
+
       - uses: actions/checkout@v2
       - name: Set docker registry (PR)
         run: echo "DOCKER_REGISTRY=$REGISTRY/pr" >> $GITHUB_ENV
