@@ -16,10 +16,11 @@ env:
 
 jobs:
   build:
-    name: Build docker image
+    name: Docker build and push
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/setup-java@v1
         with:
           java-version: 11
@@ -36,7 +37,6 @@ jobs:
       - name: Run build
         run: ./gradlew build -x checkstyleMain -x test --stacktrace
 
-      - uses: actions/checkout@v2
       - name: Set docker registry (PR)
         run: echo "DOCKER_REGISTRY=$REGISTRY/pr" >> $GITHUB_ENV
         if: contains(github.event.pull_request.labels.*.name, 'deploy')
