@@ -1,0 +1,64 @@
+name: github-actions/docker/build-and-push
+on:
+  pull_request:
+    branches:
+      - develop
+
+  push:
+    branches:
+      - develop
+
+env:
+  REGISTRY: ${{ secrets.HARBOR_URL }}
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    name: Docker build and push
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle
+          key: java-${{ hashFiles('.gradle') }}
+
+      - name: Run build
+        run: ./gradlew build -x checkstyleMain -x test --stacktrace
+
+      - name: Set docker registry (PR)
+        run: echo "DOCKER_REGISTRY=$REGISTRY/pr" >> $GITHUB_ENV
+        if: contains(github.event.pull_request.labels.*.name, 'deploy')
+
+      - name: Set docker registry (deployment)
+        run: echo "DOCKER_REGISTRY=$REGISTRY/develop" >> $GITHUB_ENV
+        if: "!contains(github.event.pull_request.labels.*.name, 'deploy')"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ secrets.HARBOR_USER_ID }}
+          password: ${{ secrets.HARBOR_USER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          push: ${{ contains(github.event.pull_request.labels.*.name, 'deploy') || github.ref == 'refs/heads/develop' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

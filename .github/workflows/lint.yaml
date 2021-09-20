@@ -19,11 +19,10 @@ jobs:
         with:
           java-version: 11
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: ~/.gradle
-          key: backend-auth-java-${{ hashFiles('backend/auth/.gradle') }}
-          restore-keys: backend-auth-java
+          key: java-${{ hashFiles('backend/auth/.gradle') }}
 
       - name: Run all check
         run: ./gradlew check -x compileJava -x compileTestJava --stacktrace

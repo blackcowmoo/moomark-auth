@@ -19,7 +19,7 @@ jobs:
       G4B_CLIENT_SECRET: ${{ secrets.G4B_CLIENT_SECRET }}
       REDIS_HOST: localhost
       REDIS_PORT: 6379
-      REDIS_PASSWORD: ''
+      REDIS_PASSWORD: ""
       MYSQL_USERNAME: moomark
       MYSQL_PASSWORD: 1q2w3e4r
       MYSQL_HOSTNAME: localhost
@@ -56,11 +56,10 @@ jobs:
             sleep 1
           done
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: ~/.gradle
           key: java-${{ hashFiles('.gradle') }}
-          restore-keys: java
 
       - name: Run build
         run: ./gradlew build -x checkstyleMain -x test --stacktrace
