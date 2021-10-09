@@ -24,4 +24,4 @@ ENV GOOGLE_CLIENT_ID '' \
 EXPOSE 8080
 STOPSIGNAL SIGINT
 
-CMD ["java", "-jar", "moomark.jar"]
+CMD ["java", "-jar", "moomark.jar", "-Dspring.profiles.active=production"]
