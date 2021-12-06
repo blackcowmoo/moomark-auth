@@ -5,6 +5,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 
 public class EnvironmentUtil {
+  
+  private EnvironmentUtil() {
+    throw new IllegalStateException("EnviromentUtil is utility class");
+  }
+  
   @Autowired
   private static Environment env;
   @Value("${spring.profiles.active}")
