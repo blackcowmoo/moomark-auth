@@ -34,9 +34,10 @@ public class DevelopmentSecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.csrf().disable().headers().frameOptions().disable().and().authorizeRequests()
-        .antMatchers("/", "/css/**", "/images/**", "/js/**", "/h2-console/**", "/anyone", "login/*").permitAll()
-        .antMatchers("/api/v1/**").hasRole("GUEST").anyRequest().authenticated().and().formLogin()
-        .defaultSuccessUrl("/api/v1/user").successHandler(new TestLoginSuccessHandler()).and().logout();
+        .antMatchers("/", "/css/**", "/images/**", "/js/**", "/h2-console/**", "/anyone", "login/*")
+        .permitAll().antMatchers("/api/v1/**").hasRole("GUEST").anyRequest().authenticated().and()
+        .formLogin().defaultSuccessUrl("/api/v1/user").successHandler(new TestLoginSuccessHandler())
+        .and().logout();
   }
 
   // @Autowired
@@ -48,7 +49,6 @@ public class DevelopmentSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication) throws IOException, ServletException {
-      // TODO Auto-generated method stub
       HttpSession session = request.getSession();
       User user = User.builder().name("테스터").email("test@test.com").picture(null).role(Role.GUEST)
           .authProvider(AuthProvider.EMPTY).build();
