@@ -35,6 +35,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
   public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
     ObjectMapper mapper = new ObjectMapper();
     String json = mapper.writeValueAsString(userRequest);
+    System.out.println(json);
     log.info(json);
 
     OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
