@@ -8,6 +8,7 @@ import com.blackcowmoo.moomark.auth.model.AuthProvider;
 import com.blackcowmoo.moomark.auth.model.dto.SessionUser;
 import com.blackcowmoo.moomark.auth.model.entity.User;
 import com.blackcowmoo.moomark.auth.service.OAuhUserServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.context.annotation.Profile;
@@ -34,9 +35,13 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
   @Override
   public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
     ObjectMapper mapper = new ObjectMapper();
-    String json = mapper.writeValueAsString(userRequest);
-    System.out.println(json);
-    log.info(json);
+    try {
+      String json = mapper.writeValueAsString(userRequest);
+      System.out.println(json);
+      log.info(json);
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
 
     OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
     OAuth2User oAuth2User = delegate.loadUser(userRequest);
