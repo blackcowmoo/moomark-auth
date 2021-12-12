@@ -29,14 +29,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
 
-    ObjectMapper mapper = new ObjectMapper();
-    try {
-      String json = mapper.writeValueAsString(request);
-      System.out.println(json);
-      logger.info(json);
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
-    }
+        // ObjectMapper mapper = new ObjectMapper();
+    // try {
+    //   String json = mapper.writeValueAsString(request);
+    //   System.out.println(json);
+    //   logger.info(json);
+    // } catch (JsonProcessingException e) {
+    //   e.printStackTrace();
+    // }
+
     // if (isAppropriateRequestForFilter(request)) {
     // try {
     // String token = jwtUtil.resolveToken(request);
