@@ -1,12 +1,14 @@
 package com.blackcowmoo.moomark.auth.config;
 
 import com.blackcowmoo.moomark.auth.model.Role;
+import com.blackcowmoo.moomark.auth.config.security.JwtAuthenticationFilter;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,10 +22,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
+    http.addFilterAfter(new JwtAuthenticationFilter(), LogoutFilter.class);
+
     http.csrf().disable().headers().frameOptions().disable().and().authorizeRequests()
         .antMatchers("/", "/css/**", "/images/**", "/js/**", "/h2-console/**", "/anyone", "login/*").permitAll()
-        .antMatchers("/api/v1/**").hasRole(Role.GUEST.name()).anyRequest().authenticated().and().logout()
-        .logoutUrl("/logout").logoutSuccessUrl("/hello").and().oauth2Login().userInfoEndpoint()
-        .userService(customOAuth2UserService).and().defaultSuccessUrl("/api/v1/user").failureUrl("/error/fail");
+        .antMatchers("/api/v1/**").hasRole(Role.GUEST.name())
+        .anyRequest().authenticated()
+        .and().logout().logoutUrl("/logout").logoutSuccessUrl("/hello")
+        .and().oauth2Login().userInfoEndpoint().userService(customOAuth2UserService)
+        .and().defaultSuccessUrl("/api/v1/user").failureUrl("/error/fail");
   }
 }
