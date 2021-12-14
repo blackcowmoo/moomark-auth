@@ -1,7 +1,7 @@
 package com.blackcowmoo.moomark.auth.service;
 
 import java.util.Optional;
-
+import com.blackcowmoo.moomark.auth.exception.JpaException;
 import com.blackcowmoo.moomark.auth.model.AuthProvider;
 import com.blackcowmoo.moomark.auth.model.entity.User;
 import com.blackcowmoo.moomark.auth.repository.UserRepository;
@@ -18,13 +18,11 @@ public class NormalUserServiceImpl implements UserService {
 
   @Override
   public User getUserById(long id) {
-    // TODO Auto-generated method stub
     return userRepository.getOne(id);
   }
 
   @Override
   public Optional<User> login(String email, String password, AuthProvider authProvider) {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -37,13 +35,17 @@ public class NormalUserServiceImpl implements UserService {
   @Override
   public void updateUser(User user) {
     // TODO Auto-generated method stub
-
   }
 
   @Override
   public boolean updateUserNickname(long userId, String nickname) {
     // TODO Auto-generated method stub
     return false;
+  }
+
+  public User loadUserByEmail(String email) throws JpaException {
+    return userRepository.findByEmail(email).orElseThrow(
+        () -> new JpaException("Cannot find user by email"));
   }
 
 }
