@@ -48,4 +48,16 @@ public class NormalUserServiceImpl implements UserService {
         () -> new JpaException("Cannot find user by email"));
   }
 
+  @Override
+  public User findByName(String name) throws JpaException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public User findByEmail(String email) throws JpaException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }

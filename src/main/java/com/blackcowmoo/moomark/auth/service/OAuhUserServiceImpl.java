@@ -1,7 +1,7 @@
 package com.blackcowmoo.moomark.auth.service;
 
 import java.util.Optional;
-
+import com.blackcowmoo.moomark.auth.exception.JpaException;
 import com.blackcowmoo.moomark.auth.model.AuthProvider;
 import com.blackcowmoo.moomark.auth.model.entity.User;
 import com.blackcowmoo.moomark.auth.repository.UserRepository;
@@ -55,6 +55,18 @@ public class OAuhUserServiceImpl implements UserService {
   public User loginOrSignUp(User user) {
     Optional<User> newOrExistUser = login(user.getEmail(), null, user.getAuthProvider());
     return newOrExistUser.orElse(signUp(user));
+  }
+
+  @Override
+  public User findByName(String name) throws JpaException {
+    return userRepository.findByName(name).orElseThrow(
+        () -> new JpaException("Can not find user by name"));
+  }
+
+  @Override
+  public User findByEmail(String email) throws JpaException {
+    return userRepository.findByEmail(email).orElseThrow(
+        () -> new JpaException("Can not find user by Email"));
   }
 
 }

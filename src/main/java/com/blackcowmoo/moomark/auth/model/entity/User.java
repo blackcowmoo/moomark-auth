@@ -1,5 +1,6 @@
 package com.blackcowmoo.moomark.auth.model.entity;
 
+import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -7,7 +8,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
+import org.springframework.security.core.GrantedAuthority;
 import com.blackcowmoo.moomark.auth.model.AuthProvider;
 import com.blackcowmoo.moomark.auth.model.Role;
 
@@ -72,4 +73,5 @@ public class User {
   public String getAuthProviderKey() {
     return this.authProvider.getKey();
   }
+
 }
