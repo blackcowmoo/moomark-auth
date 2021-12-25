@@ -3,7 +3,7 @@ package com.blackcowmoo.moomark.auth.exception;
 import org.springframework.security.core.AuthenticationException;
 
 /**
- * Jwt 만료시간에 따른 예외처리 추가
+ * Jwt 만료시간에 따른 예외처리 추가.
  * @date 21-12-08
  * @author kmy20
  *
