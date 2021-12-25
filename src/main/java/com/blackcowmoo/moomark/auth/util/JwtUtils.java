@@ -54,7 +54,7 @@ public class JwtUtils {
    * @param token
    * @return
    */
-  public Jws<Claims> parseToken(String token) {
+  public static Jws<Claims> parseToken(String token) {
     Jws<Claims> result = null;
     try {
       result = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
