@@ -17,15 +17,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AsyncLoginAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
   private final ObjectMapper objectMapper = new ObjectMapper();
-  
+
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
       Authentication authentication) throws IOException, ServletException {
     String email = (String) authentication.getPrincipal();
     List<GrantedAuthority> authorities = (List<GrantedAuthority>) authentication.getAuthorities();
-  
+
     String jwtToken = JwtUtils.createJwtToken(email, authorities);
-    
+
     response.setStatus(HttpStatus.OK.value());
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     objectMapper.writeValue(response.getWriter(), jwtToken);
@@ -33,9 +33,9 @@ public class AsyncLoginAuthenticationSuccessHandler implements AuthenticationSuc
     HttpSession session = request.getSession(false);
 
     if (session != null) {
-        session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+      session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
     }
-  
+
   }
 
 }

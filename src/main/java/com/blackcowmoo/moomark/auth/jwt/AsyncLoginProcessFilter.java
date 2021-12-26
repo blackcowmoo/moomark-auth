@@ -73,7 +73,7 @@ public class AsyncLoginProcessFilter extends AbstractAuthenticationProcessingFil
   }
 
   /**
-   * 비동기 처리 요청인지 확인
+   * 비동기 처리 요청인지 확인.
    * 
    * @param request
    * @return
@@ -83,7 +83,7 @@ public class AsyncLoginProcessFilter extends AbstractAuthenticationProcessingFil
   }
 
   /**
-   * Post 요청 여부 확인
+   * Post 요청 여부 확인.
    * 
    * @param request
    * @return

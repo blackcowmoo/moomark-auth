@@ -31,7 +31,7 @@ public class JwtUtils {
   }
 
   /**
-   * Create JWT token function
+   * Create JWT token function.
    * 
    * @param userName
    * @param authorities
@@ -49,7 +49,7 @@ public class JwtUtils {
   }
 
   /**
-   * Parsing JWT
+   * Parsing JWT.
    * 
    * @param token
    * @return
