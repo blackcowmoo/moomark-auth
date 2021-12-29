@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - develop
+    types: [labeled, synchronize, opened]
 
   push:
     branches:
@@ -14,7 +15,7 @@ env:
 
 jobs:
   build:
-    name: Docker build and push
+    name: Gradle build
     runs-on: ubuntu-latest
 
     steps:
@@ -31,6 +32,29 @@ jobs:
       - name: Run build
         run: ./gradlew build -x checkstyleMain -x test --stacktrace -Pprofile=production
 
+      - name: Upload build
+        uses: actions/upload-artifact@v2
+        with:
+          name: ./build/libs
+          path: ./build/libs
+
+  push:
+    if: contains(github.event.pull_request.labels.*.name, 'deploy') || github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
+    name: Docker build and push
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Download build
+        uses: actions/download-artifact@v2
+        with:
+          name: ./build/libs
+          path: ./build/libs
+
       - name: Set docker registry (PR)
         run: echo "DOCKER_REGISTRY=$REGISTRY/pr" >> $GITHUB_ENV
         if: contains(github.event.pull_request.labels.*.name, 'deploy')
@@ -41,12 +65,17 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
+      - name: Short sha
+        id: sha
+        run: echo "::set-output name=sha_short::$(echo ${GITHUB_HEAD_SHA:0:7})"
+        env:
+          GITHUB_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: type=raw,value={{sha}}
+          tags: type=raw,value=${{ steps.sha.outputs.sha_short }}
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
@@ -58,7 +87,7 @@ jobs:
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: .
-          push: ${{ contains(github.event.pull_request.labels.*.name, 'deploy') || github.ref == 'refs/heads/develop' }}
+          push: ${{ contains(github.event.pull_request.labels.*.name, 'deploy') || github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
