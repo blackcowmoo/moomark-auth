@@ -15,7 +15,8 @@ env:
 
 jobs:
   build:
-    name: Gradle build
+    if: contains(github.event.pull_request.labels.*.name, 'deploy') || github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
+    name: Build and Push
     runs-on: ubuntu-latest
 
     steps:
@@ -31,29 +32,6 @@ jobs:
 
       - name: Run build
         run: ./gradlew build -x checkstyleMain -x test --stacktrace -Pprofile=production
-
-      - name: Upload build
-        uses: actions/upload-artifact@v2
-        with:
-          name: build
-          path: build
-
-  push:
-    if: contains(github.event.pull_request.labels.*.name, 'deploy') || github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
-    name: Docker build and push
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-
-      - name: Download build
-        uses: actions/download-artifact@v2
-        with:
-          name: build
-          path: build
 
       - name: Set docker registry (PR)
         run: echo "DOCKER_REGISTRY=$REGISTRY/pr" >> $GITHUB_ENV
