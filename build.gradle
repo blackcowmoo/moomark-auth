@@ -37,6 +37,10 @@ test {
 	useJUnitPlatform()
 }
 
+jar {
+  enabled = false
+}
+
 apply plugin: 'checkstyle'
 
 checkstyle {
