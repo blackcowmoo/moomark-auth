@@ -1,12 +1,9 @@
-# # Build spring
-# FROM openjdk:11 as builder
+FROM alpine as base
 
-# COPY . /spring
-# WORKDIR /spring
-# RUN ./gradlew build -x test -x testClasses -x checkstyleMain -x checkstyleTest
+RUN apk add --no-cache openjdk17-jre
 
-# RUN Spring
-FROM openjdk:17-jre-slim
+###########
+FROM base
 
 COPY ./build/libs/*.jar /spring/
 WORKDIR /spring
