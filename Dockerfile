@@ -6,7 +6,7 @@
 # RUN ./gradlew build -x test -x testClasses -x checkstyleMain -x checkstyleTest
 
 # RUN Spring
-FROM openjdk:11-jre-slim
+FROM openjdk:17-jre-slim
 
 COPY ./build/libs/*.jar /spring/
 WORKDIR /spring
