@@ -7,9 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class JwtTokenProviderTest {
@@ -20,7 +18,6 @@ public class JwtTokenProviderTest {
   @Test
   @DisplayName("test jwt refresh token test")
   public void testCreateRefreshToken() {
-    log.debug("jwt refresh token test is start");
     String accessToken = jwtTokenProvider.createJwtRefreshToken("REFRESH_TOKEN");
     String givenValue = String.valueOf(jwtTokenProvider.getClaimsFromJwtToken(accessToken).getBody().get("value"));
     if (!givenValue.equals("REFRESH_TOKEN"))
