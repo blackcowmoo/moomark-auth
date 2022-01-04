@@ -2,7 +2,6 @@ package com.blackcowmoo.moomark.auth.jwt;
 
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
