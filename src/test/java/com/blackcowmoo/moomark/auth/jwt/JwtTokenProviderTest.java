@@ -1,6 +1,7 @@
 package com.blackcowmoo.moomark.auth.jwt;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
@@ -20,8 +21,9 @@ public class JwtTokenProviderTest {
   public void testCreateRefreshToken() {
     String accessToken = jwtTokenProvider.createJwtRefreshToken("REFRESH_TOKEN");
     String givenValue = String.valueOf(jwtTokenProvider.getClaimsFromJwtToken(accessToken).getBody().get("value"));
-    if (!givenValue.equals("REFRESH_TOKEN"))
+    if (!givenValue.equals("REFRESH_TOKEN")) {
       fail("refresh token is error");
-    
+    }
+    assertEquals("REFRESH_TOKEN", givenValue);
   }
 }
