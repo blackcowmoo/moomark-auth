@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
+import com.blackcowmoo.moomark.auth.model.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -34,9 +35,9 @@ public class JwtTokenProvider {
     privateKey = Base64.getEncoder().encodeToString(SEED.getBytes());
   }
 
-  public String createJwtAccessToken(String userId, List<String> roles) {
+  public String createJwtAccessToken(String userId, Role role) {
     Claims claims = Jwts.claims().setSubject(userId);
-    claims.put("roles", roles);
+    claims.put("roles", role);
     Date now = new Date();
     Date expiration = new Date(now.getTime() + ACCESS_TOKEN_VALID_TIME);
 
