@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Response {
 
-	private ResponseHeader header;
-	private ObjectNode payload;
+  private ResponseHeader header;
+  private ObjectNode payload;
 }

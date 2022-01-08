@@ -13,6 +13,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ResponseHeader {
 
-	private String name;
-	private String message;
+  private String name;
+  private String message;
 }
