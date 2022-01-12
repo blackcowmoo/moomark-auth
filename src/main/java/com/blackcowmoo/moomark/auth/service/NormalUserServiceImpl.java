@@ -43,7 +43,8 @@ public class NormalUserServiceImpl implements UserService {
       throw new JpaException(JpaErrorCode.ALREADY_EXIST_EMAIL.getMsg(),
           JpaErrorCode.ALREADY_EXIST_EMAIL.getCode());
     }
-    return null;
+    
+    return userRepository.save(user);
   }
 
   @Override
