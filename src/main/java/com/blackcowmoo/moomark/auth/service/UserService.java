@@ -20,7 +20,7 @@ public interface UserService {
 
   Optional<User> login(String email, String password, AuthProvider authProvider);
 
-  User signUp(User user);
+  User signUp(User user) throws Exception;
 
   default String getEnv() {
     return EnvironmentUtil.getActiveProfile();
