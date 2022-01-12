@@ -23,62 +23,62 @@ import lombok.Setter;
 @Entity
 public class User {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-	@Column(nullable = false)
-	private String name;
+  @Column(nullable = false)
+  private String name;
 
-	@Column(nullable = false)
-	private String email;
+  @Column(nullable = false)
+  private String email;
 
-	@Column
-	private String nickname;
+  @Column
+  private String nickname;
 
-	@Column
-	private String picture;
+  @Column
+  private String picture;
 
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private Role role;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private Role role;
 
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private AuthProvider authProvider;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private AuthProvider authProvider;
 
-	@Setter
-	@Column(name = "refresh_token_value", nullable = true)
-	private String refreshTokenValue;
+  @Setter
+  @Column(name = "refresh_token_value", nullable = true)
+  private String refreshTokenValue;
 
-	@Builder
-	public User(String name, String email, String nickname, String picture,
-			Role role, AuthProvider authProvider) {
-		this.name = name;
-		this.email = email;
-		this.nickname = nickname;
-		this.picture = picture;
-		this.role = role;
-		this.authProvider = authProvider;
-	}
+  @Builder
+  public User(String name, String email, String nickname, String picture, Role role,
+      AuthProvider authProvider) {
+    this.name = name;
+    this.email = email;
+    this.nickname = nickname;
+    this.picture = picture;
+    this.role = role;
+    this.authProvider = authProvider;
+  }
 
-	public User update(String name, String picture) {
-		this.name = name;
-		this.picture = picture;
-		return this;
-	}
+  public User update(String name, String picture) {
+    this.name = name;
+    this.picture = picture;
+    return this;
+  }
 
-	public User updateNickname(String nickname) {
-		this.nickname = nickname;
-		return this;
-	}
+  public User updateNickname(String nickname) {
+    this.nickname = nickname;
+    return this;
+  }
 
-	public String getRoleKey() {
-		return this.role.getKey();
-	}
+  public String getRoleKey() {
+    return this.role.getKey();
+  }
 
-	public String getAuthProviderKey() {
-		return this.authProvider.getKey();
-	}
+  public String getAuthProviderKey() {
+    return this.authProvider.getKey();
+  }
 
 }

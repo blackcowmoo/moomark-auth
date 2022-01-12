@@ -1,7 +1,7 @@
 package com.blackcowmoo.moomark.auth.config;
 
 import java.util.Collections;
-
+import java.util.Optional;
 import javax.servlet.http.HttpSession;
 
 import com.blackcowmoo.moomark.auth.model.AuthProvider;
@@ -35,20 +35,28 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
     String registrationId = userRequest.getClientRegistration().getRegistrationId();
-    AuthProvider provider = AuthProvider.getAuthProviderValue(userRequest.getClientRegistration().getClientName());
-    String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint()
-        .getUserNameAttributeName();
+    AuthProvider provider =
+        AuthProvider.getAuthProviderValue(userRequest.getClientRegistration().getClientName());
+    String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails()
+        .getUserInfoEndpoint().getUserNameAttributeName();
 
     OAuthAttributes attributes = OAuthAttributes.of(provider, registrationId, userNameAttributeName,
         oAuth2User.getAttributes());
-    User user = saveOrUpdate(attributes);
+    User user = null;
+    try {
+      user = saveOrUpdate(attributes);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    Optional<User> optUser = Optional.of(user);
+    user = optUser.get();
     httpSession.setAttribute("user", new SessionUser(user));
-
-    return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())),
+    return new DefaultOAuth2User(
+        Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())),
         attributes.getAttributes(), attributes.getNameAttributeKey());
   }
 
-  private User saveOrUpdate(OAuthAttributes attributes) {
+  private User saveOrUpdate(OAuthAttributes attributes) throws Exception {
     return userService.loginOrSignUp(attributes.toEntity());
   }
 }

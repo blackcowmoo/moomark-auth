@@ -49,7 +49,7 @@ public class OAuhUserServiceImpl implements UserService {
       throw new JpaException(JpaErrorCode.ALREADY_EXIST_EMAIL.getMsg(),
           JpaErrorCode.ALREADY_EXIST_EMAIL.getCode());
     }
-    
+
     return userRepository.save(user);
   }
 
@@ -65,14 +65,14 @@ public class OAuhUserServiceImpl implements UserService {
 
   @Override
   public User findByName(String name) throws JpaException {
-    return userRepository.findByName(name).orElseThrow(
-        () -> new JpaException("Can not find user by name"));
+    return userRepository.findByName(name)
+        .orElseThrow(() -> new JpaException("Can not find user by name"));
   }
 
   @Override
   public User findByEmail(String email) throws JpaException {
-    return userRepository.findByEmail(email).orElseThrow(
-        () -> new JpaException("Can not find user by Email"));
+    return userRepository.findByEmail(email)
+        .orElseThrow(() -> new JpaException("Can not find user by Email"));
   }
 
 }
