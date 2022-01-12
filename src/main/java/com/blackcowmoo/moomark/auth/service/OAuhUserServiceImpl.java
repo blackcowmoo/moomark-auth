@@ -1,6 +1,7 @@
 package com.blackcowmoo.moomark.auth.service;
 
 import java.util.Optional;
+import com.blackcowmoo.moomark.auth.exception.JpaErrorCode;
 import com.blackcowmoo.moomark.auth.exception.JpaException;
 import com.blackcowmoo.moomark.auth.model.AuthProvider;
 import com.blackcowmoo.moomark.auth.model.entity.User;
@@ -43,7 +44,12 @@ public class OAuhUserServiceImpl implements UserService {
   }
 
   @Override
-  public User signUp(User user) {
+  public User signUp(User user) throws Exception {
+    if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+      throw new JpaException(JpaErrorCode.ALREADY_EXIST_EMAIL.getMsg(),
+          JpaErrorCode.ALREADY_EXIST_EMAIL.getCode());
+    }
+    
     return userRepository.save(user);
   }
 
@@ -52,7 +58,7 @@ public class OAuhUserServiceImpl implements UserService {
     return userRepository.findByEmailAndAuthProvider(email, authProvider);
   }
 
-  public User loginOrSignUp(User user) {
+  public User loginOrSignUp(User user) throws Exception {
     Optional<User> newOrExistUser = login(user.getEmail(), null, user.getAuthProvider());
     return newOrExistUser.orElse(signUp(user));
   }
