@@ -4,6 +4,8 @@ import java.util.Optional;
 import java.util.UUID;
 import com.blackcowmoo.moomark.auth.exception.JpaErrorCode;
 import com.blackcowmoo.moomark.auth.exception.JpaException;
+import com.blackcowmoo.moomark.auth.exception.JwtErrorCode;
+import com.blackcowmoo.moomark.auth.exception.JwtExpireTokenException;
 import com.blackcowmoo.moomark.auth.jwt.JwtTokenProvider;
 import com.blackcowmoo.moomark.auth.model.AuthProvider;
 import com.blackcowmoo.moomark.auth.model.Role;
@@ -38,7 +40,7 @@ public class NormalUserServiceImpl implements UserService {
   }
 
   @Override
-  public User signUp(User user) throws Exception {
+  public User signUp(User user) throws JpaException {
     if (userRepository.findByEmail(user.getEmail()).isPresent()) {
       throw new JpaException(JpaErrorCode.ALREADY_EXIST_EMAIL.getMsg(),
           JpaErrorCode.ALREADY_EXIST_EMAIL.getCode());
@@ -49,13 +51,23 @@ public class NormalUserServiceImpl implements UserService {
 
   @Override
   public void updateUser(User user) {
-    // TODO Auto-generated method stub
+    userRepository.save(user);
   }
 
   @Override
   public boolean updateUserNickname(long userId, String nickname) {
-    // TODO Auto-generated method stub
-    return false;
+    User user;
+    try {
+      user = userRepository.findById(userId)
+          .orElseThrow(() -> new JpaException(JpaErrorCode.CANNOT_FIND_MEMBER_BY_NICKNAME.getMsg(),
+              JpaErrorCode.CANNOT_FIND_MEMBER_BY_NICKNAME.getCode()));
+    } catch (JpaException e) {
+      e.printStackTrace();
+      return false;
+    }
+    user.updateNickname(nickname);
+    updateUser(user);
+    return true;
   }
 
   public User loadUserByEmail(String email) throws JpaException {
@@ -97,11 +109,13 @@ public class NormalUserServiceImpl implements UserService {
     return new String[] {accessToken, refreshToken};
   }
 
-  private void checkJwtValidStatus(String requireToken, String givenToken) throws Exception {
+  private void checkJwtValidStatus(String requireToken, String givenToken)
+      throws JwtExpireTokenException {
     String givenValue =
         String.valueOf(jwtTokenProvider.getClaimsFromJwtToken(givenToken).getBody().get("value"));
     if (!requireToken.equals(givenValue)) {
-      throw new Exception("Invalid token.");
+      throw new JwtExpireTokenException(JwtErrorCode.JWT_EXPIRE_TIME.getMsg(),
+          JwtErrorCode.JWT_EXPIRE_TIME.getCode());
     }
   }
 

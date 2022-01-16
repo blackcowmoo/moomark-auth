@@ -1,7 +1,7 @@
 package com.blackcowmoo.moomark.auth.controller;
 
 import javax.servlet.http.HttpSession;
-
+import com.blackcowmoo.moomark.auth.exception.JpaException;
 import com.blackcowmoo.moomark.auth.model.dto.SessionUser;
 import com.blackcowmoo.moomark.auth.model.dto.UserDto;
 import com.blackcowmoo.moomark.auth.service.UserService;
@@ -34,13 +34,19 @@ public class UserController {
 
   @GetMapping
   public UserDto getUserInfo() {
-    return ModelMapperUtils.getModelMapper().map(userService.getUserById(getSessionUserId()), UserDto.class);
+    return ModelMapperUtils.getModelMapper().map(userService.getUserById(getSessionUserId()),
+        UserDto.class);
   }
 
   @PutMapping
   public ResponseEntity<Boolean> modUserInfo(@RequestBody String nickname) {
-
-    return ResponseEntity.ok(userService.updateUserNickname(getSessionUserId(), nickname));
+    boolean flag = false;
+    try {
+      flag = userService.updateUserNickname(getSessionUserId(), nickname);
+    } catch (JpaException e) {
+      e.printStackTrace();
+    }
+    return ResponseEntity.ok(flag);
   }
 
   @GetMapping(value = "/env")

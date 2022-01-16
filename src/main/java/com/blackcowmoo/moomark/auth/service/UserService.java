@@ -14,7 +14,7 @@ public interface UserService {
 
   User findByEmail(String email) throws JpaException;
   
-  boolean updateUserNickname(long userId, String nickname);
+  boolean updateUserNickname(long userId, String nickname) throws JpaException;
 
   void updateUser(User user);
 

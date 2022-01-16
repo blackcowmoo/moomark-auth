@@ -12,11 +12,18 @@ public class JwtExpireTokenException extends AuthenticationException {
 
   private static final long serialVersionUID = 2355821403998752702L;
   private String token;
+  private int code;
+
   
   public JwtExpireTokenException(String msg) {
     super(msg);
   }
 
+  public JwtExpireTokenException(String msg, int code) {
+    super(msg);
+    this.code = code;
+  }
+  
   public JwtExpireTokenException(String token, String msg, Throwable t) {
     super(msg, t);
     this.token = token;
