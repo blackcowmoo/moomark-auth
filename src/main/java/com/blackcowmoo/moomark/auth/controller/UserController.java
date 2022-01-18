@@ -5,13 +5,16 @@ import com.blackcowmoo.moomark.auth.exception.JpaException;
 import com.blackcowmoo.moomark.auth.model.dto.SessionUser;
 import com.blackcowmoo.moomark.auth.model.dto.UserDto;
 import com.blackcowmoo.moomark.auth.service.UserService;
+import com.blackcowmoo.moomark.auth.service.UserServiceFactory;
+import com.blackcowmoo.moomark.auth.service.UserServiceType;
 import com.blackcowmoo.moomark.auth.util.ModelMapperUtils;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +24,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserController {
 
-  private final UserService userService;
+  @Autowired
+  private final UserServiceFactory serviceFactory;
   private final HttpSession httpSession;
 
   private SessionUser getSessionUser() {
@@ -33,16 +37,17 @@ public class UserController {
   }
 
   @GetMapping
-  public UserDto getUserInfo() {
-    return ModelMapperUtils.getModelMapper().map(userService.getUserById(getSessionUserId()),
-        UserDto.class);
+  public UserDto getUserInfo(@RequestBody UserServiceType type) {
+    return ModelMapperUtils.getModelMapper()
+        .map(serviceFactory.getUserService(type).getUserById(getSessionUserId()), UserDto.class);
   }
 
   @PutMapping
-  public ResponseEntity<Boolean> modUserInfo(@RequestBody String nickname) {
+  public ResponseEntity<Boolean> modUserInfo(@RequestBody String nickname,
+      @RequestParam UserServiceType type) {
     boolean flag = false;
     try {
-      flag = userService.updateUserNickname(getSessionUserId(), nickname);
+      flag = serviceFactory.getUserService(type).updateUserNickname(getSessionUserId(), nickname);
     } catch (JpaException e) {
       e.printStackTrace();
     }
@@ -51,6 +56,6 @@ public class UserController {
 
   @GetMapping(value = "/env")
   public String getProfile() {
-    return userService.getEnv();
+    return serviceFactory.getUserService(UserServiceType.NORMAL).getEnv();
   }
 }

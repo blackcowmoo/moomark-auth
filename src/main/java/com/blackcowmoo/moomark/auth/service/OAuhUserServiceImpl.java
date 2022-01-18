@@ -15,7 +15,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Service
-@Profile("production")
+@Profile({"local", "development"})
 public class OAuhUserServiceImpl implements UserService {
   @Autowired
   UserRepository userRepository;
