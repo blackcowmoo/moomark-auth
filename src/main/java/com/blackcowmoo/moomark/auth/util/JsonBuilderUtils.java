@@ -13,10 +13,6 @@ public class JsonBuilderUtils {
   @Autowired
   static ObjectMapper objectMapper;
 
-  private JsonBuilderUtils() {
-    throw new IllegalStateException("JsonBuilderUtils is utility class");
-  }
-
   public static String buildJsonWithHeaderAndPayload(ResponseHeader header, ObjectNode payload) {
     return objectMapper.valueToTree(Response.builder().header(header).payload(payload).build())
         .toPrettyString();

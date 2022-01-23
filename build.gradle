@@ -24,12 +24,18 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.session:spring-session-data-redis'
 	implementation 'mysql:mysql-connector-java:8.0.20'
-	 implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
-  implementation 'org.modelmapper:modelmapper:2.3.8'
+	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+  	implementation 'org.modelmapper:modelmapper:2.3.8'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test' 
-  testImplementation 'org.springframework.security:spring-security-test'
+  	testImplementation 'org.springframework.security:spring-security-test'
 
+	compile('org.springframework.boot:spring-boot-starter-data-redis')
+
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.11.3'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.11.3'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.3'
+	compile group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
 }
 
 test {
