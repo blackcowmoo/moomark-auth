@@ -9,10 +9,12 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
+@EnableRedisRepositories
 public class RedisConfig {
   @Value("${spring.redis.host}")
   private String host;
@@ -28,9 +30,8 @@ public class RedisConfig {
     RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
     redisStandaloneConfiguration.setHostName(host);
     redisStandaloneConfiguration.setPort(port);
-    redisStandaloneConfiguration.setPassword(password); // redis에 비밀번호가 설정 되어 있는 경우 설정해주면 됩니다.
-    LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisStandaloneConfiguration);
-    return lettuceConnectionFactory;
+    redisStandaloneConfiguration.setPassword(password);
+    return new LettuceConnectionFactory(redisStandaloneConfiguration);
   }
 
   @Bean
