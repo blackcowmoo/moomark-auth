@@ -9,3 +9,14 @@ spring:
             scope:
               - profile
               - email
+
+  datasource:
+    url: jdbc:mysql://${MYSQL_RW_HOSTNAME}/${MYSQL_DATABASE}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
