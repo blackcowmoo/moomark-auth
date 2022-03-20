@@ -3,10 +3,10 @@ package com.blackcowmoo.moomark.auth.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.blackcowmoo.moomark.auth.configuration.oauth2.Token;
-import com.blackcowmoo.moomark.auth.configuration.oauth2.TokenService;
+import com.blackcowmoo.moomark.auth.TokenService;
 import com.blackcowmoo.moomark.auth.model.AuthProvider;
 import com.blackcowmoo.moomark.auth.model.Role;
+import com.blackcowmoo.moomark.auth.model.Token;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

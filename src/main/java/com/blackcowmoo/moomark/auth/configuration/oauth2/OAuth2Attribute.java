@@ -22,7 +22,7 @@ class OAuth2Attribute {
   private AuthProvider provider;
 
   static OAuth2Attribute of(String provider, Map<String, Object> attributes) {
-    switch (provider) {
+    switch (provider.toLowerCase()) {
       case "google":
         return ofGoogle(attributes);
       default:
