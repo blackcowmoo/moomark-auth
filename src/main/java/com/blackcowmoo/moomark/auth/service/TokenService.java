@@ -25,7 +25,7 @@ public class TokenService {
   private String jwtSecret = null;
   private SecretKey key = null;
 
-  private final long tokenPeriod = 1000L * 60L * 10L;
+  private final long tokenPeriod = 1000L * 60L * 60L;
   private final long refreshPeriod = 1000L * 60L * 60L * 24L * 30L * 3L;
 
   @PostConstruct
@@ -41,19 +41,24 @@ public class TokenService {
     claims.put("role", role);
 
     Date now = new Date();
-    return new Token(
-        Jwts.builder()
-            .setClaims(claims)
-            .setIssuedAt(now)
-            .setExpiration(new Date(now.getTime() + tokenPeriod))
-            .signWith(key)
-            .compact(),
-        Jwts.builder()
-            .setClaims(claims)
-            .setIssuedAt(now)
-            .setExpiration(new Date(now.getTime() + refreshPeriod))
-            .signWith(key)
-            .compact());
+
+    String token = Jwts.builder()
+        .setClaims(claims)
+        .setIssuedAt(now)
+        .setExpiration(new Date(now.getTime() + tokenPeriod))
+        .signWith(key)
+        .compact();
+
+    claims.put("token", "refresh");
+
+    String refreshToken = Jwts.builder()
+        .setClaims(claims)
+        .setIssuedAt(now)
+        .setExpiration(new Date(now.getTime() + refreshPeriod))
+        .signWith(key)
+        .compact();
+
+    return new Token(token, refreshToken);
   }
 
   // @Override
@@ -88,5 +93,14 @@ public class TokenService {
         .parseClaimsJws(token)
         .getBody()
         .get("provider"));
+  }
+
+  public String getTokenType(String token) {
+    return (String) Jwts.parserBuilder()
+        .setSigningKey(key)
+        .build()
+        .parseClaimsJws(token)
+        .getBody()
+        .get("token");
   }
 }

@@ -52,6 +52,8 @@ public class OAuth2Controller {
     String token = googleOAuth2Service.getToken(code);
     GoogleTokenResult googleUserInfo = googleOAuth2Service.parseIdToken(token);
 
-    return googleOAuth2Service.login(googleUserInfo);
+    Token tt = googleOAuth2Service.login(googleUserInfo);
+    log.info(tt.toString());
+    return tt;
   }
 }

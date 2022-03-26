@@ -1,10 +1,8 @@
 package com.blackcowmoo.moomark.auth.configuration;
 
-import com.blackcowmoo.moomark.auth.configuration.oauth2.OAuth2UserServiceCustom;
 import com.blackcowmoo.moomark.auth.service.TokenService;
 import com.blackcowmoo.moomark.auth.service.UserService;
 import com.blackcowmoo.moomark.auth.configuration.oauth2.JwtAuthFilter;
-import com.blackcowmoo.moomark.auth.configuration.oauth2.OAuth2SuccessHandler;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -19,8 +17,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-  private final OAuth2UserServiceCustom oauth2UserService;
-  private final OAuth2SuccessHandler successHandler;
   private final TokenService tokenService;
   private final UserService userService;
 
@@ -31,9 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
         .and().authorizeRequests()
         .antMatchers("/api/v1/oauth2/google").permitAll()
-        .anyRequest().authenticated()
-        .and().oauth2Login().successHandler(successHandler)
-        .userInfoEndpoint().userService(oauth2UserService);
+        .anyRequest().authenticated();
 
     http.addFilterBefore(new JwtAuthFilter(tokenService, userService), UsernamePasswordAuthenticationFilter.class);
   }
