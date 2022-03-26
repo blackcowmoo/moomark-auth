@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/api/v1/user")
 public class UserController {
+  private ObjectMapper mapper;
+
   private User getUser() {
     return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
   }
@@ -19,7 +21,6 @@ public class UserController {
   @GetMapping
   public String getUserInfo() throws JsonProcessingException {
     User user = getUser();
-    ObjectMapper mapper = new ObjectMapper();
     String userInfoString;
     userInfoString = mapper.writeValueAsString(user);
 

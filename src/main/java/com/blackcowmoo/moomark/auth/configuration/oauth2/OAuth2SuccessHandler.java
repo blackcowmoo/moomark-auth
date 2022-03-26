@@ -6,11 +6,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.blackcowmoo.moomark.auth.TokenService;
-import com.blackcowmoo.moomark.auth.model.Token;
 import com.blackcowmoo.moomark.auth.model.UserRequestMapper;
 import com.blackcowmoo.moomark.auth.model.dto.UserDto;
 import com.blackcowmoo.moomark.auth.model.entity.User;
+import com.blackcowmoo.moomark.auth.model.oauth2.Token;
+import com.blackcowmoo.moomark.auth.service.TokenService;
 import com.blackcowmoo.moomark.auth.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -20,7 +20,9 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
@@ -37,6 +39,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
     UserDto userDto = userRequestMapper.toDto(oAuth2User);
 
+    log.info("onAuthenticationSuccess: {}", oAuth2User);
     User user = userService.getUserById(userDto.getId(), userDto.getProvider());
     if (user == null) {
       user = userService.signUp(userDto.getId(), userDto.getProvider(), userDto.getName(), userDto.getEmail(),

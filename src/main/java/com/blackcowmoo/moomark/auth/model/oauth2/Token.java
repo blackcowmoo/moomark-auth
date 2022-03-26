@@ -1,4 +1,4 @@
-package com.blackcowmoo.moomark.auth.model;
+package com.blackcowmoo.moomark.auth.model.oauth2;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

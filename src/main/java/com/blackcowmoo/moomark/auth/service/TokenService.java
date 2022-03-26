@@ -1,4 +1,4 @@
-package com.blackcowmoo.moomark.auth;
+package com.blackcowmoo.moomark.auth.service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -8,7 +8,7 @@ import javax.crypto.SecretKey;
 
 import com.blackcowmoo.moomark.auth.model.AuthProvider;
 import com.blackcowmoo.moomark.auth.model.Role;
-import com.blackcowmoo.moomark.auth.model.Token;
+import com.blackcowmoo.moomark.auth.model.oauth2.Token;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
