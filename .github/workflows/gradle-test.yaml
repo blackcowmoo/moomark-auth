@@ -17,16 +17,16 @@ jobs:
       GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
       G4B_CLIENT_ID: ${{ secrets.G4B_CLIENT_ID }}
       G4B_CLIENT_SECRET: ${{ secrets.G4B_CLIENT_SECRET }}
-      REDIS_CLUSTER_HOST=localhost
+      REDIS_CLUSTER_HOST: localhost
       REDIS_PORT: 6379
       REDIS_PASSWORD: ""
-      MYSQL_RO_HOSTNAME=localhost:3306
-      MYSQL_RW_HOSTNAME=localhost:3306
+      MYSQL_RO_HOSTNAME: localhost:3306
+      MYSQL_RW_HOSTNAME: localhost:3306
       MYSQL_USERNAME: moomark
       MYSQL_PASSWORD: 1q2w3e4r
       MYSQL_DATABASE: moomark-auth
-      JWT_SECRET=secret
-      BASE_URL=http://localhost:8080/
+      JWT_SECRET: secret
+      BASE_URL: http://localhost:8080/
 
     services:
       redis:
