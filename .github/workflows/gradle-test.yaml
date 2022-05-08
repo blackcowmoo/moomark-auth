@@ -70,8 +70,8 @@ jobs:
         run: ./gradlew test -x checkstyleMain --stacktrace
 
       - name: Update artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: ${{ failure() }}
         with:
           name: auth-result
-          path: build/reports
+          path: ${{ github.workspace }}/build/reports
