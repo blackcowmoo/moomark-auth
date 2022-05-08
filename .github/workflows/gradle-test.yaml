@@ -17,14 +17,16 @@ jobs:
       GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
       G4B_CLIENT_ID: ${{ secrets.G4B_CLIENT_ID }}
       G4B_CLIENT_SECRET: ${{ secrets.G4B_CLIENT_SECRET }}
-      REDIS_HOST: localhost
+      REDIS_CLUSTER_HOST: localhost
       REDIS_PORT: 6379
       REDIS_PASSWORD: ""
+      MYSQL_RO_HOSTNAME: localhost:3306
+      MYSQL_RW_HOSTNAME: localhost:3306
       MYSQL_USERNAME: moomark
       MYSQL_PASSWORD: 1q2w3e4r
-      MYSQL_HOSTNAME: localhost
-      MYSQL_PORT: 3306
       MYSQL_DATABASE: moomark-auth
+      JWT_SECRET: abcdefghijklnmopqrstuvwxyz123456
+      BASE_URL: http://localhost:8080/
 
     services:
       redis:
@@ -46,7 +48,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v1
         with:
-          java-version: 11
+          java-version: 17
 
       - name: Verify MySql connection
         env:
@@ -68,8 +70,8 @@ jobs:
         run: ./gradlew test -x checkstyleMain --stacktrace
 
       - name: Update artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: ${{ failure() }}
         with:
           name: auth-result
-          path: build/reports
+          path: ${{ github.workspace }}/build/reports

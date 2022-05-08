@@ -1,28 +1,35 @@
 package com.blackcowmoo.moomark.auth.model.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 
 import com.blackcowmoo.moomark.auth.model.AuthProvider;
 import com.blackcowmoo.moomark.auth.model.Role;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@EqualsAndHashCode
 @Entity
-public class User {
+@IdClass(UserId.class)
+public class User implements Serializable {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @Enumerated(EnumType.STRING)
+  private AuthProvider authProvider;
+
+  @Id
+  private String id;
 
   @Column(nullable = false)
   private String name;
@@ -40,12 +47,10 @@ public class User {
   @Column(nullable = false)
   private Role role;
 
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private AuthProvider authProvider;
-
   @Builder
-  public User(String name, String email, String nickname, String picture, Role role, AuthProvider authProvider) {
+  public User(String id, AuthProvider authProvider, String name, String email, String nickname, String picture,
+      Role role) {
+    this.id = id;
     this.name = name;
     this.email = email;
     this.nickname = nickname;
@@ -63,13 +68,5 @@ public class User {
   public User updateNickname(String nickname) {
     this.nickname = nickname;
     return this;
-  }
-
-  public String getRoleKey() {
-    return this.role.getKey();
-  }
-
-  public String getAuthProviderKey() {
-    return this.authProvider.getKey();
   }
 }

@@ -2,10 +2,9 @@ HELP.md
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**
-!**/src/test/**
-google-key.json
-application-local.yml
+!**/src/main/**/build/
+!**/src/test/**/build/
+
 ### STS ###
 .apt_generated
 .classpath
@@ -15,12 +14,17 @@ application-local.yml
 .springBeans
 .sts4-cache
 bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
 out/
+!**/src/main/**/out/
+!**/src/test/**/out/
 
 ### NetBeans ###
 /nbproject/private/
@@ -31,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+.env
+.env.sh

@@ -1,0 +1,13 @@
+version: "3.7"
+services:
+  db:
+    image: mysql:8
+    restart: always
+    container_name: mysql
+    network_mode: host
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_DATABASE=auth
+      - MYSQL_ROOT_PASSWORD=auth
+      - TZ=Asia/Seoul

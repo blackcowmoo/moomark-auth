@@ -1,16 +1,17 @@
 package com.blackcowmoo.moomark.auth.model;
 
-import java.util.Arrays;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
 public enum AuthProvider {
 
-  GOOGLE("Google", "구글"), GITHUB("GitHub", "깃허브"), KAKAO("PROVIDER_KAKAO", "카카오"), NAVER("PROVIDER_NAVER", "네이버"),
-  EMPTY("No Data", "없음");
+  GOOGLE("GOOGLE", "구글"), GITHUB("GITHUB", "깃허브"),
+  // KAKAO("KAKAO", "카카오"), NAVER("NAVER", "네이버"),
+  EMPTY("EMPTY", "없음");
 
   private final String key;
   private final String value;
