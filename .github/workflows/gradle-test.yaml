@@ -25,7 +25,7 @@ jobs:
       MYSQL_USERNAME: moomark
       MYSQL_PASSWORD: 1q2w3e4r
       MYSQL_DATABASE: moomark-auth
-      JWT_SECRET: secret
+      JWT_SECRET: abcdefghijklnmopqrstuvwxyz123456
       BASE_URL: http://localhost:8080/
 
     services:
