@@ -13,6 +13,7 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
     env:
+      ENVIRONMENT: dev
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
       G4B_CLIENT_ID: ${{ secrets.G4B_CLIENT_ID }}
