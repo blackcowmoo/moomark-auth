@@ -27,6 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
         .and().authorizeRequests()
         .antMatchers("/api/v1/oauth2/google").permitAll()
+        .antMatchers("/actuator/health").permitAll()
         .anyRequest().authenticated();
 
     http.addFilterBefore(new JwtAuthFilter(tokenService, userService), UsernamePasswordAuthenticationFilter.class);
