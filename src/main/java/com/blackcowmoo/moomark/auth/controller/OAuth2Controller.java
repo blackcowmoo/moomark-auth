@@ -50,7 +50,7 @@ public class OAuth2Controller {
   public Token googleCode(HttpServletRequest request, HttpServletResponse response) {
     String code = request.getParameter("code");
 
-    if (code.startsWith("test-")) {
+    if (testOAuth2Service.isTest(code)) {
       return testOAuth2Service.login(code);
     }
 
