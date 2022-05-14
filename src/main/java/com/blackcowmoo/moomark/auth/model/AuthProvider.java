@@ -9,7 +9,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public enum AuthProvider {
 
-  GOOGLE("GOOGLE", "구글"), GITHUB("GITHUB", "깃허브"),
+  TEST("TEST", "테스트"), GOOGLE("GOOGLE", "구글"), GITHUB("GITHUB", "깃허브"),
   // KAKAO("KAKAO", "카카오"), NAVER("NAVER", "네이버"),
   EMPTY("EMPTY", "없음");
 

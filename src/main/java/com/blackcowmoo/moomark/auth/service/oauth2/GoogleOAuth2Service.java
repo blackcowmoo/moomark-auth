@@ -1,4 +1,4 @@
-package com.blackcowmoo.moomark.auth.service;
+package com.blackcowmoo.moomark.auth.service.oauth2;
 
 import java.util.Base64;
 import java.util.HashMap;
@@ -9,6 +9,8 @@ import com.blackcowmoo.moomark.auth.model.entity.User;
 import com.blackcowmoo.moomark.auth.model.oauth2.GoogleTokenResponse;
 import com.blackcowmoo.moomark.auth.model.oauth2.GoogleTokenResult;
 import com.blackcowmoo.moomark.auth.model.oauth2.Token;
+import com.blackcowmoo.moomark.auth.service.TokenService;
+import com.blackcowmoo.moomark.auth.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
