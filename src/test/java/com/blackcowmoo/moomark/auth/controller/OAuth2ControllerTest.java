@@ -21,7 +21,7 @@ public class OAuth2ControllerTest {
   private ObjectMapper mapper;
 
   @Test
-  public void TEST_GOOGLE_CODE() throws Exception {
+  public void TestGoogleCode() throws Exception {
     Token token = mapper
         .readValue(mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234")).andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString(), Token.class);
