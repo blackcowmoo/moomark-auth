@@ -2,7 +2,9 @@ package com.blackcowmoo.moomark.auth.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.blackcowmoo.moomark.auth.model.oauth2.Token;
@@ -12,7 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-@WebMvcTest(controllers = OAuth2Controller.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class OAuth2ControllerTest {
   @Autowired
   private MockMvc mvc;
