@@ -8,9 +8,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.blackcowmoo.moomark.auth.model.oauth2.Token;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @WebMvcTest(controllers = OAuth2Controller.class)
 public class OAuth2ControllerTest {
