@@ -21,6 +21,14 @@ public class UserService {
     return userRepository.save(new User(id, authProvider, name, email, name, picture, Role.USER));
   }
 
+  public void withdraw(String id, AuthProvider authProvider) {
+    userRepository.delete(userRepository.findByIdAndAuthProvider(id, authProvider));
+  }
+
+  public void withdraw(User user) {
+    userRepository.delete(user);
+  }
+
   // @Override
   // public void updateUser(User user) {
   // userRepository.save(user);
