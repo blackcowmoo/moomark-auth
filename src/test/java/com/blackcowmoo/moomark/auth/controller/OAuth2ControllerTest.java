@@ -5,12 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.blackcowmoo.moomark.auth.model.oauth2.Token;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.blackcowmoo.moomark.auth.model.oauth2.Token;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(controllers = OAuth2Controller.class)
 public class OAuth2ControllerTest {
