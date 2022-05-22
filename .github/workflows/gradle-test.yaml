@@ -71,7 +71,7 @@ jobs:
         run: ./gradlew test -x checkstyleMain -x checkstyleTest --stacktrace
 
       - name: ls reports
-        run: ls -alhR ${{ github.workspace }}/build
+        run: pwd && ls -alhR ${{ github.workspace }}/build
 
       - name: Test Report
         uses: dorny/test-reporter@v1
