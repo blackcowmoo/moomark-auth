@@ -65,10 +65,10 @@ jobs:
           key: java-${{ hashFiles('.gradle') }}
 
       - name: Run build
-        run: ./gradlew build -x checkstyleMain -x test --stacktrace
+        run: ./gradlew build -x checkstyleMain -x test -x checkstyleTest --stacktrace
 
       - name: Run test
-        run: ./gradlew test -x checkstyleMain --stacktrace
+        run: ./gradlew test -x checkstyleMain -x checkstyleTest --stacktrace
 
       - name: Update artifact
         uses: actions/upload-artifact@v3
