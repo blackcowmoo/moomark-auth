@@ -86,6 +86,12 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: ${{ env.MIN_TEST_COVERAGE }}
 
+      - uses: izhangzhihao/delete-comment@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          delete_user_name: github-actions
+          issue_number: ${{ github.event.number }}
+
       - name: coverage
         run: echo "$RESULT_COVERAGE < $COVERAGE" && [[ "$(echo $RESULT_COVERAGE | awk '{print $1*100}')" -gt "$(echo $COVERAGE | awk '{print $1*100}')" ]]
         env:
