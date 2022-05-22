@@ -70,17 +70,18 @@ jobs:
       - name: Run test
         run: ./gradlew test -x checkstyleMain -x checkstyleTest --stacktrace
 
-      - name: Add coverage to PR
-        id: jacoco
-        uses: madrapps/jacoco-report@v1.2
-        with:
-          paths: ${{ github.workspace }}/build/reports/jacoco/testCoverage/testCoverage.xml
-          token: ${{ secrets.GITHUB_TOKEN }}
-          min-coverage-overall: 40
+      - name: ls reports
+        run: ls -alhR ${{ github.workspace }}/build
 
-      - name: Update artifact
-        uses: actions/upload-artifact@v3
-        if: ${{ failure() }}
+      - name: Test Report
+        uses: dorny/test-reporter@v1
         with:
-          name: auth-result
-          path: ${{ github.workspace }}/build/reports
+          name: junit Tests
+          path: ${{ github.workspace }}/build/reports/jacoco/testCoverage/testCoverage.xml
+          reporter: jacoco-junit
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: ${{ github.workspace }}/build/reports/**
