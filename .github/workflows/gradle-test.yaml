@@ -84,6 +84,12 @@ jobs:
           delete_user_name: github-actions[bot]
           issue_number: ${{ github.event.number }}
 
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: ${{ github.workspace }}/build/test-results/**/*.xml
+
       - name: Add coverage to PR
         id: coverage
         uses: madrapps/jacoco-report@v1.2
@@ -97,9 +103,3 @@ jobs:
         env:
           COVERAGE: ${{ env.MIN_TEST_COVERAGE }}
           RESULT_COVERAGE: ${{ steps.coverage.outputs.coverage-overall }}
-
-      - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        if: always()
-        with:
-          files: ${{ github.workspace }}/build/test-results/**/*.xml
