@@ -70,8 +70,13 @@ jobs:
       - name: Run test
         run: ./gradlew test -x checkstyleMain -x checkstyleTest --stacktrace
 
-      - name: ls reports
-        run: pwd && ls -alhR ${{ github.workspace }}/build
+      - name: Add coverage to PR
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.2
+        with:
+          paths: ${{ github.workspace }}build/reports/jacoco/test/jacocoTestReport.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 40
 
       - name: Test Report
         uses: dorny/test-reporter@v1
