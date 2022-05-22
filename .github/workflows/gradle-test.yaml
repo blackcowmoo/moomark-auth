@@ -70,6 +70,13 @@ jobs:
       - name: Run test
         run: ./gradlew test -x checkstyleMain -x checkstyleTest --stacktrace
 
+      - name: Add coverage to PR
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.2
+        with:
+          paths: ${{ github.workspace }}/build/reports/jacoco/testCoverage/testCoverage.xml
+          min-coverage-overall: 40
+
       - name: Update artifact
         uses: actions/upload-artifact@v3
         if: ${{ failure() }}
