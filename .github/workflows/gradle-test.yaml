@@ -77,7 +77,7 @@ jobs:
         uses: dorny/test-reporter@v1
         with:
           name: junit Tests
-          path: ${{ github.workspace }}/build/reports/jacoco/testCoverage/testCoverage.xml
+          path: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
           reporter: jacoco-junit
 
       - name: Publish Test Results
