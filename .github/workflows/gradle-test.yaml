@@ -78,6 +78,12 @@ jobs:
           path: ${{ github.workspace }}/build/test-results/test/**/*.xml
           reporter: java-junit
 
+      - uses: izhangzhihao/delete-comment@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          delete_user_name: github-actions[bot]
+          issue_number: ${{ github.event.number }}
+
       - name: Add coverage to PR
         id: coverage
         uses: madrapps/jacoco-report@v1.2
@@ -85,12 +91,6 @@ jobs:
           paths: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: ${{ env.MIN_TEST_COVERAGE }}
-
-      - uses: izhangzhihao/delete-comment@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          delete_user_name: github-actions[bot]
-          issue_number: ${{ github.event.number }}
 
       - name: coverage
         run: echo "$RESULT_COVERAGE < $COVERAGE" && [[ "$(echo $RESULT_COVERAGE | awk '{print $1*100}')" -gt "$(echo $COVERAGE | awk '{print $1*100}')" ]]
