@@ -77,11 +77,11 @@ jobs:
         uses: dorny/test-reporter@v1
         with:
           name: junit Tests
-          path: ${{ github.workspace }}/build/reports/**/*.xml
+          path: ${{ github.workspace }}/build/test-results/test/**/*.xml
           reporter: java-junit
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()
         with:
-          files: ${{ github.workspace }}/build/reports/**/*.xml
+          files: ${{ github.workspace }}/build/test-results/**/*.xml
