@@ -91,7 +91,7 @@ jobs:
         run: echo $RESULT_COVERAGE, $COVERAGE && "[[ $RESULT_COVERAGE -gt $COVERAGE ]]"
         env:
           COVERAGE: ${{ env.MIN_TEST_COVERAGE }}
-          RESULT_COVERAGE: ${{ jobs.coverage.outputs.coverage-overall }}
+          RESULT_COVERAGE: ${{ steps.coverage.outputs.coverage-overall }}
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
