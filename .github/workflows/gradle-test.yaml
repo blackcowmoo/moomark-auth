@@ -13,6 +13,7 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
     env:
+      MIN_TEST_COVERAGE: 30
       ENVIRONMENT: dev
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
@@ -70,9 +71,35 @@ jobs:
       - name: Run test
         run: ./gradlew test -x checkstyleMain -x checkstyleTest --stacktrace
 
-      - name: Update artifact
-        uses: actions/upload-artifact@v3
-        if: ${{ failure() }}
+      - name: Test Report
+        uses: dorny/test-reporter@v1
         with:
-          name: auth-result
-          path: ${{ github.workspace }}/build/reports
+          name: junit Tests
+          path: ${{ github.workspace }}/build/test-results/test/**/*.xml
+          reporter: java-junit
+
+      - uses: izhangzhihao/delete-comment@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          delete_user_name: github-actions[bot]
+          issue_number: ${{ github.event.number }}
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: ${{ github.workspace }}/build/test-results/**/*.xml
+
+      - name: Add coverage to PR
+        id: coverage
+        uses: madrapps/jacoco-report@v1.2
+        with:
+          paths: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: ${{ env.MIN_TEST_COVERAGE }}
+
+      - name: coverage
+        run: echo "$RESULT_COVERAGE < $COVERAGE" && [[ "$(echo $RESULT_COVERAGE | awk '{print $1*100}')" -gt "$(echo $COVERAGE | awk '{print $1*100}')" ]]
+        env:
+          COVERAGE: ${{ env.MIN_TEST_COVERAGE }}
+          RESULT_COVERAGE: ${{ steps.coverage.outputs.coverage-overall }}
