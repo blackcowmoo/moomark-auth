@@ -39,7 +39,6 @@ public class TokenService {
     key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
   }
 
-  // @Override
   public Token generateToken(String id, AuthProvider provider, Role role) {
     Claims claims = Jwts.claims();
     claims.setSubject(id);
@@ -67,7 +66,6 @@ public class TokenService {
     return new Token(token, refreshToken);
   }
 
-  // @Override
   public boolean verifyToken(String token) {
     try {
       Jws<Claims> claims = Jwts.parserBuilder()
@@ -105,7 +103,6 @@ public class TokenService {
     }
   }
 
-  // @Override
   public String getUid(String token) {
     return Jwts.parserBuilder()
         .setSigningKey(key)

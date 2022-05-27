@@ -51,7 +51,8 @@ public class OAuth2ControllerTest {
 
     mapper
         .readValue(
-            mvc.perform(post("/api/v1/oauth2/refresh").content(requestParams.toJSONString()))
+            mvc.perform(post("/api/v1/oauth2/refresh").header("Content-Type", "application/json")
+                .content(requestParams.toJSONString()))
                 .andExpect(status().is(401))
                 .andReturn().getResponse().getContentAsString(),
             Token.class);
@@ -73,7 +74,8 @@ public class OAuth2ControllerTest {
 
     Token newToken = mapper
         .readValue(
-            mvc.perform(post("/api/v1/oauth2/refresh").content(requestParams.toJSONString())).andExpect(status().isOk())
+            mvc.perform(post("/api/v1/oauth2/refresh").header("Content-Type", "application/json")
+                .content(requestParams.toJSONString())).andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(),
             Token.class);
 
