@@ -41,15 +41,18 @@ public class OAuth2ControllerTest {
 
     assertNotNull(token.getToken());
     assertNotNull(token.getRefreshToken());
+    assertNotEquals(token.getToken(), "");
+    assertNotEquals(token.getRefreshToken(), "");
 
     Token newToken = mapper
         .readValue(mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234")).andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString(), Token.class);
 
     assertNotNull(newToken.getToken());
-    assertNotEquals(newToken.getToken(), "");
     assertNotNull(newToken.getRefreshToken());
-    assertNotNull(newToken.getRefreshToken(), "");
-
+    assertNotEquals(newToken.getToken(), "");
+    assertNotEquals(newToken.getRefreshToken(), "");
+    assertNotEquals(token.getToken(), newToken.getToken());
+    assertNotEquals(token.getRefreshToken(), newToken.getRefreshToken());
   }
 }
