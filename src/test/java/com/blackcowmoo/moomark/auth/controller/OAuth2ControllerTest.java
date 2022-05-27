@@ -49,13 +49,10 @@ public class OAuth2ControllerTest {
     JSONObject requestParams = new JSONObject();
     requestParams.put("getToken", token.getRefreshToken());
 
-    mapper
-        .readValue(
-            mvc.perform(post("/api/v1/oauth2/refresh").header("Content-Type", "application/json")
-                .content(requestParams.toJSONString()))
-                .andExpect(status().is(401))
-                .andReturn().getResponse().getContentAsString(),
-            Token.class);
+    mvc.perform(post("/api/v1/oauth2/refresh").header("Content-Type", "application/json")
+        .content(requestParams.toJSONString()))
+        .andExpect(status().is(401))
+        .andReturn().getResponse().getContentAsString();
   }
 
   @Test
