@@ -87,13 +87,14 @@ public class TokenService {
           .build()
           .parseClaimsJws(refreshToken);
       Claims claimsBody = claims.getBody();
+
       if (claimsBody
           .getExpiration()
           .after(new Date()) && claimsBody.get(TOKEN_KEY, String.class).equals(REFRESH_TOKEN_VALUE)) {
         TokenResponse response = new TokenResponse();
         response.setId(claimsBody.getSubject());
-        response.setProvider(claimsBody.get(PROVIDER_KEY, AuthProvider.class));
-        response.setRole(claimsBody.get(ROKE_KEY, Role.class));
+        response.setProvider(AuthProvider.valueOf(claimsBody.get(PROVIDER_KEY, String.class)));
+        response.setRole(Role.valueOf(claimsBody.get(ROKE_KEY, String.class)));
         return response;
       } else {
         return null;

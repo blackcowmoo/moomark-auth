@@ -20,12 +20,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RestController
 public class OAuth2Controller {
+  private static class RefreshTokenRequestBody {
+    public String refreshToken;
+  }
+
   private final TokenService tokenService;
   private final GoogleOAuth2Service googleOAuth2Service;
   private final TestOAuth2Service testOAuth2Service;
 
   @GetMapping("/api/v1/oauth2/google")
-  public Token googleCode(HttpServletRequest request, HttpServletResponse response) {
+  public Token googleCode(HttpServletRequest request) {
     String code = request.getParameter("code");
 
     if (testOAuth2Service.isTest(code)) {
@@ -39,8 +43,8 @@ public class OAuth2Controller {
   }
 
   @PostMapping("/api/v1/oauth2/refresh")
-  public Token refreshToken(@RequestBody String refreshToken, HttpServletResponse response) {
-    TokenResponse tokenResponse = tokenService.verifyRefreshToken(refreshToken);
+  public Token refreshToken(@RequestBody RefreshTokenRequestBody body, HttpServletResponse response) {
+    TokenResponse tokenResponse = tokenService.verifyRefreshToken(body.refreshToken);
 
     if (tokenResponse != null) {
       return tokenService.generateToken(tokenResponse.getId(), tokenResponse.getProvider(), tokenResponse.getRole());
