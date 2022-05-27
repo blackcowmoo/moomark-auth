@@ -18,7 +18,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import lombok.Data;
 
 @Service
 public class TokenService {
@@ -29,10 +28,11 @@ public class TokenService {
 
   private final long tokenPeriod = 1000L * 60L * 60L;
   private final long refreshPeriod = 1000L * 60L * 60L * 24L * 30L * 3L;
-  private final String PROVIDER_KEY = "provider";
-  private final String ROKE_KEY = "role";
-  private final String TOKEN_KEY = "token";
-  private final String REFRESH_TOKEN_VALUE = "refresh";
+
+  private static final String PROVIDER_KEY = "provider";
+  private static final String ROKE_KEY = "role";
+  private static final String TOKEN_KEY = "token";
+  private static final String REFRESH_TOKEN_VALUE = "refresh";
 
   @PostConstruct
   private void init() {
