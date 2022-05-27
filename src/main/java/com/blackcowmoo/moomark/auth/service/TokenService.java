@@ -8,6 +8,7 @@ import javax.crypto.SecretKey;
 
 import com.blackcowmoo.moomark.auth.model.AuthProvider;
 import com.blackcowmoo.moomark.auth.model.Role;
+import com.blackcowmoo.moomark.auth.model.dto.TokenResponse;
 import com.blackcowmoo.moomark.auth.model.oauth2.Token;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -28,17 +29,21 @@ public class TokenService {
   private final long tokenPeriod = 1000L * 60L * 60L;
   private final long refreshPeriod = 1000L * 60L * 60L * 24L * 30L * 3L;
 
+  private static final String PROVIDER_KEY = "provider";
+  private static final String ROKE_KEY = "role";
+  private static final String TOKEN_KEY = "token";
+  private static final String REFRESH_TOKEN_VALUE = "refresh";
+
   @PostConstruct
   private void init() {
     key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
   }
 
-  // @Override
   public Token generateToken(String id, AuthProvider provider, Role role) {
     Claims claims = Jwts.claims();
     claims.setSubject(id);
-    claims.put("provider", provider);
-    claims.put("role", role);
+    claims.put(PROVIDER_KEY, provider);
+    claims.put(ROKE_KEY, role);
 
     Date now = new Date();
 
@@ -49,7 +54,7 @@ public class TokenService {
         .signWith(key)
         .compact();
 
-    claims.put("token", "refresh");
+    claims.put(TOKEN_KEY, REFRESH_TOKEN_VALUE);
 
     String refreshToken = Jwts.builder()
         .setClaims(claims)
@@ -61,7 +66,6 @@ public class TokenService {
     return new Token(token, refreshToken);
   }
 
-  // @Override
   public boolean verifyToken(String token) {
     try {
       Jws<Claims> claims = Jwts.parserBuilder()
@@ -76,7 +80,30 @@ public class TokenService {
     }
   }
 
-  // @Override
+  public TokenResponse verifyRefreshToken(String refreshToken) {
+    try {
+      Jws<Claims> claims = Jwts.parserBuilder()
+          .setSigningKey(key)
+          .build()
+          .parseClaimsJws(refreshToken);
+      Claims claimsBody = claims.getBody();
+
+      if (claimsBody
+          .getExpiration()
+          .after(new Date()) && claimsBody.get(TOKEN_KEY, String.class).equals(REFRESH_TOKEN_VALUE)) {
+        TokenResponse response = new TokenResponse();
+        response.setId(claimsBody.getSubject());
+        response.setProvider(AuthProvider.valueOf(claimsBody.get(PROVIDER_KEY, String.class)));
+        response.setRole(Role.valueOf(claimsBody.get(ROKE_KEY, String.class)));
+        return response;
+      } else {
+        return null;
+      }
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
   public String getUid(String token) {
     return Jwts.parserBuilder()
         .setSigningKey(key)

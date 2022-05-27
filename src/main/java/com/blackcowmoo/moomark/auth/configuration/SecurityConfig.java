@@ -26,6 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .and().csrf().disable().formLogin().disable().httpBasic().disable().logout().disable()
         .exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
         .and().authorizeRequests()
+        .antMatchers("/api/v1/oauth2/refresh").permitAll()
         .antMatchers("/api/v1/oauth2/google").permitAll()
         .antMatchers("/actuator/health").permitAll()
         .anyRequest().authenticated();
