@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.blackcowmoo.moomark.auth.model.oauth2.Token;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.shaded.json.JSONObject;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -34,6 +36,27 @@ public class OAuth2ControllerTest {
   }
 
   @Test
+  public void failRefreshToken() throws Exception {
+    Token token = mapper
+        .readValue(mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234")).andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString(), Token.class);
+
+    assertNotNull(token.getToken());
+    assertNotNull(token.getRefreshToken());
+    assertNotEquals(token.getToken(), "");
+    assertNotEquals(token.getRefreshToken(), "");
+
+    JSONObject requestParams = new JSONObject();
+    requestParams.put("getToken", token.getRefreshToken());
+
+    mapper
+        .readValue(
+            mvc.perform(post("/api/v1/oauth2/refresh").content(requestParams.toJSONString())).andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString(),
+            Token.class);
+  }
+
+  @Test
   public void refreshToken() throws Exception {
     Token token = mapper
         .readValue(mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234")).andExpect(status().isOk())
@@ -44,9 +67,14 @@ public class OAuth2ControllerTest {
     assertNotEquals(token.getToken(), "");
     assertNotEquals(token.getRefreshToken(), "");
 
+    JSONObject requestParams = new JSONObject();
+    requestParams.put("refreshToken", token.getRefreshToken());
+
     Token newToken = mapper
-        .readValue(mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234")).andExpect(status().isOk())
-            .andReturn().getResponse().getContentAsString(), Token.class);
+        .readValue(
+            mvc.perform(post("/api/v1/oauth2/refresh").content(requestParams.toJSONString())).andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString(),
+            Token.class);
 
     assertNotNull(newToken.getToken());
     assertNotNull(newToken.getRefreshToken());
