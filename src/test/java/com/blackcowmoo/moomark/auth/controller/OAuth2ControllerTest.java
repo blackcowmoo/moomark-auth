@@ -1,5 +1,6 @@
 package com.blackcowmoo.moomark.auth.controller;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -30,5 +31,25 @@ public class OAuth2ControllerTest {
 
     assertNotNull(token.getToken());
     assertNotNull(token.getRefreshToken());
+  }
+
+  @Test
+  public void refreshToken() throws Exception {
+    Token token = mapper
+        .readValue(mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234")).andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString(), Token.class);
+
+    assertNotNull(token.getToken());
+    assertNotNull(token.getRefreshToken());
+
+    Token newToken = mapper
+        .readValue(mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234")).andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString(), Token.class);
+
+    assertNotNull(newToken.getToken());
+    assertNotEquals(newToken.getToken(), "");
+    assertNotNull(newToken.getRefreshToken());
+    assertNotNull(newToken.getRefreshToken(), "");
+
   }
 }
