@@ -3,8 +3,10 @@ package com.blackcowmoo.moomark.auth.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.blackcowmoo.moomark.auth.model.dto.TokenResponse;
 import com.blackcowmoo.moomark.auth.model.oauth2.GoogleTokenResult;
 import com.blackcowmoo.moomark.auth.model.oauth2.Token;
+import com.blackcowmoo.moomark.auth.service.TokenService;
 import com.blackcowmoo.moomark.auth.service.oauth2.GoogleOAuth2Service;
 import com.blackcowmoo.moomark.auth.service.oauth2.TestOAuth2Service;
 
@@ -14,12 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class OAuth2Controller {
+  private final TokenService tokenService;
   private final GoogleOAuth2Service googleOAuth2Service;
   private final TestOAuth2Service testOAuth2Service;
 
@@ -38,9 +39,14 @@ public class OAuth2Controller {
   }
 
   @PostMapping("/api/v1/oauth2/refresh")
-  public Token refreshToken(@RequestBody String refreshToken) {
-    log.info(refreshToken);
+  public Token refreshToken(@RequestBody String refreshToken, HttpServletResponse response) {
+    TokenResponse tokenResponse = tokenService.verifyRefreshToken(refreshToken);
 
-    return new Token();
+    if (tokenResponse != null) {
+      return tokenService.generateToken(tokenResponse.getId(), tokenResponse.getProvider(), tokenResponse.getRole());
+    }
+
+    response.setStatus(401);
+    return null;
   }
 }
