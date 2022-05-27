@@ -47,7 +47,7 @@ public class OAuth2ControllerTest {
     assertNotEquals(token.getRefreshToken(), "");
 
     JSONObject requestParams = new JSONObject();
-    requestParams.put("getToken", token.getRefreshToken());
+    requestParams.put("refreshToken", token.getToken());
 
     mvc.perform(post("/api/v1/oauth2/refresh").header("Content-Type", "application/json")
         .content(requestParams.toJSONString()))
@@ -65,6 +65,8 @@ public class OAuth2ControllerTest {
     assertNotNull(token.getRefreshToken());
     assertNotEquals(token.getToken(), "");
     assertNotEquals(token.getRefreshToken(), "");
+
+    Thread.sleep(1000);
 
     JSONObject requestParams = new JSONObject();
     requestParams.put("refreshToken", token.getRefreshToken());
