@@ -1,3 +1,3 @@
-# moomark-auth-server
+# moomark-auth
 
 ## Environments
