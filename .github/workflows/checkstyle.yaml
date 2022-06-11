@@ -22,7 +22,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ~/.gradle
-          key: java-${{ hashFiles('backend/auth/.gradle') }}
+          key: java-${{ hashFiles('build.gradle') }}
 
       - name: Run all check
         run: ./gradlew check -x compileJava -x compileTestJava --stacktrace
