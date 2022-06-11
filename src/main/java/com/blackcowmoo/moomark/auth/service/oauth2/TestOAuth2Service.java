@@ -29,7 +29,7 @@ public class TestOAuth2Service {
   public Token login(String testCode) {
     String[] tokenStrings = testCode.split("-");
     String id = tokenStrings[1];
-    User user = userService.getUserById(id, AuthProvider.TEST);
+    User user = userService.getUserById(AuthProvider.TEST, id);
     if (user == null) {
       user = userService.signUp(id, AuthProvider.TEST, "test", "test@blackcowmoo.com",
           "https://www.gravatar.com/avatar/HASH");

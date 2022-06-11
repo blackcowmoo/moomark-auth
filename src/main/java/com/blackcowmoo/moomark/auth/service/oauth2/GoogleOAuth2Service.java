@@ -71,7 +71,7 @@ public class GoogleOAuth2Service {
   }
 
   public Token login(GoogleTokenResult googleUser) {
-    User user = userService.getUserById(googleUser.getSub(), AuthProvider.GOOGLE);
+    User user = userService.getUserById(AuthProvider.GOOGLE, googleUser.getSub());
     if (user == null) {
       user = userService.signUp(googleUser.getSub(), AuthProvider.GOOGLE, googleUser.getName(), googleUser.getEmail(),
           googleUser.getPicture());

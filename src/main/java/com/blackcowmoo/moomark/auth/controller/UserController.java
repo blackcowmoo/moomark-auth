@@ -1,11 +1,15 @@
 package com.blackcowmoo.moomark.auth.controller;
 
+import com.blackcowmoo.moomark.auth.model.AuthProvider;
 import com.blackcowmoo.moomark.auth.model.entity.User;
 import com.blackcowmoo.moomark.auth.service.UserService;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,8 +26,20 @@ public class UserController {
   }
 
   @GetMapping
-  public User getUserInfo() {
+  public User getMyInfo() {
     return getUser();
+  }
+
+  @GetMapping("/{provider}/{userId}")
+  public User getUserInfo(@PathVariable("provider") String provider, @PathVariable("userId") String userId,
+      HttpServletResponse response) {
+    User user = userService.getUserById(AuthProvider.getAuthProviderValue(provider), userId);
+    if (user != null) {
+      return user;
+    }
+
+    response.setStatus(404);
+    return null;
   }
 
   @DeleteMapping
