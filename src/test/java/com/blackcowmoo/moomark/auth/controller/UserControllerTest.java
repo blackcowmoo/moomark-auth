@@ -44,7 +44,7 @@ public class UserControllerTest {
     assertNotNull(token.getToken());
 
     User user = mapper
-        .readValue(mvc.perform(get("/api/v1/oauth2/google").header("Authorization", token.getToken()))
+        .readValue(mvc.perform(get("/api/v1/user").header("Authorization", token.getToken()))
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString(), User.class);
 
