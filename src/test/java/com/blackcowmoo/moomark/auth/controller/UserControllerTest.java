@@ -55,7 +55,8 @@ public class UserControllerTest {
   @Test
   public void user() throws Exception {
     User user = mapper
-        .readValue(mvc.perform(get("/api/v1/user/TEST/test").header("Content-Type", "application/json")).andExpect(status().isOk()).andReturn().getResponse()
+        .readValue(mvc.perform(get("/api/v1/user/TEST/test").header("Content-Type", "application/json"))
+            .andExpect(status().isOk()).andReturn().getResponse()
             .getContentAsString(), User.class);
 
     assertEquals(user.getAuthProvider(), AuthProvider.TEST);
