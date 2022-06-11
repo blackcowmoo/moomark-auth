@@ -37,7 +37,7 @@ public class JwtAuthFilter extends GenericFilterBean {
       String id = tokenService.getUid(token);
       AuthProvider provider = tokenService.getProvider(token);
 
-      User user = userService.getUserById(id, provider);
+      User user = userService.getUserById(provider, id);
 
       Authentication auth = getAuthentication(user);
       SecurityContextHolder.getContext().setAuthentication(auth);

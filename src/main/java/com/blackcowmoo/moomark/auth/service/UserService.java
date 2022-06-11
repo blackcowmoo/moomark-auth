@@ -13,7 +13,7 @@ public class UserService {
   @Autowired
   UserRepository userRepository;
 
-  public User getUserById(String id, AuthProvider authProvider) {
+  public User getUserById(AuthProvider authProvider, String id) {
     return userRepository.findByIdAndAuthProvider(id, authProvider);
   }
 
