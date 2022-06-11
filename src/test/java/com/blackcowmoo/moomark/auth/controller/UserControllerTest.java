@@ -54,6 +54,12 @@ public class UserControllerTest {
 
   @Test
   public void user() throws Exception {
+    Token token = mapper
+        .readValue(mvc.perform(get("/api/v1/oauth2/google").param("code", "test-test")).andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString(), Token.class);
+
+    assertNotNull(token.getToken());
+
     User user = mapper
         .readValue(mvc.perform(get("/api/v1/user/TEST/test").header("Content-Type", "application/json"))
             .andExpect(status().isOk()).andReturn().getResponse()
