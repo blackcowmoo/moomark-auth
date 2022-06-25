@@ -10,12 +10,12 @@ public class RsaUtil {
   private static KeyFactory keyFactory = null;
 
   public static PublicKey buildPublicKey(String publicKeyString) throws Exception {
-    X509EncodedKeySpec ukeySpec = new X509EncodedKeySpec(ByteUtil.hexToByteArray(publicKeyString));
+    X509EncodedKeySpec ukeySpec = new X509EncodedKeySpec(publicKeyString.getBytes());
     return getKeyFactory().generatePublic(ukeySpec);
   }
 
   public static PrivateKey buildPrivateKey(String privateKeyString) throws Exception {
-    PKCS8EncodedKeySpec rkeySpec = new PKCS8EncodedKeySpec(ByteUtil.hexToByteArray(privateKeyString));
+    PKCS8EncodedKeySpec rkeySpec = new PKCS8EncodedKeySpec(privateKeyString.getBytes());
     return getKeyFactory().generatePrivate(rkeySpec);
   }
 
