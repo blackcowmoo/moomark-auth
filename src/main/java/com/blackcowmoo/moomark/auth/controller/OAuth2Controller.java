@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+@RestController
 @RequestMapping(value = "/api/v1/oauth2")
 public class OAuth2Controller {
   private static class RefreshTokenRequestBody {
