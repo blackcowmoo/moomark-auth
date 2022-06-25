@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
@@ -19,14 +20,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class PssportControllerTest {
+  @Value("${passport.public-key}")
+  private String passportPublicKey;
+
   @Autowired
   private MockMvc mvc;
 
   @Autowired
   private ObjectMapper mapper;
-
-  @Autowired
-  private PassportService passportService;
 
   @Test
   public void generatePassport() throws Exception {
@@ -49,7 +50,7 @@ public class PssportControllerTest {
 
   @Test
   public void checkPublicKey() throws Exception {
-    String publicKey = passportService.getPublicKey();
+    String publicKey = passportPublicKey;
     String testPublicKey = mvc.perform(get("/api/v1/passport/verify/public"))
         .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 

@@ -1,17 +1,58 @@
 package com.blackcowmoo.moomark.auth.service;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.blackcowmoo.moomark.auth.model.entity.User;
+import com.blackcowmoo.moomark.auth.util.RsaUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class PassportService {
   @Value("${passport.public-key}")
-  private String publicKey;
+  private String publicKeyString;
 
   @Value("${passport.private-key}")
-  private String privateKey;
+  private String privateKeyString;
 
-  public String getPublicKey() {
+  @Autowired
+  private ObjectMapper mapper;
+
+  private PublicKey publicKey;
+  private PrivateKey privateKey;
+
+  public PassportService() throws Exception {
+    publicKey = RsaUtil.buildPublicKey(publicKeyString);
+    privateKey = RsaUtil.buildPrivateKey(privateKeyString);
+  }
+
+  public String getPublicKeyString() {
+    return publicKeyString;
+  }
+
+  public PublicKey testPublicKey() {
     return publicKey;
+  }
+
+  public PrivateKey testPrivateKey() {
+    return privateKey;
+  }
+
+  public String generatePassport(User user) {
+    String userString = "";
+    try {
+      userString = mapper.writeValueAsString(user);
+    } catch (Exception e) {
+      log.error("generatePassport: Invalid user", e);
+    }
+
+    return null;
   }
 }

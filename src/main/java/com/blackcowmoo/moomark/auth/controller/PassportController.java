@@ -25,7 +25,7 @@ public class PassportController {
 
   @GetMapping("/verify/public")
   public String getMyInfo() {
-    return passportService.getPublicKey();
+    return passportService.getPublicKeyString();
   }
 
   @GetMapping("/verify")
@@ -36,8 +36,6 @@ public class PassportController {
 
   @GetMapping
   public String generatePassport() {
-    User user = getUser();
-
-    return "user";
+    return passportService.generatePassport(getUser());
   }
 }
