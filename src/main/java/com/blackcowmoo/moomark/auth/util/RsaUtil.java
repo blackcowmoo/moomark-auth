@@ -5,17 +5,18 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 public class RsaUtil {
   private static KeyFactory keyFactory = null;
 
-  public static PublicKey buildPublicKey(String publicKeyString) throws Exception {
-    X509EncodedKeySpec ukeySpec = new X509EncodedKeySpec(publicKeyString.getBytes());
+  public static PublicKey buildPublicKey(String publicKeyBase64String) throws Exception {
+    X509EncodedKeySpec ukeySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyBase64String));
     return getKeyFactory().generatePublic(ukeySpec);
   }
 
-  public static PrivateKey buildPrivateKey(String privateKeyString) throws Exception {
-    PKCS8EncodedKeySpec rkeySpec = new PKCS8EncodedKeySpec(privateKeyString.getBytes());
+  public static PrivateKey buildPrivateKey(String privateKeyBase64String) throws Exception {
+    PKCS8EncodedKeySpec rkeySpec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyBase64String));
     return getKeyFactory().generatePrivate(rkeySpec);
   }
 
