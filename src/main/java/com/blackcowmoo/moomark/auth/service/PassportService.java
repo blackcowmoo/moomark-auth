@@ -3,6 +3,8 @@ package com.blackcowmoo.moomark.auth.service;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,8 +15,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Service
 @Slf4j
+@Service
 public class PassportService {
   @Value("${passport.public-key}")
   private String publicKeyString;
@@ -28,7 +30,8 @@ public class PassportService {
   private PublicKey publicKey;
   private PrivateKey privateKey;
 
-  public PassportService() throws Exception {
+  @PostConstruct
+  public void buildRsaKeys() throws Exception {
     publicKey = RsaUtil.buildPublicKey(publicKeyString);
     privateKey = RsaUtil.buildPrivateKey(privateKeyString);
   }
@@ -53,6 +56,6 @@ public class PassportService {
       log.error("generatePassport: Invalid user", e);
     }
 
-    return null;
+    return userString;
   }
 }
