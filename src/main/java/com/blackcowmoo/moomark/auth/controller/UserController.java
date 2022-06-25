@@ -25,7 +25,7 @@ public class UserController {
     return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
   }
 
-  @GetMapping
+  @GetMapping("/")
   public User getMyInfo() {
     return getUser();
   }
@@ -42,7 +42,7 @@ public class UserController {
     return null;
   }
 
-  @DeleteMapping
+  @DeleteMapping("/")
   public void deleteUser() {
     userService.withdraw(getUser());
   }
