@@ -29,6 +29,8 @@ jobs:
       MYSQL_DATABASE: moomark-auth
       JWT_SECRET: abcdefghijklnmopqrstuvwxyz123456
       BASE_URL: http://localhost:8080/
+      RSA_PUBLIC_KEY: ${{ secrets.RSA_PUBLIC_KEY }}
+      RSA_PRIVATE_KEY: ${{ secrets.RSA_PRIVATE_KEY }}
 
     services:
       redis:
