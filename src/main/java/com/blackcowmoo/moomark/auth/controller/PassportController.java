@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
-@RestController
 @RequestMapping(value = "/api/v1/passport")
 public class PassportController {
   private final PassportService passportService;
