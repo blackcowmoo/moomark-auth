@@ -50,7 +50,7 @@ public class PassportService {
   public String generatePassport(User user) {
     try {
       String userString = mapper.writeValueAsString(user);
-      return new String(Base64.getEncoder().encode(rsaUtil.encryptByPrivateKey(userString)));
+      return Base64.getEncoder().encodeToString(rsaUtil.encryptByPrivateKey(userString));
     } catch (Exception e) {
       log.error("generatePassport", e);
     }

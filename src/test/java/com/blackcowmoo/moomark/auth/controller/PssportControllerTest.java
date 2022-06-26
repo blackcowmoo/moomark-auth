@@ -38,7 +38,7 @@ public class PssportControllerTest {
 
     assertNotNull(token.getToken());
 
-    String passport = mvc.perform(get("/api/v1/oauth2/google").header("Authorization", token.getToken()))
+    String passport = mvc.perform(get("/api/v1/passport").header("Authorization", token.getToken()))
         .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
     User user = mapper
