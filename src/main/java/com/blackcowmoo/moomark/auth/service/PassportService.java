@@ -26,7 +26,7 @@ public class PassportService {
   @Value("${passport.private-key}")
   private String privateKeyString;
 
-  private Long passportTTL = 120L;
+  private Long passportExpireSeconds = 120L;
 
   @Autowired
   private ObjectMapper mapper;
@@ -60,7 +60,7 @@ public class PassportService {
   public String generatePassport(User user) {
     try {
       PassportResponse passport = new PassportResponse();
-      passport.setExp(Timestamp.valueOf(LocalDateTime.now().plusSeconds((passportTTL))));
+      passport.setExp(Timestamp.valueOf(LocalDateTime.now().plusSeconds((passportExpireSeconds))));
       passport.setUser(user);
 
       return Base64.getEncoder().encodeToString(rsaUtil.encryptByPrivateKey(mapper.writeValueAsString(passport)));
