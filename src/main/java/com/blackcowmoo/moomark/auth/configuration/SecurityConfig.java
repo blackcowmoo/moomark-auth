@@ -29,6 +29,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/api/v1/oauth2/refresh").permitAll()
         .antMatchers("/api/v1/oauth2/google").permitAll()
         .antMatchers("/api/v1/user/{provider}/{userId}").permitAll()
+        .antMatchers("/api/v1/passport/verify").permitAll()
+        .antMatchers("/api/v1/passport/verify/public").permitAll()
         .antMatchers("/actuator/health").permitAll()
         .anyRequest().authenticated();
 

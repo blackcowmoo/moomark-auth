@@ -1,6 +1,5 @@
 package com.blackcowmoo.moomark.auth.controller;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.blackcowmoo.moomark.auth.model.dto.TokenResponse;
@@ -13,12 +12,15 @@ import com.blackcowmoo.moomark.auth.service.oauth2.TestOAuth2Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping(value = "/api/v1/oauth2")
 public class OAuth2Controller {
   private static class RefreshTokenRequestBody {
     public String refreshToken;
@@ -28,10 +30,8 @@ public class OAuth2Controller {
   private final GoogleOAuth2Service googleOAuth2Service;
   private final TestOAuth2Service testOAuth2Service;
 
-  @GetMapping("/api/v1/oauth2/google")
-  public Token googleCode(HttpServletRequest request) {
-    String code = request.getParameter("code");
-
+  @GetMapping("/google")
+  public Token googleCode(@RequestParam String code) {
     if (testOAuth2Service.isTest(code)) {
       return testOAuth2Service.login(code);
     }
@@ -42,7 +42,7 @@ public class OAuth2Controller {
     return googleOAuth2Service.login(googleUserInfo);
   }
 
-  @PostMapping("/api/v1/oauth2/refresh")
+  @PostMapping("/refresh")
   public Token refreshToken(@RequestBody RefreshTokenRequestBody body, HttpServletResponse response) {
     TokenResponse tokenResponse = tokenService.verifyRefreshToken(body.refreshToken);
 
