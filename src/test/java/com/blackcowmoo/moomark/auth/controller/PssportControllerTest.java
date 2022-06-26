@@ -23,6 +23,9 @@ public class PssportControllerTest {
   @Value("${passport.public-key}")
   private String passportPublicKey;
 
+  @Value("${passport.test.token.expired}")
+  private String expiredTestPassport;
+
   @Autowired
   private MockMvc mvc;
 
@@ -57,5 +60,13 @@ public class PssportControllerTest {
     assertNotNull(publicKey);
     assertNotEquals(publicKey, "");
     assertEquals(publicKey, testPublicKey);
+  }
+
+  @Test
+  public void expiredPassport() throws Exception {
+    String response = mvc.perform(get("/api/v1/passport/verify").header("x-moom-passport", expiredTestPassport))
+        .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+    assertEquals(response, "");
   }
 }

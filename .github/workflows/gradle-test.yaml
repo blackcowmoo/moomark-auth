@@ -13,7 +13,7 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
     env:
-      MIN_TEST_COVERAGE: 50
+      MIN_TEST_COVERAGE: 47
       ENVIRONMENT: dev
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
@@ -31,6 +31,7 @@ jobs:
       BASE_URL: http://localhost:8080/
       RSA_PUBLIC_KEY: ${{ secrets.RSA_PUBLIC_KEY }}
       RSA_PRIVATE_KEY: ${{ secrets.RSA_PRIVATE_KEY }}
+      PASSPORT_TEST_TOKEN_EXPIRED: ${{ secrets.EXPIRED_TEST_PASSPORT }}
 
     services:
       redis:
