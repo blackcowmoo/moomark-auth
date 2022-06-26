@@ -37,6 +37,16 @@ public class PassportService {
     return publicKeyString;
   }
 
+  public User parsePassport(String passport) {
+    try {
+      return mapper.readValue(rsaUtil.decryptByPublicKey(Base64.getDecoder().decode(passport)), User.class);
+    } catch (Exception e) {
+      log.error("parsePassport", e);
+    }
+
+    return null;
+  }
+
   public String generatePassport(User user) {
     try {
       String userString = mapper.writeValueAsString(user);

@@ -30,8 +30,7 @@ public class PassportController {
 
   @GetMapping("/verify")
   public User verifyPassport(@RequestParam String passport) {
-    log.info(passport);
-    return getUser();
+    return passportService.parsePassport(passport);
   }
 
   @GetMapping
