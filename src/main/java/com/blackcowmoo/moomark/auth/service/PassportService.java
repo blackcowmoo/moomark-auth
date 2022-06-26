@@ -1,7 +1,6 @@
 package com.blackcowmoo.moomark.auth.service;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.util.Base64;
 
 import javax.annotation.PostConstruct;
 
@@ -27,35 +26,25 @@ public class PassportService {
   @Autowired
   private ObjectMapper mapper;
 
-  private PublicKey publicKey;
-  private PrivateKey privateKey;
+  private RsaUtil rsaUtil;
 
   @PostConstruct
   public void buildRsaKeys() throws Exception {
-    publicKey = RsaUtil.buildPublicKey(publicKeyString);
-    privateKey = RsaUtil.buildPrivateKey(privateKeyString);
+    rsaUtil = new RsaUtil(publicKeyString, privateKeyString);
   }
 
   public String getPublicKeyString() {
     return publicKeyString;
   }
 
-  public PublicKey testPublicKey() {
-    return publicKey;
-  }
-
-  public PrivateKey testPrivateKey() {
-    return privateKey;
-  }
-
   public String generatePassport(User user) {
-    String userString = "";
     try {
-      userString = mapper.writeValueAsString(user);
+      String userString = mapper.writeValueAsString(user);
+      return Base64.getEncoder().encode(rsaUtil.encryptByPrivateKey(userString)).toString();
     } catch (Exception e) {
-      log.error("generatePassport: Invalid user", e);
+      log.error("generatePassport", e);
     }
 
-    return userString;
+    return "";
   }
 }

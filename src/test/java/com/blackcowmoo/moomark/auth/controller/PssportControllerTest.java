@@ -1,6 +1,7 @@
 package com.blackcowmoo.moomark.auth.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -14,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.blackcowmoo.moomark.auth.model.entity.User;
 import com.blackcowmoo.moomark.auth.model.oauth2.Token;
-import com.blackcowmoo.moomark.auth.service.PassportService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -54,6 +54,8 @@ public class PssportControllerTest {
     String testPublicKey = mvc.perform(get("/api/v1/passport/verify/public"))
         .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
+    assertNotNull(publicKey);
+    assertNotEquals(publicKey, "");
     assertEquals(publicKey, testPublicKey);
   }
 }
