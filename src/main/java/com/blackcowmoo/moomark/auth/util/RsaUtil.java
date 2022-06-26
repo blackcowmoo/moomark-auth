@@ -49,7 +49,7 @@ public class RsaUtil {
   public String decryptByPublicKey(byte[] data) {
     try {
       cipher.init(Cipher.DECRYPT_MODE, publicKey);
-      return cipher.doFinal(data).toString();
+      return new String(cipher.doFinal(data));
     } catch (Exception e) {
       log.error("decryptByPublicKey: ", e);
       return null;
@@ -69,7 +69,7 @@ public class RsaUtil {
   public String decryptByPrivateKey(byte[] data) {
     try {
       cipher.init(Cipher.DECRYPT_MODE, privateKey);
-      return cipher.doFinal(data).toString();
+      return new String(cipher.doFinal(data));
     } catch (Exception e) {
       log.error("decryptByPrivateKey: ", e);
       return null;
