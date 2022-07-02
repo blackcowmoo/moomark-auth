@@ -38,7 +38,7 @@ public class UserService {
       user.updateNickname(nickname);
     }
 
-    if (picture != null && !picture.equals("")) {
+    if (picture != null && !picture.equals("") && picture.startsWith("https://")) {
       user.updatePicture(picture);
     } else if (picture != null && picture.equals("")) {
       user.updatePicture(defaultPicture);

@@ -108,7 +108,7 @@ public class UserControllerTest {
     assertEquals(user1.getId(), id);
     assertEquals(user1.getNickname(), beforeUser.getNickname());
     assertEquals(user1.getPicture(), beforeUser.getPicture());
-    
+
     JSONObject requestParams2 = new JSONObject();
     requestParams2.put("nickname", "");
     requestParams2.put("picture", "");
@@ -125,6 +125,26 @@ public class UserControllerTest {
     assertEquals(user2.getId(), id);
     assertEquals(user2.getNickname(), beforeUser.getNickname());
     assertEquals(user2.getPicture(), defaultPicture);
+
+    String newNickname = "testNewNickname";
+    String newPicture = "https://i.pravatar.cc/300";
+
+    JSONObject requestParams3 = new JSONObject();
+    requestParams3.put("nickname", newNickname);
+    requestParams3.put("picture", newPicture);
+
+    User user3 = mapper
+        .readValue(mvc.perform(put("/api/v1/user")
+            .header("Content-Type", "application/json")
+            .header("Authorization", token.getToken())
+            .content(requestParams3.toJSONString()))
+            .andExpect(status().isOk()).andReturn().getResponse()
+            .getContentAsString(), User.class);
+
+    assertEquals(user3.getAuthProvider(), AuthProvider.TEST);
+    assertEquals(user3.getId(), id);
+    assertEquals(user3.getNickname(), beforeUser.getNickname());
+    assertEquals(user3.getPicture(), defaultPicture);
   }
 
   @Test
