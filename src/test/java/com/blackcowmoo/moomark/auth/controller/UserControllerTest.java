@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 import com.blackcowmoo.moomark.auth.model.AuthProvider;
 import com.blackcowmoo.moomark.auth.model.entity.User;
@@ -93,7 +93,7 @@ public class UserControllerTest {
     requestParams1.put("picture", null);
 
     User user1 = mapper
-        .readValue(mvc.perform(post("/api/v1/user")
+        .readValue(mvc.perform(put("/api/v1/user")
             .header("Content-Type", "application/json")
             .header("Authorization", token.getToken())
             .content(requestParams1.toJSONString()))
