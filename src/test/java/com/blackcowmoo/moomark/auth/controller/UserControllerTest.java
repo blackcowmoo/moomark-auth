@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +27,9 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class UserControllerTest {
+  @Value("${resources.user.default-picture}")
+  private String defaultPicture;
+
   @Autowired
   private MockMvc mvc;
 
@@ -102,8 +106,25 @@ public class UserControllerTest {
 
     assertEquals(user1.getAuthProvider(), AuthProvider.TEST);
     assertEquals(user1.getId(), id);
-    assertEquals(beforeUser.getNickname(), beforeUser.getNickname());
-    assertEquals(beforeUser.getPicture(), beforeUser.getPicture());
+    assertEquals(user1.getNickname(), beforeUser.getNickname());
+    assertEquals(user1.getPicture(), beforeUser.getPicture());
+    
+    JSONObject requestParams2 = new JSONObject();
+    requestParams2.put("nickname", "");
+    requestParams2.put("picture", "");
+
+    User user2 = mapper
+        .readValue(mvc.perform(put("/api/v1/user")
+            .header("Content-Type", "application/json")
+            .header("Authorization", token.getToken())
+            .content(requestParams2.toJSONString()))
+            .andExpect(status().isOk()).andReturn().getResponse()
+            .getContentAsString(), User.class);
+
+    assertEquals(user2.getAuthProvider(), AuthProvider.TEST);
+    assertEquals(user2.getId(), id);
+    assertEquals(user2.getNickname(), beforeUser.getNickname());
+    assertEquals(user2.getPicture(), defaultPicture);
   }
 
   @Test
