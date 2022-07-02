@@ -6,10 +6,14 @@ import com.blackcowmoo.moomark.auth.model.entity.User;
 import com.blackcowmoo.moomark.auth.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
+  @Value("${resources.user.default-picture}")
+  private String defaultPicture;
+
   @Autowired
   UserRepository userRepository;
 
@@ -30,8 +34,16 @@ public class UserService {
   }
 
   public User updateUser(User user, String nickname, String picture) {
-    user.updateNickname(nickname);
-    user.updatePicture(picture);
+    if (!nickname.equals("") && nickname != null) {
+      user.updateNickname(nickname);
+    }
+
+    if (!picture.equals("")) {
+      user.updatePicture(picture);
+    } else if (picture != null) {
+      user.updatePicture(defaultPicture);
+    }
+
     return userRepository.save(user);
   }
 
