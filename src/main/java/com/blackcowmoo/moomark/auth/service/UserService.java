@@ -34,13 +34,13 @@ public class UserService {
   }
 
   public User updateUser(User user, String nickname, String picture) {
-    if (!nickname.equals("") && nickname != null) {
+    if (nickname != null && !nickname.equals("")) {
       user.updateNickname(nickname);
     }
 
-    if (!picture.equals("")) {
+    if (picture != null && !picture.equals("")) {
       user.updatePicture(picture);
-    } else if (picture != null) {
+    } else if (picture.equals("")) {
       user.updatePicture(defaultPicture);
     }
 
