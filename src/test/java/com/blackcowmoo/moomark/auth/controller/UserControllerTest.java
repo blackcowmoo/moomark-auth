@@ -143,8 +143,8 @@ public class UserControllerTest {
 
     assertEquals(user3.getAuthProvider(), AuthProvider.TEST);
     assertEquals(user3.getId(), id);
-    assertEquals(user3.getNickname(), beforeUser.getNickname());
-    assertEquals(user3.getPicture(), defaultPicture);
+    assertEquals(user3.getNickname(), newNickname);
+    assertEquals(user3.getPicture(), newPicture);
   }
 
   @Test
