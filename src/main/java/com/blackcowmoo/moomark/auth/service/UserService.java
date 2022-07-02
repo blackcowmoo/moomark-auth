@@ -40,7 +40,7 @@ public class UserService {
 
     if (picture != null && !picture.equals("")) {
       user.updatePicture(picture);
-    } else if (picture.equals("")) {
+    } else if (picture != null && picture.equals("")) {
       user.updatePicture(defaultPicture);
     }
 
