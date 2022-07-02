@@ -13,7 +13,7 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
     env:
-      MIN_TEST_COVERAGE: 47
+      MIN_TEST_COVERAGE: 50
       ENVIRONMENT: dev
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}

@@ -6,10 +6,14 @@ import com.blackcowmoo.moomark.auth.model.entity.User;
 import com.blackcowmoo.moomark.auth.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
+  @Value("${resources.user.default-picture}")
+  private String defaultPicture;
+
   @Autowired
   UserRepository userRepository;
 
@@ -17,8 +21,8 @@ public class UserService {
     return userRepository.findByIdAndAuthProvider(id, authProvider);
   }
 
-  public User signUp(String id, AuthProvider authProvider, String name, String email, String picture) {
-    return userRepository.save(new User(id, authProvider, name, email, name, picture, Role.USER));
+  public User signUp(String id, AuthProvider authProvider, String nickname, String email, String picture) {
+    return userRepository.save(new User(id, authProvider, email, nickname, picture, Role.USER));
   }
 
   public void withdraw(String id, AuthProvider authProvider) {
@@ -29,10 +33,19 @@ public class UserService {
     userRepository.delete(user);
   }
 
-  // @Override
-  // public void updateUser(User user) {
-  // userRepository.save(user);
-  // }
+  public User updateUser(User user, String nickname, String picture) {
+    if (nickname != null && !nickname.equals("")) {
+      user.updateNickname(nickname);
+    }
+
+    if (picture != null && !picture.equals("") && picture.startsWith("https://")) {
+      user.updatePicture(picture);
+    } else if (picture != null && picture.equals("")) {
+      user.updatePicture(defaultPicture);
+    }
+
+    return userRepository.save(user);
+  }
 
   // @Override
   // public boolean updateUserNickname(long userId, String nickname) {
@@ -45,18 +58,6 @@ public class UserService {
   // return false;
   // }
   // return true;
-  // }
-
-  // @Override
-  // public Optional<User> login(String email, String password, AuthProvider
-  // authProvider) {
-  // return userRepository.findByEmailAndAuthProvider(email, authProvider);
-  // }
-
-  // public User loginOrSignUp(User user) {
-  // Optional<User> newOrExistUser = login(user.getEmail(), null,
-  // user.getAuthProvider());
-  // return newOrExistUser.orElse(signUp(user));
   // }
 
 }

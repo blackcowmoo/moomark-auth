@@ -32,9 +32,6 @@ public class User implements Serializable {
   private String id;
 
   @Column(nullable = false)
-  private String name;
-
-  @Column(nullable = false)
   private String email;
 
   @Column
@@ -48,10 +45,9 @@ public class User implements Serializable {
   private Role role;
 
   @Builder
-  public User(String id, AuthProvider authProvider, String name, String email, String nickname, String picture,
+  public User(String id, AuthProvider authProvider, String email, String nickname, String picture,
       Role role) {
     this.id = id;
-    this.name = name;
     this.email = email;
     this.nickname = nickname;
     this.picture = picture;
@@ -59,14 +55,13 @@ public class User implements Serializable {
     this.authProvider = authProvider;
   }
 
-  public User update(String name, String picture) {
-    this.name = name;
-    this.picture = picture;
+  public User updateNickname(String nickname) {
+    this.nickname = nickname;
     return this;
   }
 
-  public User updateNickname(String nickname) {
-    this.nickname = nickname;
+  public User updatePicture(String picture) {
+    this.picture = picture;
     return this;
   }
 }
