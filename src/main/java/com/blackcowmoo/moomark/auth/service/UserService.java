@@ -17,8 +17,8 @@ public class UserService {
     return userRepository.findByIdAndAuthProvider(id, authProvider);
   }
 
-  public User signUp(String id, AuthProvider authProvider, String name, String email, String picture) {
-    return userRepository.save(new User(id, authProvider, name, email, name, picture, Role.USER));
+  public User signUp(String id, AuthProvider authProvider, String nickname, String email, String picture) {
+    return userRepository.save(new User(id, authProvider, email, nickname, picture, Role.USER));
   }
 
   public void withdraw(String id, AuthProvider authProvider) {
@@ -29,10 +29,11 @@ public class UserService {
     userRepository.delete(user);
   }
 
-  // @Override
-  // public void updateUser(User user) {
-  // userRepository.save(user);
-  // }
+  public User updateUser(User user, String nickname, String picture) {
+    user.updateNickname(nickname);
+    user.updatePicture(picture);
+    return userRepository.save(user);
+  }
 
   // @Override
   // public boolean updateUserNickname(long userId, String nickname) {
@@ -45,18 +46,6 @@ public class UserService {
   // return false;
   // }
   // return true;
-  // }
-
-  // @Override
-  // public Optional<User> login(String email, String password, AuthProvider
-  // authProvider) {
-  // return userRepository.findByEmailAndAuthProvider(email, authProvider);
-  // }
-
-  // public User loginOrSignUp(User user) {
-  // Optional<User> newOrExistUser = login(user.getEmail(), null,
-  // user.getAuthProvider());
-  // return newOrExistUser.orElse(signUp(user));
   // }
 
 }

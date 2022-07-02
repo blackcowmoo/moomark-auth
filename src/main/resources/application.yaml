@@ -27,3 +27,7 @@ spring:
 passport:
   public-key: ${RSA_PUBLIC_KEY}
   private-key: ${RSA_PRIVATE_KEY}
+
+resources:
+  user:
+    default-picture: https://avatars.githubusercontent.com/u/60027496?v=4
