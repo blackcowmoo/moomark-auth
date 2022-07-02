@@ -1,5 +1,6 @@
 package com.blackcowmoo.moomark.auth.configuration;
 
+import com.blackcowmoo.moomark.auth.service.PassportService;
 import com.blackcowmoo.moomark.auth.service.TokenService;
 import com.blackcowmoo.moomark.auth.service.UserService;
 import com.blackcowmoo.moomark.auth.configuration.oauth2.JwtAuthFilter;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final TokenService tokenService;
   private final UserService userService;
+  private final PassportService passportService;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -34,6 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/actuator/health").permitAll()
         .anyRequest().authenticated();
 
-    http.addFilterBefore(new JwtAuthFilter(tokenService, userService), UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(new JwtAuthFilter(passportService, tokenService, userService),
+        UsernamePasswordAuthenticationFilter.class);
   }
 }
