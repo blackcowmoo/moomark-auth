@@ -52,6 +52,25 @@ public class PssportControllerTest {
   }
 
   @Test
+  public void verifyPassport() throws Exception {
+    String userId = "1234";
+    Token token = mapper
+        .readValue(mvc.perform(get("/api/v1/oauth2/google").param("code", "test-" + userId)).andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString(), Token.class);
+
+    assertNotNull(token.getToken());
+
+    String passport = mvc.perform(get("/api/v1/passport").header("Authorization", token.getToken()))
+        .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+    User user = mapper
+        .readValue(mvc.perform(get("/api/v1/user").header("x-moom-passport", passport))
+            .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), User.class);
+
+    assertEquals(user.getId(), userId);
+  }
+
+  @Test
   public void checkPublicKey() throws Exception {
     String publicKey = passportPublicKey;
     String testPublicKey = mvc.perform(get("/api/v1/passport/verify/public"))
