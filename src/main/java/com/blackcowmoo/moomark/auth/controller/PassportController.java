@@ -1,5 +1,7 @@
 package com.blackcowmoo.moomark.auth.controller;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -32,7 +34,13 @@ public class PassportController {
   }
 
   @GetMapping
-  public String generatePassport() {
-    return passportService.generatePassport(getUser());
+  public String generatePassport(HttpServletResponse response) {
+    String passport = passportService.generatePassport(getUser());
+    if (passport == "") {
+      response.setStatus(401);
+      return null;
+    }
+
+    return passport;
   }
 }
