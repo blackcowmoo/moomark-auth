@@ -72,7 +72,7 @@ jobs:
         run: ./gradlew build -x checkstyleMain -x test -x checkstyleTest --stacktrace
 
       - name: Run test
-        run: ./gradlew test -x checkstyleMain -x checkstyleTest --stacktrace -Dspring.profiles.active=ci-test
+        run: ./gradlew test -x checkstyleMain -x checkstyleTest --stacktrace
 
       - name: Test Report
         uses: dorny/test-reporter@v1
