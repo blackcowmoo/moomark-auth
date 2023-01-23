@@ -1,9 +1,10 @@
 package com.blackcowmoo.moomark.auth.configuration;
 
+import com.blackcowmoo.moomark.auth.configuration.oauth2.JwtAuthFilter;
+import com.blackcowmoo.moomark.auth.configuration.oauth2.PassportFilter;
 import com.blackcowmoo.moomark.auth.service.PassportService;
 import com.blackcowmoo.moomark.auth.service.TokenService;
 import com.blackcowmoo.moomark.auth.service.UserService;
-import com.blackcowmoo.moomark.auth.configuration.oauth2.JwtAuthFilter;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -25,18 +26,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and().csrf().disable().formLogin().disable().httpBasic().disable().logout().disable()
-        .exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-        .and().authorizeRequests()
-        .antMatchers("/api/v1/oauth2/refresh").permitAll()
-        .antMatchers("/api/v1/oauth2/google").permitAll()
-        .antMatchers("/api/v1/user/{provider}/{userId}").permitAll()
-        .antMatchers("/api/v1/passport/verify").permitAll()
-        .antMatchers("/api/v1/passport/verify/public").permitAll()
-        .antMatchers("/actuator/health").permitAll()
-        .anyRequest().authenticated();
+      .and().csrf().disable().formLogin().disable().httpBasic().disable().logout().disable()
+      .exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+      .and().authorizeRequests()
+      .antMatchers("/api/v1/oauth2/refresh").permitAll()
+      .antMatchers("/api/v1/oauth2/google").permitAll()
+      .antMatchers("/api/v1/user/{provider}/{userId}").permitAll()
+      .antMatchers("/api/v1/passport/verify").permitAll()
+      .antMatchers("/api/v1/passport/verify/public").permitAll()
+      .antMatchers("/actuator/health").permitAll()
+      .anyRequest().authenticated();
 
-    http.addFilterBefore(new JwtAuthFilter(passportService, tokenService, userService),
-        UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(new JwtAuthFilter(tokenService, userService), UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(new PassportFilter(passportService), UsernamePasswordAuthenticationFilter.class);
   }
 }

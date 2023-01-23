@@ -1,16 +1,24 @@
 package com.blackcowmoo.moomark.auth.service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Base64;
 
 import javax.annotation.PostConstruct;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 
+import com.blackcowmoo.moomark.auth.model.AuthProvider;
+import com.blackcowmoo.moomark.auth.model.dto.PassportResponse;
+import com.blackcowmoo.moomark.auth.util.AesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.blackcowmoo.moomark.auth.model.dto.PassportResponse;
+import com.blackcowmoo.moomark.auth.model.dto.Passport;
 import com.blackcowmoo.moomark.auth.model.entity.User;
 import com.blackcowmoo.moomark.auth.util.RsaUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +39,13 @@ public class PassportService {
   @Autowired
   private ObjectMapper mapper;
 
+  private Base64.Encoder encoder = Base64.getEncoder();
+  private Base64.Decoder decoder = Base64.getDecoder();
+
   private RsaUtil rsaUtil;
+
+  @Autowired
+  private AesUtil aesUtil;
 
   @PostConstruct
   public void buildRsaKeys() throws Exception {
@@ -42,32 +56,64 @@ public class PassportService {
     return publicKeyString;
   }
 
-  public User parsePassport(String passport) {
+  public User parsePassport(String passport, String passportKey) {
     try {
-      PassportResponse passportResult = mapper
-          .readValue(rsaUtil.decryptByPublicKey(Base64.getDecoder().decode(passport)), PassportResponse.class);
-
+      Passport passportResult = decryptPassport(passportKey);
       if (passportResult.getExp().after(Timestamp.valueOf(LocalDateTime.now()))) {
-        return passportResult.getUser();
+        String hash = passportResult.getHash();
+        SecretKey key = new SecretKeySpec(decoder.decode(passportResult.getKey()), "AES");
+        String userBody = aesUtil.decrypt(decoder.decode(passport), key);
+        if (getHash(userBody).equals(hash)) {
+          return mapper.readValue(decoder.decode(userBody), User.class);
+        }
       }
     } catch (Exception e) {
-      log.error("parsePassport", e);
+      log.error(e.getMessage(), e);
     }
 
     return null;
   }
 
-  public String generatePassport(User user) {
+  public PassportResponse generatePassport(User user) {
     try {
-      PassportResponse passport = new PassportResponse();
+      SecretKey key = getAesKey(user.getAuthProvider(), user.getId());
+      String userBody = encoder.encodeToString(mapper.writeValueAsString(user).getBytes());
+
+      Passport passport = new Passport();
       passport.setExp(Timestamp.valueOf(LocalDateTime.now().plusSeconds((passportExpireSeconds))));
-      passport.setUser(user);
+      passport.setKey(encoder.encodeToString(key.getEncoded()));
+      passport.setHash(getHash(userBody));
 
-      return Base64.getEncoder().encodeToString(rsaUtil.encryptByPrivateKey(mapper.writeValueAsString(passport)));
+      PassportResponse response = new PassportResponse();
+      response.setPassport(encoder.encodeToString(aesUtil.encrypt(userBody, key)));
+      response.setKey(encryptPassport(passport));
+      return response;
     } catch (Exception e) {
-      log.error("generatePassport", e);
+      log.error(e.getMessage(), e);
+      return null;
     }
-
-    return "";
   }
+
+  private String getHash(String user) throws Exception {
+    MessageDigest md = MessageDigest.getInstance("MD5");
+    byte[] digest = md.digest(user.getBytes(StandardCharsets.UTF_8));
+    return DatatypeConverter.printHexBinary(digest);
+  }
+
+  private String encryptPassport(Passport passport) throws Exception {
+    return encoder.encodeToString(rsaUtil.encryptByPrivateKey(mapper.writeValueAsString(passport)));
+  }
+
+  private Passport decryptPassport(String passport) throws Exception {
+    return mapper.readValue(rsaUtil.decryptByPublicKey(decoder.decode(passport)), Passport.class);
+  }
+
+  private SecretKey getAesKey(AuthProvider provider, String id) {
+    // TODO: redis cache
+    //String providerValue = provider.getValue();
+
+    SecretKey key = aesUtil.generateNewKey();
+    return key;
+  }
+
 }

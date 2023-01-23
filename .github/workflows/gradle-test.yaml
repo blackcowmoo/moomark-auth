@@ -32,6 +32,8 @@ jobs:
       RSA_PUBLIC_KEY: ${{ secrets.RSA_PUBLIC_KEY }}
       RSA_PRIVATE_KEY: ${{ secrets.RSA_PRIVATE_KEY }}
       PASSPORT_TEST_TOKEN_EXPIRED: ${{ secrets.EXPIRED_TEST_PASSPORT }}
+      PASSPORT_TEST_TOKEN_EXPIRED_USER: ${{ secrets.EXPIRED_TEST_PASSPORT_USER }}
+      PASSPORT_TEST_TOKEN_EXPIRED_KEY: ${{ secrets.EXPIRED_TEST_PASSPORT_KEY }}
 
     services:
       redis:
