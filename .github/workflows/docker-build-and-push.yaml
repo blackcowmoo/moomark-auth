@@ -31,7 +31,7 @@ jobs:
           key: java-${{ hashFiles('.gradle') }}
 
       - name: Run build
-        run: ./gradlew build -x checkstyleMain -x test -x testClasses --stacktrace -Pprofile=production
+        run: ./gradlew build -x checkstyleMain -x test -x compileTestJava --stacktrace -Pprofile=production
 
       - name: Set docker registry (PR)
         run: echo "DOCKER_REGISTRY=$REGISTRY/pr" >> $GITHUB_ENV
