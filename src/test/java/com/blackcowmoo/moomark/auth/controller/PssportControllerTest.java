@@ -45,7 +45,8 @@ public class PssportControllerTest {
 
     assertNotNull(token.getToken());
 
-    PassportResponse passport = mapper.readValue(mvc.perform(get("/api/v1/passport").header("Authorization", token.getToken()))
+    PassportResponse passport = mapper
+      .readValue(mvc.perform(get("/api/v1/passport").header("Authorization", token.getToken()))
       .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), PassportResponse.class);
 
     User user = mapper
@@ -68,7 +69,8 @@ public class PssportControllerTest {
 
     assertNotNull(token.getToken());
 
-    PassportResponse passport = mapper.readValue(mvc.perform(get("/api/v1/passport").header("Authorization", token.getToken()))
+    PassportResponse passport = mapper
+      .readValue(mvc.perform(get("/api/v1/passport").header("Authorization", token.getToken()))
       .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), PassportResponse.class);
 
     User user = mapper

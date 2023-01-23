@@ -6,16 +6,13 @@ import org.springframework.stereotype.Component;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Base64;
 
 @Component
 @Slf4j
 public class AesUtil {
-  private final String CIPHER = "AES";
+  private final String cipher = "AES";
 
   private SecureRandom secureRandom = new SecureRandom();
 
@@ -34,16 +31,12 @@ public class AesUtil {
   }
 
   public SecretKey generateNewKey() {
-    SecretKey key = getRandomKey(CIPHER, 128);
-    if (key == null) {
-      return null;
-    }
-    return key;
+    return getRandomKey(cipher, 128);
   }
 
   private SecretKey getRandomKey(String cipher, int keySize) {
     try {
-      KeyGenerator generator = KeyGenerator.getInstance("AES");
+      KeyGenerator generator = KeyGenerator.getInstance(cipher);
       SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
       random.setSeed(getRandomBytes(keySize));
       generator.init(128, random);

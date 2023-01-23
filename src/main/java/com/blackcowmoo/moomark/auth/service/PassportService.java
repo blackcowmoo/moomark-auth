@@ -110,7 +110,7 @@ public class PassportService {
 
   private SecretKey getAesKey(AuthProvider provider, String id) {
     // TODO: redis cache
-//    String providerValue = provider.getValue();
+    //String providerValue = provider.getValue();
 
     SecretKey key = aesUtil.generateNewKey();
     return key;
