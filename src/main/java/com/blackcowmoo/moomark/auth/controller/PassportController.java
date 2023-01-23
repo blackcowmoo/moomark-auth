@@ -2,6 +2,7 @@ package com.blackcowmoo.moomark.auth.controller;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.blackcowmoo.moomark.auth.model.dto.PassportResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -29,14 +30,17 @@ public class PassportController {
   }
 
   @GetMapping("/verify")
-  public User verifyPassport(@RequestHeader("x-moom-passport") String passport) {
-    return passportService.parsePassport(passport);
+  public User verifyPassport(
+    @RequestHeader("x-moom-passport-user") String passport,
+    @RequestHeader("x-moom-passport-key") String key
+  ) {
+    return passportService.parsePassport(passport, key);
   }
 
   @GetMapping
-  public String generatePassport(HttpServletResponse response) {
-    String passport = passportService.generatePassport(getUser());
-    if (passport == "") {
+  public PassportResponse generatePassport(HttpServletResponse response) {
+    PassportResponse passport = passportService.generatePassport(getUser());
+    if (passport == null) {
       response.setStatus(401);
       return null;
     }
