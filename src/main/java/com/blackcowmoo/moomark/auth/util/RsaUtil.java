@@ -57,9 +57,13 @@ public class RsaUtil {
   }
 
   public byte[] encryptByPrivateKey(String data) {
+    return encryptByPrivateKey(data.getBytes());
+  }
+
+  public byte[] encryptByPrivateKey(byte[] data) {
     try {
       cipher.init(Cipher.ENCRYPT_MODE, privateKey);
-      return cipher.doFinal(data.getBytes());
+      return cipher.doFinal(data);
     } catch (Exception e) {
       log.error("encryptByPrivateKey: ", e);
       return null;
