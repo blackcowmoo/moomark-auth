@@ -23,8 +23,7 @@ public class PassportFilter extends GenericFilterBean {
   private final PassportService passportService;
 
   @Override
-  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-    throws IOException, ServletException {
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
     String passport = ((HttpServletRequest) request).getHeader("x-moom-passport-user");
     String key = ((HttpServletRequest) request).getHeader("x-moom-passport-key");
 
@@ -38,7 +37,6 @@ public class PassportFilter extends GenericFilterBean {
   }
 
   private Authentication getAuthentication(User user) {
-    return new UsernamePasswordAuthenticationToken(user, "",
-      Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
+    return new UsernamePasswordAuthenticationToken(user, "", Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
   }
 }
