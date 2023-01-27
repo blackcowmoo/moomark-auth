@@ -44,9 +44,6 @@ public class PassportService {
 
   private RsaUtil rsaUtil;
 
-  @Autowired
-  private AesUtil aesUtil;
-
   @PostConstruct
   public void buildRsaKeys() throws Exception {
     rsaUtil = new RsaUtil(publicKeyString, privateKeyString);
@@ -62,7 +59,7 @@ public class PassportService {
       if (passportResult.getExp().after(Timestamp.valueOf(LocalDateTime.now()))) {
         String hash = passportResult.getHash();
         SecretKey key = new SecretKeySpec(decoder.decode(passportResult.getKey()), "AES");
-        String userBody = aesUtil.decrypt(decoder.decode(passport), key);
+        String userBody = AesUtil.decrypt(decoder.decode(passport), key);
         if (getHash(userBody).equals(hash)) {
           return mapper.readValue(decoder.decode(userBody), User.class);
         }
@@ -85,7 +82,7 @@ public class PassportService {
       passport.setHash(getHash(userBody));
 
       PassportResponse response = new PassportResponse();
-      response.setPassport(encoder.encodeToString(aesUtil.encrypt(userBody, key)));
+      response.setPassport(encoder.encodeToString(AesUtil.encrypt(userBody, key)));
       response.setKey(encryptPassport(passport));
       return response;
     } catch (Exception e) {
@@ -112,7 +109,7 @@ public class PassportService {
     // TODO: redis cache
     //String providerValue = provider.getValue();
 
-    SecretKey key = aesUtil.generateNewKey();
+    SecretKey key = AesUtil.generateNewKey();
     return key;
   }
 

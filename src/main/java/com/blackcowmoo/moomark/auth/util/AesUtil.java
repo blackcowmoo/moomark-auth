@@ -1,5 +1,9 @@
 package com.blackcowmoo.moomark.auth.util;
 
+import java.security.InvalidKeyException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -12,43 +16,49 @@ import java.security.SecureRandom;
 @Component
 @Slf4j
 public class AesUtil {
-  private final String cipher = "AES";
 
-  private SecureRandom secureRandom = new SecureRandom();
-
-  public byte[] encrypt(String body, SecretKey key) throws Exception {
-    Cipher cipher = Cipher.getInstance("AES");
-    cipher.init(Cipher.ENCRYPT_MODE, key);
-    byte[] encrypted = cipher.doFinal(body.getBytes());
-    return encrypted;
+  private AesUtil() throws InstantiationException {
+    throw new InstantiationException();
   }
 
-  public String decrypt(byte[] body, SecretKey key) throws Exception {
-    Cipher cipher = Cipher.getInstance("AES");
+  private static final String CIPHER = "AES/GCM/NoPadding";
+  private static final Integer KEY_SIZE = 128;
+  private static final SecureRandom secureRandom = new SecureRandom();
+
+  public static byte[] encrypt(String body, SecretKey key)
+    throws NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException {
+    Cipher cipher = Cipher.getInstance(CIPHER);
+    cipher.init(Cipher.ENCRYPT_MODE, key);
+    return cipher.doFinal(body.getBytes());
+  }
+
+  public static String decrypt(byte[] body, SecretKey key)
+    throws NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException {
+    Cipher cipher = Cipher.getInstance(CIPHER);
     cipher.init(Cipher.DECRYPT_MODE, key);
     byte[] decrypted = cipher.doFinal(body);
     return new String(decrypted);
   }
 
-  public SecretKey generateNewKey() {
-    return getRandomKey(cipher, 128);
+  public static SecretKey generateNewKey() {
+    return getRandomKey();
   }
 
-  private SecretKey getRandomKey(String cipher, int keySize) {
+  private static SecretKey getRandomKey() {
+    KeyGenerator generator = null;
     try {
-      KeyGenerator generator = KeyGenerator.getInstance(cipher);
+      generator = KeyGenerator.getInstance(AesUtil.CIPHER);
       SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-      random.setSeed(getRandomBytes(keySize));
-      generator.init(128, random);
+      random.setSeed(getRandomBytes());
+      generator.init(KEY_SIZE, random);
       return generator.generateKey();
     } catch (NoSuchAlgorithmException e) {
-      log.error(e.getMessage(), e);
-      return null;
+      throw new IllegalStateException(e.getMessage(), e);
     }
   }
 
-  private byte[] getRandomBytes(int keySize) {
-    byte[] secureRandomKeyBytes = new byte[keySize / 8];
+  private static byte[] getRandomBytes() {
+    byte[] secureRandomKeyBytes = new byte[AesUtil.KEY_SIZE / 8];
     secureRandom.nextBytes(secureRandomKeyBytes);
     return secureRandomKeyBytes;
   }
