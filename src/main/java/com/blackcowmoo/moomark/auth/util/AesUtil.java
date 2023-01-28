@@ -21,7 +21,7 @@ public class AesUtil {
     throw new InstantiationException("Can not instantiation class");
   }
 
-  private static final String CIPHER = "AES/GCM/NoPadding";
+  private static final String CIPHER = "AES";
   private static final Integer KEY_SIZE = 128;
   private static final SecureRandom secureRandom = new SecureRandom();
 
