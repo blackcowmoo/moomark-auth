@@ -18,7 +18,7 @@ import java.security.SecureRandom;
 public class AesUtil {
 
   private AesUtil() throws InstantiationException {
-    throw new InstantiationException();
+    throw new InstantiationException("Can not instantiation class");
   }
 
   private static final String CIPHER = "AES/GCM/NoPadding";
