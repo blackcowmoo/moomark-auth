@@ -28,12 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class PassportService {
-  @Value("${passport.public-key}")
-  private String publicKeyString;
-
-  @Value("${passport.private-key}")
-  private String privateKeyString;
-
   private Long passportExpireSeconds = 120L;
 
   @Autowired
@@ -42,15 +36,8 @@ public class PassportService {
   private Base64.Encoder encoder = Base64.getEncoder();
   private Base64.Decoder decoder = Base64.getDecoder();
 
-  private RsaUtil rsaUtil;
-
-  @PostConstruct
-  public void buildRsaKeys() throws Exception {
-    rsaUtil = new RsaUtil(publicKeyString, privateKeyString);
-  }
-
   public String getPublicKeyString() {
-    return publicKeyString;
+    return RsaUtil.getPublicKey();
   }
 
   public User parsePassport(String passport, String passportKey) {
@@ -98,11 +85,11 @@ public class PassportService {
   }
 
   private String encryptPassport(Passport passport) throws Exception {
-    return encoder.encodeToString(rsaUtil.encryptByPrivateKey(mapper.writeValueAsString(passport)));
+    return encoder.encodeToString(RsaUtil.encryptByPrivateKey(mapper.writeValueAsString(passport)));
   }
 
   private Passport decryptPassport(String passport) throws Exception {
-    return mapper.readValue(rsaUtil.decryptByPublicKey(decoder.decode(passport)), Passport.class);
+    return mapper.readValue(RsaUtil.decryptByPublicKey(decoder.decode(passport)), Passport.class);
   }
 
   private SecretKey getAesKey(AuthProvider provider, String id) {
