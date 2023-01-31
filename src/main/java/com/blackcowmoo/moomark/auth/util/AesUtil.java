@@ -26,14 +26,16 @@ public class AesUtil {
   private static final SecureRandom secureRandom = new SecureRandom();
 
   public static byte[] encrypt(String body, SecretKey key)
-    throws NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException {
+    throws NoSuchAlgorithmException, InvalidKeyException,
+    IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException {
     Cipher cipher = Cipher.getInstance(CIPHER);
     cipher.init(Cipher.ENCRYPT_MODE, key);
     return cipher.doFinal(body.getBytes());
   }
 
   public static String decrypt(byte[] body, SecretKey key)
-    throws NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException {
+    throws NoSuchAlgorithmException, InvalidKeyException,
+    IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException {
     Cipher cipher = Cipher.getInstance(CIPHER);
     cipher.init(Cipher.DECRYPT_MODE, key);
     byte[] decrypted = cipher.doFinal(body);
