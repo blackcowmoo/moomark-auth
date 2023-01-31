@@ -1,8 +1,6 @@
 package com.blackcowmoo.moomark.auth.util;
 
-
 import java.security.InvalidKeyException;
-
 import java.security.NoSuchAlgorithmException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
