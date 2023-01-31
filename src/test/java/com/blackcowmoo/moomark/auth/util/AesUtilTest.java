@@ -1,6 +1,5 @@
 package com.blackcowmoo.moomark.auth.util;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -16,7 +15,8 @@ class AesUtilTest {
 
   @Test
   void encryptAndDecryptTest()
-    throws IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+      throws IllegalBlockSizeException, NoSuchPaddingException,
+      NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
     String plainText = "PLAIN TEXT";
 
     SecretKey aesSecretKey = AesUtil.generateNewKey();
