@@ -1,26 +1,24 @@
 package com.blackcowmoo.moomark.auth.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.utility.DockerImageName;
 
+@Configuration
 public class AbstractContainerBaseTest {
 
   static final String REDIS_IMAGE = "redis:6-alpine";
-  static final GenericContainer REDIS_CONTAINER;
+
+  @Value("${spring.redis.host}")
+  String redisHost;
 
   static {
-    REDIS_CONTAINER = new GenericContainer<>(REDIS_IMAGE)
-      .withExposedPorts(6379)
-      .withReuse(true);
-    REDIS_CONTAINER.start();
-  }
-
-  @DynamicPropertySource
-  public static void overrideProps(DynamicPropertyRegistry registry) {
-    System.out.println("host :" + REDIS_CONTAINER.getHost());
-    System.out.println("port :" + REDIS_CONTAINER.getMappedPort(6379));
-    registry.add("spring.redis.host", REDIS_CONTAINER::getHost);
-    registry.add("spring.redis.port", () -> "" + REDIS_CONTAINER.getMappedPort(6379));
+    GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse(REDIS_IMAGE)).withExposedPorts(6379);
+    redis.start();
+    System.setProperty("spring.redis.host", redis.getHost());
+    System.setProperty("spring.redis.port", redis.getMappedPort(6379).toString());
   }
 }
