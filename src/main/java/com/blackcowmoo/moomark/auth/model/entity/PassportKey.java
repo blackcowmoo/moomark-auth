@@ -2,11 +2,12 @@ package com.blackcowmoo.moomark.auth.model.entity;
 
 import java.io.Serializable;
 import javax.crypto.SecretKey;
-import javax.persistence.Id;
+import javax.persistence.Column;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 @Getter
@@ -15,6 +16,7 @@ import org.springframework.data.redis.core.RedisHash;
 public class PassportKey implements Serializable {
 
   @Id
+  @Column(name = "hash")
   private String hash;
   private SecretKey key;
 
