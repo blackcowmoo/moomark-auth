@@ -1,49 +1,59 @@
 package com.blackcowmoo.moomark.auth.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.blackcowmoo.moomark.auth.model.entity.PassportKey;
 import com.blackcowmoo.moomark.auth.util.AesUtil;
 import com.blackcowmoo.moomark.auth.util.HashUtils;
-import javax.crypto.SecretKey;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
-@DataRedisTest
+@DisplayName("Redis CRUD Test")
+@SpringBootTest(
+  webEnvironment = WebEnvironment.RANDOM_PORT
+)
 class PassportKeyRedisRepositoryTest {
-
   @Autowired
-  PassportKeyRedisRepository passportKeyRedisRepository;
-
+  private PassportKeyRedisRepository passportKeyRedisRepository;
   @Autowired
-  AesUtil aesUtil;
+  private AesUtil aesUtil;
 
-  @DisplayName("save test")
-  @Test
-  void save() throws Exception {
-    //given
-    String accessToken = "accessToken";
-    String username = "username";
-    SecretKey key = aesUtil.generateNewKey();
-    String hash = HashUtils.toSha256(accessToken + username);
-    PassportKey passportKey = PassportKey.builder()
-      .key(key)
-      .hash(hash)
+  private final String TEST_PRIFIX = "TEST";
+  private PassportKey passportKey;
+  @BeforeEach
+  void initTest() {
+    passportKey = PassportKey.builder()
+      .key(aesUtil.generateNewKey())
+      .hash(makeKeyHash(TEST_PRIFIX, "TEST_USER"))
       .build();
-
-    //when
-    passportKeyRedisRepository.save(passportKey);
-
-    //then
-    PassportKey findPassportKey = passportKeyRedisRepository.findById(accessToken)
-      .orElseGet(null);
-
-    assertAll(
-      () -> assertEquals(key, findPassportKey.getKey()),
-      () -> assertEquals(hash, findPassportKey.getHash())
-    );
   }
 
+  @AfterEach
+  void tearDown() {
+    passportKeyRedisRepository.deleteById(passportKey.getHash());
+  }
+
+  @Test
+  void saveTest() {
+    // given
+    passportKeyRedisRepository.save(passportKey);
+
+    // when
+    PassportKey psersistPassportKey = passportKeyRedisRepository
+      .findById(passportKey.getHash())
+      .orElseThrow(RuntimeException::new);
+
+
+    // then
+    Assertions.assertThat(psersistPassportKey.getHash()).isEqualTo(passportKey.getHash());
+  }
+
+  private String makeKeyHash(String providerValue, String id) {
+    return HashUtils.toSha256(providerValue + id);
+  }
 }
