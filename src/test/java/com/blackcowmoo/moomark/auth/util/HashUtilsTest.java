@@ -1,11 +1,11 @@
 package com.blackcowmoo.moomark.auth.util;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class HashUtilsTest {
+
   @Test
   void Sha256Test() {
     String testMsg = "TEST MESSAGE";
