@@ -2,12 +2,14 @@ package com.blackcowmoo.moomark.auth.util;
 
 
 import org.assertj.core.api.Assertions;
+
 import org.junit.jupiter.api.Test;
 
 class HashUtilsTest {
 
   @Test
   void sha256Test() {
+
     String testMsg = "TEST MESSAGE";
     String testMsg2 = "TEST MESSAGE2";
     String result = HashUtils.toSha256(testMsg);
