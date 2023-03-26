@@ -28,7 +28,8 @@ class PassportKeyRedisRepositoryTest {
   private static final String DOCKER_IMG_NAME = "redis:6-alpine";
 
   @Container
-  private static final GenericContainer<?> REDIS_CONTAINER = new GenericContainer<>(DockerImageName.parse(DOCKER_IMG_NAME))
+  private static final GenericContainer<?> REDIS_CONTAINER = new GenericContainer<>(
+    DockerImageName.parse(DOCKER_IMG_NAME))
     .withExposedPorts(6379)
     .withReuse(true);
 
@@ -42,14 +43,11 @@ class PassportKeyRedisRepositoryTest {
   @Test
   void saveKeyTest() {
     PassportKey passportKey = PassportKey.builder()
-      .key(aesUtil.generateNewKey())
+      .key(aesUtil.generateNewKey().getEncoded())
       .hash(HashUtils.toSha256("TEST"))
       .build();
 
-    System.out.println("Passport key : " + Arrays.toString(passportKey.getKey().getEncoded()));
-    System.out.println("Passport key : " + passportKey.getHash());
     PassportKey savedPassportKey = passportKeyRedisRepository.save(passportKey);
-
     Assertions.assertThat(passportKey.getHash()).isEqualTo(savedPassportKey.getHash());
   }
 }
