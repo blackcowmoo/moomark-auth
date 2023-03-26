@@ -40,7 +40,7 @@ public class PssportControllerTest {
     .withInitScript("initDB.sql");
 
   @Container
-  private static final GenericContainer< ? > MY_REDIS_CONTAINER = new GenericContainer<>("redis:6")
+  private static final GenericContainer<?> MY_REDIS_CONTAINER = new GenericContainer<>("redis:6")
     .withExposedPorts(6379);
 
   @DynamicPropertySource

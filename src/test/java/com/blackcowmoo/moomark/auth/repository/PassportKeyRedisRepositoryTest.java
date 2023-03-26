@@ -4,7 +4,6 @@ package com.blackcowmoo.moomark.auth.repository;
 import com.blackcowmoo.moomark.auth.model.entity.PassportKey;
 import com.blackcowmoo.moomark.auth.util.AesUtil;
 import com.blackcowmoo.moomark.auth.util.HashUtils;
-import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
