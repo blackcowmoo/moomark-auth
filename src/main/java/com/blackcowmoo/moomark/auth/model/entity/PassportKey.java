@@ -3,6 +3,8 @@ package com.blackcowmoo.moomark.auth.model.entity;
 import java.io.Serializable;
 import javax.crypto.SecretKey;
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,10 +20,10 @@ public class PassportKey implements Serializable {
   @Id
   @Column(name = "hash")
   private String hash;
-  private SecretKey key;
+  private byte[] key;
 
   @Builder
-  public PassportKey(SecretKey key, String hash) {
+  public PassportKey(byte[] key, String hash) {
     this.key = key;
     this.hash = hash;
   }

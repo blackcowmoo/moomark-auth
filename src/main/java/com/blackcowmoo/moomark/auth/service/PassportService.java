@@ -125,7 +125,7 @@ public class PassportService {
 
     PassportKey passportKey = PassportKey.builder()
       .hash(hash)
-      .key(key)
+      .key(key.getEncoded())
       .build();
 
     passportKeyRedisRepository.save(passportKey);
