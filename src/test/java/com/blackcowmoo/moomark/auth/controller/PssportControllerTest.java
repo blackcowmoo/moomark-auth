@@ -48,8 +48,6 @@ public class PssportControllerTest {
     registry.add("spring.datasource.url", MY_SQL_CONTAINER::getJdbcUrl);
     registry.add("spring.datasource.username", MY_SQL_CONTAINER::getUsername);
     registry.add("spring.datasource.password", MY_SQL_CONTAINER::getPassword);
-//    registry.add("spring.redis.host", MY_REDIS_CONTAINER::getHost);
-//    registry.add("spring.redis.port", Integer.toString(6379));
     System.setProperty("spring.redis.host", MY_REDIS_CONTAINER.getHost());
     System.setProperty("spring.redis.port", MY_REDIS_CONTAINER.getMappedPort(6379).toString());
   }
