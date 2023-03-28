@@ -1,8 +1,7 @@
 package com.blackcowmoo.moomark.auth.repository;
 
-
-
 import com.blackcowmoo.moomark.auth.model.entity.PassportKey;
+
 import com.blackcowmoo.moomark.auth.util.AesUtil;
 import com.blackcowmoo.moomark.auth.util.HashUtils;
 import lombok.extern.slf4j.Slf4j;
