@@ -34,20 +34,11 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class PssportControllerTest {
 
   @Container
-  private static final MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>("mysql:8.0.24")
-    .withUsername("root")
-    .withPassword("root")
-    .withInitScript("initDB.sql");
-
-  @Container
   private static final GenericContainer<?> MY_REDIS_CONTAINER = new GenericContainer<>("redis:6")
     .withExposedPorts(6379);
 
   @DynamicPropertySource
   public static void properties(DynamicPropertyRegistry registry) {
-    registry.add("spring.datasource.url", MY_SQL_CONTAINER::getJdbcUrl);
-    registry.add("spring.datasource.username", MY_SQL_CONTAINER::getUsername);
-    registry.add("spring.datasource.password", MY_SQL_CONTAINER::getPassword);
     System.setProperty("spring.redis.host", MY_REDIS_CONTAINER.getHost());
     System.setProperty("spring.redis.port", MY_REDIS_CONTAINER.getMappedPort(6379).toString());
   }
