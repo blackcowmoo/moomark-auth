@@ -117,19 +117,23 @@ public class PassportService {
   }
 
   private SecretKey getAesKey(AuthProvider provider, String id) {
-    // TODO: Add redis cache
     String providerValue = provider.getValue();
     String hash = makeKeyHash(providerValue, id);
-    passportKeyRedisRepository.findById(hash);
-    SecretKey key = aesUtil.generateNewKey();
+    PassportKey savedPassportKey = passportKeyRedisRepository.findById(hash)
+      .orElseGet(() -> saveNewPassportKey(hash));
 
+    return new SecretKeySpec(savedPassportKey.getKey(), "AES");
+  }
+
+  private PassportKey saveNewPassportKey(String hash) {
+    SecretKey key = aesUtil.generateNewKey();
     PassportKey passportKey = PassportKey.builder()
       .hash(hash)
       .key(key.getEncoded())
       .build();
 
     passportKeyRedisRepository.save(passportKey);
-    return key;
+    return passportKey;
   }
 
   private String makeKeyHash(String providerValue, String id) {
