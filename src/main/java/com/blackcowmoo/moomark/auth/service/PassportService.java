@@ -4,6 +4,7 @@ import com.blackcowmoo.moomark.auth.model.dto.Passport;
 import com.blackcowmoo.moomark.auth.model.entity.PassportKey;
 import com.blackcowmoo.moomark.auth.repository.PassportKeyRedisRepository;
 import com.blackcowmoo.moomark.auth.util.HashUtils;
+import io.micrometer.core.instrument.util.StringUtils;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.sql.Timestamp;
@@ -138,6 +139,9 @@ public class PassportService {
 
   private String makeKeyHash(String providerValue, String id) {
     // TODO : We need to develop more complexity method
+    if(StringUtils.isBlank(providerValue) || StringUtils.isBlank(id)) {
+      throw new IllegalArgumentException("ProviderValue or ID must be not null");
+    }
     return HashUtils.toSha256(providerValue + id);
   }
 
