@@ -1,10 +1,7 @@
 package com.blackcowmoo.moomark.auth.model.entity;
 
 import java.io.Serializable;
-import javax.crypto.SecretKey;
 import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +10,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 @Getter
-@RedisHash("Passport")
+@RedisHash(value = "Passport", timeToLive = 1800)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PassportKey implements Serializable {
 
