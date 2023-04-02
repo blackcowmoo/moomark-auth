@@ -139,7 +139,7 @@ public class PassportService {
 
   private String makeKeyHash(String providerValue, String id) {
     // TODO : We need to develop more complexity method
-    if(StringUtils.isBlank(providerValue) || StringUtils.isBlank(id)) {
+    if (StringUtils.isBlank(providerValue) || StringUtils.isBlank(id)) {
       throw new IllegalArgumentException("ProviderValue or ID must be not null");
     }
     return HashUtils.toSha256(providerValue + id);
