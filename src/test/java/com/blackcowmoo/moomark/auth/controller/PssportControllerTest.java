@@ -3,24 +3,46 @@ package com.blackcowmoo.moomark.auth.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.blackcowmoo.moomark.auth.model.dto.PassportResponse;
+import com.blackcowmoo.moomark.auth.model.entity.User;
+import com.blackcowmoo.moomark.auth.model.oauth2.Token;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.blackcowmoo.moomark.auth.model.entity.User;
-import com.blackcowmoo.moomark.auth.model.oauth2.Token;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-@SpringBootTest
+@SpringBootTest(
+  webEnvironment = WebEnvironment.RANDOM_PORT
+)
 @AutoConfigureMockMvc
+@Testcontainers
+@Slf4j
 public class PssportControllerTest {
+
+  @Container
+  private static final GenericContainer<?> MY_REDIS_CONTAINER = new GenericContainer<>("redis:6")
+    .withExposedPorts(6379);
+
+  @DynamicPropertySource
+  public static void properties(DynamicPropertyRegistry registry) {
+    System.setProperty("spring.redis.host", MY_REDIS_CONTAINER.getHost());
+    System.setProperty("spring.redis.port", MY_REDIS_CONTAINER.getMappedPort(6379).toString());
+  }
+
   @Value("${passport.public-key}")
   private String passportPublicKey;
 
@@ -37,17 +59,18 @@ public class PssportControllerTest {
   private ObjectMapper mapper;
 
   @Test
-  public void generatePassport() throws Exception {
+  void generatePassport() throws Exception {
     String userId = "1234";
     Token token = mapper
-      .readValue(mvc.perform(get("/api/v1/oauth2/google").param("code", "test-" + userId)).andExpect(status().isOk())
+      .readValue(mvc.perform(get("/api/v1/oauth2/google").param("code", "test-" + userId))
+        .andExpect(status().isOk())
         .andReturn().getResponse().getContentAsString(), Token.class);
 
     assertNotNull(token.getToken());
 
     PassportResponse passport = mapper
       .readValue(mvc.perform(get("/api/v1/passport").header("Authorization", token.getToken()))
-      .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), PassportResponse.class);
+        .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), PassportResponse.class);
 
     User user = mapper
       .readValue(mvc.perform(
@@ -61,7 +84,7 @@ public class PssportControllerTest {
   }
 
   @Test
-  public void verifyPassport() throws Exception {
+  void verifyPassport() throws Exception {
     String userId = "1234";
     Token token = mapper
       .readValue(mvc.perform(get("/api/v1/oauth2/google").param("code", "test-" + userId)).andExpect(status().isOk())
@@ -71,7 +94,7 @@ public class PssportControllerTest {
 
     PassportResponse passport = mapper
       .readValue(mvc.perform(get("/api/v1/passport").header("Authorization", token.getToken()))
-      .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), PassportResponse.class);
+        .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), PassportResponse.class);
 
     User user = mapper
       .readValue(mvc.perform(
@@ -85,7 +108,7 @@ public class PssportControllerTest {
   }
 
   @Test
-  public void checkPublicKey() throws Exception {
+  void checkPublicKey() throws Exception {
     String publicKey = passportPublicKey;
     String testPublicKey = mvc.perform(get("/api/v1/passport/verify/public"))
       .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -96,7 +119,7 @@ public class PssportControllerTest {
   }
 
   @Test
-  public void expiredPassport() throws Exception {
+  void expiredPassport() throws Exception {
     String response = mvc.perform(
         get("/api/v1/passport/verify")
           .header("x-moom-passport-user", expiredTestPassportUser)
