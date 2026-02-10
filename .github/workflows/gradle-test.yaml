@@ -35,28 +35,34 @@ jobs:
       PASSPORT_TEST_TOKEN_EXPIRED_USER: ${{ secrets.EXPIRED_TEST_PASSPORT_USER }}
       PASSPORT_TEST_TOKEN_EXPIRED_KEY: ${{ secrets.EXPIRED_TEST_PASSPORT_KEY }}
 
-    services:
-      redis:
-        image: ${{ secrets.DOCKER_REGISTRY_PROXY }}/docker.io/redis:6
-        ports:
-          - 6379:6379/tcp
-      mysql:
-        image: ${{ secrets.DOCKER_REGISTRY_PROXY }}/docker.io/mysql:8.0.20
-        ports:
-          - 3306:3306/tcp
-        env:
-          MYSQL_DATABASE: moomark-auth
-          MYSQL_USER: moomark
-          MYSQL_PASSWORD: 1q2w3e4r
-          MYSQL_ROOT_PASSWORD: 1q2w3e4r
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-java@v5
         with:
           java-version: 17
           distribution: temurin
+
+      - name: Run Redis
+        run: |
+          docker run -d \
+            --name redis \
+            --publish 6379:6379/tcp \
+            ${{ secrets.DOCKER_REGISTRY_PROXY }}/docker.io/redis:6
+
+      - name: Run MySQL
+        run: |
+          docker run -d \
+          --name mysql \
+          --publish 3306:3306/tcp \
+          -e MYSQL_DATABASE=moomark-auth \
+          -e MYSQL_USER=moomark \
+          -e MYSQL_PASSWORD=1q2w3e4r \
+          -e MYSQL_ROOT_PASSWORD=1q2w3e4r \
+          --health-cmd="mysqladmin ping" \
+          --health-interval=10s \
+          --health-timeout=5s \
+          --health-retries=3 \
+          ${{ secrets.DOCKER_REGISTRY_PROXY }}/docker.io/mysql:8.0.20
 
       - name: Verify MySql connection
         env:
@@ -112,3 +118,8 @@ jobs:
         env:
           COVERAGE: ${{ env.MIN_TEST_COVERAGE }}
           RESULT_COVERAGE: ${{ steps.coverage.outputs.coverage-overall }}
+
+      - name: Clean-up daemons
+        run: |
+          docker rm -f redis
+          docker rm -f mysql
