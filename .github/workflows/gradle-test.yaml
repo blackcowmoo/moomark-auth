@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     name: Build and Test
-    runs-on: ubuntu-latest
+    runs-on: [moomark]
     env:
       MIN_TEST_COVERAGE: 50
       ENVIRONMENT: dev
@@ -34,41 +34,50 @@ jobs:
       PASSPORT_TEST_TOKEN_EXPIRED: ${{ secrets.EXPIRED_TEST_PASSPORT }}
       PASSPORT_TEST_TOKEN_EXPIRED_USER: ${{ secrets.EXPIRED_TEST_PASSPORT_USER }}
       PASSPORT_TEST_TOKEN_EXPIRED_KEY: ${{ secrets.EXPIRED_TEST_PASSPORT_KEY }}
-
-    services:
-      redis:
-        image: redis:6
-        ports:
-          - 6379:6379/tcp
-      mysql:
-        image: mysql:8.0.20
-        ports:
-          - 3306:3306/tcp
-        env:
-          MYSQL_DATABASE: moomark-auth
-          MYSQL_USER: moomark
-          MYSQL_PASSWORD: 1q2w3e4r
-          MYSQL_ROOT_PASSWORD: 1q2w3e4r
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      DOCKER_HOST: unix:///var/run/docker.sock 
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v1
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
           java-version: 17
+          distribution: temurin
+
+      - name: Run Redis
+        run: |
+          docker run -d \
+            --name redis \
+            --publish 6379:6379/tcp \
+            ${{ secrets.DOCKER_REGISTRY_PROXY }}/docker.io/redis:6
+
+      - name: Run MySQL
+        run: |
+          docker run -d \
+          --name mysql \
+          --publish 3306:3306/tcp \
+          -e MYSQL_DATABASE=moomark-auth \
+          -e MYSQL_USER=moomark \
+          -e MYSQL_PASSWORD=1q2w3e4r \
+          -e MYSQL_ROOT_PASSWORD=1q2w3e4r \
+          --health-cmd="mysqladmin ping" \
+          --health-interval=10s \
+          --health-timeout=5s \
+          --health-retries=3 \
+          ${{ secrets.DOCKER_REGISTRY_PROXY }}/docker.io/mysql:8.0.20
 
       - name: Verify MySql connection
         env:
           PORT: ${{ job.services.mysql.ports[3306] }}
+        timeout-minutes: 1
         run: |
-          while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
+          while ! docker exec mysql mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
             sleep 1
           done
 
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle
-          key: java-${{ hashFiles('.gradle') }}
+      # - uses: actions/cache@v5
+      #   with:
+      #     path: ~/.gradle
+      #     key: java-${{ hashFiles('.gradle') }}
 
       - name: Run build
         run: ./gradlew build -x checkstyleMain -x test -x checkstyleTest --stacktrace
@@ -77,7 +86,7 @@ jobs:
         run: ./gradlew test -x checkstyleMain -x checkstyleTest --stacktrace
 
       - name: Test Report
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v2
         if: always()
         with:
           name: junit Tests
@@ -92,14 +101,14 @@ jobs:
           issue_number: ${{ github.event.number }}
 
       - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
+        uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: ${{ github.workspace }}/build/test-results/**/*.xml
 
       - name: Add coverage to PR
         id: coverage
-        uses: madrapps/jacoco-report@v1.2
+        uses: madrapps/jacoco-report@v1.7.2
         if: always()
         with:
           paths: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
@@ -111,3 +120,10 @@ jobs:
         env:
           COVERAGE: ${{ env.MIN_TEST_COVERAGE }}
           RESULT_COVERAGE: ${{ steps.coverage.outputs.coverage-overall }}
+
+      - name: Clean-up daemons
+        if: always()
+        run: |
+          docker rm -f redis
+          docker rm -f mysql
+          ./gradlew --stop
