@@ -1,0 +1,79 @@
+plugins {
+    id("org.springframework.boot") version "2.6.2"
+    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("java")
+    id("jacoco")
+}
+
+group = "com.blackcowmoo.moomark"
+version = "0.0.1-SNAPSHOT"
+java.sourceCompatibility = JavaVersion.VERSION_17
+
+configurations {
+    compileOnly {
+        extendsFrom(configurations.annotationProcessor.get())
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    compileOnly("org.projectlombok:lombok")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+    runtimeOnly("com.h2database:h2")
+    runtimeOnly("com.mysql:mysql-connector-java:8.0.27")
+    annotationProcessor("org.projectlombok:lombok")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.testcontainers:testcontainers:1.17.6")
+    testImplementation("org.testcontainers:junit-jupiter:1.17.6")
+    testImplementation("org.projectlombok:lombok:1.18.20")
+    testImplementation("org.testcontainers:mysql:1.17.6")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
+    testRuntimeOnly("org.projectlombok:lombok:1.18.20")
+    implementation("io.jsonwebtoken:jjwt-api:0.11.2")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.2", "io.jsonwebtoken:jjwt-jackson:0.11.2")
+}
+
+tasks.test {
+    useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jar {
+    enabled = false
+}
+
+apply(plugin = "checkstyle")
+
+checkstyle {
+    toolVersion = "8.26"
+    configFile = file("./checkstyle.xml")
+    reportsDir = file("${buildDir}/checkstyle-output")
+}
+
+tasks.checkstyleMain {
+    reports {
+        xml.destination = file("${tasks.checkstyleMain.get().reportsDir}/checkstyle-report.xml")
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.8"
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
