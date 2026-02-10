@@ -120,6 +120,7 @@ jobs:
           RESULT_COVERAGE: ${{ steps.coverage.outputs.coverage-overall }}
 
       - name: Clean-up daemons
+        if: always()
         run: |
           docker rm -f redis
           docker rm -f mysql
