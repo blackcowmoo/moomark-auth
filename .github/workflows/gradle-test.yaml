@@ -74,10 +74,10 @@ jobs:
             sleep 1
           done
 
-      - uses: actions/cache@v5
-        with:
-          path: ~/.gradle
-          key: java-${{ hashFiles('.gradle') }}
+      # - uses: actions/cache@v5
+      #   with:
+      #     path: ~/.gradle
+      #     key: java-${{ hashFiles('.gradle') }}
 
       - name: Run build
         run: ./gradlew build -x checkstyleMain -x test -x checkstyleTest --stacktrace
