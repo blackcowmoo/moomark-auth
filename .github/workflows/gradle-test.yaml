@@ -18,21 +18,38 @@ jobs:
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
       G4B_CLIENT_ID: ${{ secrets.G4B_CLIENT_ID }}
-      REDIS_CLUSTER_HOST: ${{ secrets.REDIS_CLUSTER_HOST }}
+      G4B_CLIENT_SECRET: ${{ secrets.G4B_CLIENT_SECRET }}
+      REDIS_CLUSTER_HOST: localhost
       REDIS_PORT: 6379
       REDIS_PASSWORD: ""
-      MYSQL_RO_HOSTNAME: ${{ secrets.MYSQL_RO_HOSTNAME }}
-      MYSQL_RW_HOSTNAME: ${{ secrets.MYSQL_RW_HOSTNAME }}
-      MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
-      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-      MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      BASE_URL: ${{ secrets.BASE_URL }}
+      MYSQL_RO_HOSTNAME: localhost:3306
+      MYSQL_RW_HOSTNAME: localhost:3306
+      MYSQL_USERNAME: moomark
+      MYSQL_PASSWORD: 1q2w3e4r
+      MYSQL_DATABASE: moomark-auth
+      JWT_SECRET: abcdefghijklnmopqrstuvwxyz123456
+      BASE_URL: http://localhost:8080/
       RSA_PUBLIC_KEY: ${{ secrets.RSA_PUBLIC_KEY }}
       RSA_PRIVATE_KEY: ${{ secrets.RSA_PRIVATE_KEY }}
       PASSPORT_TEST_TOKEN_EXPIRED: ${{ secrets.EXPIRED_TEST_PASSPORT }}
       PASSPORT_TEST_TOKEN_EXPIRED_USER: ${{ secrets.EXPIRED_TEST_PASSPORT_USER }}
       PASSPORT_TEST_TOKEN_EXPIRED_KEY: ${{ secrets.EXPIRED_TEST_PASSPORT_KEY }}
+
+    services:
+      redis:
+        image: redis:6
+        ports:
+          - 6379:6379/tcp
+      mysql:
+        image: mysql:8.0.20
+        ports:
+          - 3306:3306/tcp
+        env:
+          MYSQL_DATABASE: moomark-auth
+          MYSQL_USER: moomark
+          MYSQL_PASSWORD: 1q2w3e4r
+          MYSQL_ROOT_PASSWORD: 1q2w3e4r
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - uses: actions/checkout@v6
@@ -40,6 +57,14 @@ jobs:
         with:
           java-version: 17
           distribution: temurin
+
+      - name: Verify MySql connection
+        env:
+          PORT: ${{ job.services.mysql.ports[3306] }}
+        run: |
+          while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
+            sleep 1
+          done
 
       - uses: actions/cache@v5
         with:
