@@ -20,7 +20,7 @@ jobs:
       G4B_CLIENT_ID: ${{ secrets.G4B_CLIENT_ID }}
       REDIS_CLUSTER_HOST: ${{ secrets.REDIS_CLUSTER_HOST }}
       REDIS_PORT: 6379
-      REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+      REDIS_PASSWORD: ""
       MYSQL_RO_HOSTNAME: ${{ secrets.MYSQL_RO_HOSTNAME }}
       MYSQL_RW_HOSTNAME: ${{ secrets.MYSQL_RW_HOSTNAME }}
       MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
