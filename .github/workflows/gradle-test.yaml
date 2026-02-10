@@ -37,11 +37,11 @@ jobs:
 
     services:
       redis:
-        image: redis:6
+        image: ${{ secrets.DOCKER_REGISTRY_PROXY }}/docker.io/redis:6
         ports:
           - 6379:6379/tcp
       mysql:
-        image: mysql:8.0.20
+        image: ${{ secrets.DOCKER_REGISTRY_PROXY }}/docker.io/mysql:8.0.20
         ports:
           - 3306:3306/tcp
         env:
