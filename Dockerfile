@@ -1,9 +1,4 @@
-FROM alpine as base
-
-RUN apk add --no-cache openjdk17-jre
-
-###########
-FROM base
+FROM eclipse-temurin:17-jre
 
 COPY ./build/libs/*.jar /spring/
 WORKDIR /spring
