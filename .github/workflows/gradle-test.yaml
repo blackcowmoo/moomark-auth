@@ -126,3 +126,4 @@ jobs:
         run: |
           docker rm -f redis
           docker rm -f mysql
+          ./gradlew --stop
