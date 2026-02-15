@@ -1,5 +1,10 @@
 package com.blackcowmoo.moomark.auth.service;
 
+import com.blackcowmoo.moomark.auth.model.dto.Passport;
+import com.blackcowmoo.moomark.auth.model.entity.PassportKey;
+import com.blackcowmoo.moomark.auth.repository.PassportKeyRedisRepository;
+import com.blackcowmoo.moomark.auth.util.HashUtils;
+import io.micrometer.core.instrument.util.StringUtils;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.sql.Timestamp;
@@ -14,11 +19,9 @@ import javax.xml.bind.DatatypeConverter;
 import com.blackcowmoo.moomark.auth.model.AuthProvider;
 import com.blackcowmoo.moomark.auth.model.dto.PassportResponse;
 import com.blackcowmoo.moomark.auth.util.AesUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.blackcowmoo.moomark.auth.model.dto.Passport;
 import com.blackcowmoo.moomark.auth.model.entity.User;
 import com.blackcowmoo.moomark.auth.util.RsaUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class PassportService {
+
   @Value("${passport.public-key}")
   private String publicKeyString;
 
@@ -36,16 +40,21 @@ public class PassportService {
 
   private Long passportExpireSeconds = 120L;
 
-  @Autowired
-  private ObjectMapper mapper;
+  private final ObjectMapper mapper;
+  private final PassportKeyRedisRepository passportKeyRedisRepository;
 
   private Base64.Encoder encoder = Base64.getEncoder();
   private Base64.Decoder decoder = Base64.getDecoder();
 
   private RsaUtil rsaUtil;
 
-  @Autowired
-  private AesUtil aesUtil;
+  private final AesUtil aesUtil;
+
+  public PassportService(ObjectMapper mapper, PassportKeyRedisRepository passportKeyRedisRepository, AesUtil aesUtil) {
+    this.mapper = mapper;
+    this.passportKeyRedisRepository = passportKeyRedisRepository;
+    this.aesUtil = aesUtil;
+  }
 
   @PostConstruct
   public void buildRsaKeys() throws Exception {
@@ -109,11 +118,31 @@ public class PassportService {
   }
 
   private SecretKey getAesKey(AuthProvider provider, String id) {
-    // TODO: redis cache
-    //String providerValue = provider.getValue();
+    String providerValue = provider.getValue();
+    String hash = makeKeyHash(providerValue, id);
+    PassportKey savedPassportKey = passportKeyRedisRepository.findById(hash)
+      .orElseGet(() -> saveNewPassportKey(hash));
 
+    return new SecretKeySpec(savedPassportKey.getKey(), "AES");
+  }
+
+  private PassportKey saveNewPassportKey(String hash) {
     SecretKey key = aesUtil.generateNewKey();
-    return key;
+    PassportKey passportKey = PassportKey.builder()
+      .hash(hash)
+      .key(key.getEncoded())
+      .build();
+
+    passportKeyRedisRepository.save(passportKey);
+    return passportKey;
+  }
+
+  private String makeKeyHash(String providerValue, String id) {
+    // TODO : We need to develop more complexity method
+    if (StringUtils.isBlank(providerValue) || StringUtils.isBlank(id)) {
+      throw new IllegalArgumentException("ProviderValue or ID must be not null");
+    }
+    return HashUtils.toSha256(providerValue + id);
   }
 
 }
