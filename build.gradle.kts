@@ -54,7 +54,7 @@ jacoco {
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
     reports {
-        xml.enabled.set(true)
-        html.enabled.set(true)
+        xml.enabled = true
+        html.enabled = true
     }
 }
