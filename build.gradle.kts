@@ -58,3 +58,7 @@ tasks.jacocoTestReport {
         html.required.set(true)
     }
 }
+
+tasks.bootJar {
+    mainClass.set("com.blackcowmoo.moomark.auth.AuthApplication")
+}
