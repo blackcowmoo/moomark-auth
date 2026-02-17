@@ -18,7 +18,9 @@ import com.blackcowmoo.moomark.auth.model.entity.User;
 import com.blackcowmoo.moomark.auth.model.oauth2.Token;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@SpringBootTest
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @AutoConfigureMockMvc
 public class PssportControllerTest {
   @Value("${passport.public-key}")
