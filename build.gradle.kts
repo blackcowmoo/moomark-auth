@@ -23,10 +23,10 @@ repositories {
 
 sourceSets {
     main {
-        srcDir("src/main/kotlin")
+        java.srcDir(file("src/main/kotlin"))
     }
     test {
-        srcDir("src/test/kotlin")
+        java.srcDir(file("src/test/kotlin"))
     }
 }
 
