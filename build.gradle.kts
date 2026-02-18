@@ -23,10 +23,10 @@ repositories {
 
 sourceSets {
     main {
-        kotlin.srcDirs = setOf("src/main/kotlin")
+        kotlin.srcDirs(listOf("src/main/kotlin"))
     }
     test {
-        kotlin.srcDirs = setOf("src/test/kotlin")
+        kotlin.srcDirs(listOf("src/test/kotlin"))
     }
 }
 
