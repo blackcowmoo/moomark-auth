@@ -21,10 +21,12 @@ repositories {
     mavenCentral()
 }
 
-kotlin {
-    sourceSets {
-        main.kotlin.srcDirs("src/main/kotlin")
-        test.kotlin.srcDirs("src/test/kotlin")
+sourceSets {
+    main {
+        kotlin.srcDirs("src/main/kotlin")
+    }
+    test {
+        kotlin.srcDirs("src/test/kotlin")
     }
 }
 
