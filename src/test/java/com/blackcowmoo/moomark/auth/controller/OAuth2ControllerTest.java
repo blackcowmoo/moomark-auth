@@ -18,7 +18,7 @@ import org.json.JSONObject;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
-@AutoConfigureMockMvc(securityEnabled = false)
+@AutoConfigureMockMvc(secure = false)
 public class OAuth2ControllerTest {
   @Autowired
   private MockMvc mvc;
