@@ -1,6 +1,7 @@
 plugins {
     id("org.springframework.boot") version "2.6.2"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("org.jetbrains.kotlin.jvm") version "1.6.10"
     id("java")
     id("jacoco")
     id("checkstyle")
@@ -18,6 +19,13 @@ configurations {
 
 repositories {
     mavenCentral()
+}
+
+kotlin {
+    sourceSets {
+        main.kotlin.srcDirs("src/main/kotlin")
+        test.kotlin.srcDirs("src/test/kotlin")
+    }
 }
 
 dependencies {
