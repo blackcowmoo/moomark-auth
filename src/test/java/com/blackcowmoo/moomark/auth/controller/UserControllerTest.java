@@ -27,7 +27,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(secure = false)
 public class UserControllerTest {
   @Value("${resources.user.default-picture}")
   private String defaultPicture;
