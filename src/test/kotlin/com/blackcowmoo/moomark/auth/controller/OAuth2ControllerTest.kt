@@ -3,6 +3,9 @@ package com.blackcowmoo.moomark.auth.controller
 import com.blackcowmoo.moomark.auth.model.oauth2.Token
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nimbusds.jose.shaded.json.JSONObject
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -22,9 +25,10 @@ class OAuth2ControllerTest {
     lateinit var mapper: ObjectMapper
 
     @Test
-    fun testGoogleCode() throws Exception {
+    fun testGoogleCode() {
         val token = mapper.readValue(
-            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234")).andExpect(status().isOk())
+            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
+                .andExpect(status().isOk())
                 .andReturn().response.contentAsString,
             Token::class.java
         )
@@ -34,9 +38,10 @@ class OAuth2ControllerTest {
     }
 
     @Test
-    fun failRefreshToken() throws Exception {
+    fun failRefreshToken() {
         val token = mapper.readValue(
-            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234")).andExpect(status().isOk())
+            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
+                .andExpect(status().isOk())
                 .andReturn().response.contentAsString,
             Token::class.java
         )
@@ -56,9 +61,10 @@ class OAuth2ControllerTest {
     }
 
     @Test
-    fun refreshToken() throws Exception {
+    fun refreshToken() {
         val token = mapper.readValue(
-            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234")).andExpect(status().isOk())
+            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
+                .andExpect(status().isOk())
                 .andReturn().response.contentAsString,
             Token::class.java
         )
@@ -75,7 +81,8 @@ class OAuth2ControllerTest {
 
         val newToken = mapper.readValue(
             mvc.perform(post("/api/v1/oauth2/refresh").header("Content-Type", "application/json")
-                .content(requestParams.toString())).andExpect(status().isOk())
+                .content(requestParams.toString()))
+                .andExpect(status().isOk())
                 .andReturn().response.contentAsString,
             Token::class.java
         )

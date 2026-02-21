@@ -31,9 +31,10 @@ class UserControllerTest {
 
     @Test
     @Order(1)
-    fun me() throws Exception {
+    fun me() {
         val token = mapper.readValue(
-            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234")).andExpect(status().isOk())
+            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
+                .andExpect(status().isOk())
                 .andReturn().response.contentAsString,
             Token::class.java
         )
@@ -53,9 +54,10 @@ class UserControllerTest {
 
     @Test
     @Order(2)
-    fun user() throws Exception {
+    fun user() {
         val token = mapper.readValue(
-            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-test")).andExpect(status().isOk())
+            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-test"))
+                .andExpect(status().isOk())
                 .andReturn().response.contentAsString,
             Token::class.java
         )
@@ -63,7 +65,7 @@ class UserControllerTest {
         assertNotNull(token.token)
 
         val user = mapper.readValue(
-            mvc.perform(get("/api/v1/user/TEST/test").header("Content-Type", "application/json"))
+            mvc.perform(get("/api/v1/user/TEST/test").header("Authorization", token.token))
                 .andExpect(status().isOk())
                 .andReturn().response.contentAsString,
             User::class.java
@@ -75,10 +77,11 @@ class UserControllerTest {
 
     @Test
     @Order(3)
-    fun modifyUser() throws Exception {
+    fun modifyUser() {
         val id = "test"
         val token = mapper.readValue(
-            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$id")).andExpect(status().isOk())
+            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$id"))
+                .andExpect(status().isOk())
                 .andReturn().response.contentAsString,
             Token::class.java
         )
@@ -86,7 +89,7 @@ class UserControllerTest {
         assertNotNull(token.token)
 
         val beforeUser = mapper.readValue(
-            mvc.perform(get("/api/v1/user/TEST/test").header("Content-Type", "application/json"))
+            mvc.perform(get("/api/v1/user/TEST/test").header("Authorization", token.token))
                 .andExpect(status().isOk())
                 .andReturn().response.contentAsString,
             User::class.java
@@ -103,7 +106,6 @@ class UserControllerTest {
 
         val user1 = mapper.readValue(
             mvc.perform(put("/api/v1/user")
-                .header("Content-Type", "application/json")
                 .header("Authorization", token.token)
                 .content(requestParams1.toJSONString()))
                 .andExpect(status().isOk())
@@ -122,7 +124,6 @@ class UserControllerTest {
 
         val user2 = mapper.readValue(
             mvc.perform(put("/api/v1/user")
-                .header("Content-Type", "application/json")
                 .header("Authorization", token.token)
                 .content(requestParams2.toJSONString()))
                 .andExpect(status().isOk())
@@ -144,7 +145,6 @@ class UserControllerTest {
 
         val user3 = mapper.readValue(
             mvc.perform(put("/api/v1/user")
-                .header("Content-Type", "application/json")
                 .header("Authorization", token.token)
                 .content(requestParams3.toJSONString()))
                 .andExpect(status().isOk())
@@ -160,9 +160,10 @@ class UserControllerTest {
 
     @Test
     @Order(Int.MAX_VALUE)
-    fun withdraw() throws Exception {
+    fun withdraw() {
         val token = mapper.readValue(
-            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234")).andExpect(status().isOk())
+            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
+                .andExpect(status().isOk())
                 .andReturn().response.contentAsString,
             Token::class.java
         )

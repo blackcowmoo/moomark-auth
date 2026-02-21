@@ -4,6 +4,9 @@ import com.blackcowmoo.moomark.auth.model.dto.PassportResponse
 import com.blackcowmoo.moomark.auth.model.entity.User
 import com.blackcowmoo.moomark.auth.model.oauth2.Token
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -32,10 +35,11 @@ class PssportControllerTest {
     lateinit var mapper: ObjectMapper
 
     @Test
-    fun generatePassport() throws Exception {
+    fun generatePassport() {
         val userId = "1234"
         val token = mapper.readValue(
-            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId")).andExpect(status().isOk())
+            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
+                .andExpect(status().isOk())
                 .andReturn().response.contentAsString,
             Token::class.java
         )
@@ -63,10 +67,11 @@ class PssportControllerTest {
     }
 
     @Test
-    fun verifyPassport() throws Exception {
+    fun verifyPassport() {
         val userId = "1234"
         val token = mapper.readValue(
-            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId")).andExpect(status().isOk())
+            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
+                .andExpect(status().isOk())
                 .andReturn().response.contentAsString,
             Token::class.java
         )
@@ -94,7 +99,7 @@ class PssportControllerTest {
     }
 
     @Test
-    fun checkPublicKey() throws Exception {
+    fun checkPublicKey() {
         val publicKey = passportPublicKey
         val testPublicKey = mvc.perform(get("/api/v1/passport/verify/public"))
             .andExpect(status().isOk())
@@ -106,7 +111,7 @@ class PssportControllerTest {
     }
 
     @Test
-    fun expiredPassport() throws Exception {
+    fun expiredPassport() {
         val response = mvc.perform(
             get("/api/v1/passport/verify")
                 .header("x-moom-passport-user", expiredTestPassportUser)
