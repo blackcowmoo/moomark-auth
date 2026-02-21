@@ -56,7 +56,7 @@ class OAuth2ControllerTest {
 
         mvc.perform(post("/api/v1/oauth2/refresh").header("Content-Type", "application/json")
             .content(requestParams.toString()))
-            .andExpect(status().is(401))
+            .andExpect(status().`is`(401))
             .andReturn().response.contentAsString
     }
 
