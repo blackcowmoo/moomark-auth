@@ -10,8 +10,8 @@ spring:
       ddl-auto: create-drop
 
 passport:
-  public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0Z3VS5JJcds3xfn/ygWyF8PbnGy0sZT
-  private-key: MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC0Z3VS5JJcds3xfn/ygWyF8PbnGy0sZT
+  public-key: ${RSA_PUBLIC_KEY}
+  private-key: ${RSA_PRIVATE_KEY}
   test:
     token:
       expired:
