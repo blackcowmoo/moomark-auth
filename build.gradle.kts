@@ -42,7 +42,6 @@ dependencies {
     runtimeOnly("mysql:mysql-connector-java:8.0.27")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("com.h2database:h2")
     testImplementation("org.springframework.security:spring-security-test")
     implementation("io.jsonwebtoken:jjwt-api:0.11.2")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.2")
