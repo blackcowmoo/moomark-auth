@@ -117,6 +117,7 @@ jobs:
 
       - name: coverage
         run: echo "$RESULT_COVERAGE < $COVERAGE" && [[ "$(echo $RESULT_COVERAGE | awk '{print $1*100}')" -gt "$(echo $COVERAGE | awk '{print $1*100}')" ]]
+        if: github.event_name == 'pull_request'
         env:
           COVERAGE: ${{ env.MIN_TEST_COVERAGE }}
           RESULT_COVERAGE: ${{ steps.coverage.outputs.coverage-overall }}
