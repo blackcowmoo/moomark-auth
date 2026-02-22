@@ -34,7 +34,7 @@ jobs:
       PASSPORT_TEST_TOKEN_EXPIRED: ${{ secrets.EXPIRED_TEST_PASSPORT }}
       PASSPORT_TEST_TOKEN_EXPIRED_USER: ${{ secrets.EXPIRED_TEST_PASSPORT_USER }}
       PASSPORT_TEST_TOKEN_EXPIRED_KEY: ${{ secrets.EXPIRED_TEST_PASSPORT_KEY }}
-      DOCKER_HOST: unix:///var/run/docker.sock 
+      DOCKER_HOST: unix:///var/run/docker.sock
 
     steps:
       - uses: actions/checkout@v6
@@ -94,7 +94,7 @@ jobs:
           reporter: java-junit
 
       - uses: izhangzhihao/delete-comment@master
-        if: always()
+        if: github.event_name == 'pull_request'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           delete_user_name: github-actions[bot]
@@ -102,14 +102,14 @@ jobs:
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
+        if: github.event_name == 'pull_request'
         with:
           files: ${{ github.workspace }}/build/test-results/**/*.xml
 
       - name: Add coverage to PR
         id: coverage
         uses: madrapps/jacoco-report@v1.7.2
-        if: always()
+        if: github.event_name == 'pull_request'
         with:
           paths: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
