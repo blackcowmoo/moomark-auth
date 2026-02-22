@@ -8,3 +8,16 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create-drop
+
+passport:
+  public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0Z3VS5JJcds3xfn/ygWyF8PbnGy0sZT
+  private-key: MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC0Z3VS5JJcds3xfn/ygWyF8PbnGy0sZT
+  test:
+    token:
+      expired:
+        user: test@example.com
+        key: test-key
+
+resources:
+  user:
+    default-picture: https://avatars.githubusercontent.com/u/60027496?v=4
