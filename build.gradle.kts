@@ -1,7 +1,6 @@
 plugins {
     id("org.springframework.boot") version "2.6.2"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    id("org.jetbrains.kotlin.jvm") version "1.6.10"
     id("java")
     id("jacoco")
     id("checkstyle")
@@ -19,15 +18,6 @@ configurations {
 
 repositories {
     mavenCentral()
-}
-
-sourceSets {
-    main {
-        java.srcDir(file("src/main/kotlin"))
-    }
-    test {
-        java.srcDir(file("src/test/kotlin"))
-    }
 }
 
 dependencies {
@@ -67,8 +57,4 @@ tasks.jacocoTestReport {
         xml.required.set(true)
         html.required.set(true)
     }
-}
-
-tasks.bootJar {
-    mainClass.set("com.blackcowmoo.moomark.auth.AuthApplication")
 }
