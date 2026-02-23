@@ -11,11 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.blackcowmoo.moomark.auth.model.oauth2.Token;
-import org.json.JSONObject;
 
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import com.blackcowmoo.moomark.auth.model.oauth2.Token;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.shaded.json.JSONObject;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -51,7 +50,7 @@ public class OAuth2ControllerTest {
     requestParams.put("refreshToken", token.getToken());
 
     mvc.perform(post("/api/v1/oauth2/refresh").header("Content-Type", "application/json")
-        .content(requestParams.toString()))
+        .content(requestParams.toJSONString()))
         .andExpect(status().is(401))
         .andReturn().getResponse().getContentAsString();
   }
@@ -75,7 +74,7 @@ public class OAuth2ControllerTest {
     Token newToken = mapper
         .readValue(
             mvc.perform(post("/api/v1/oauth2/refresh").header("Content-Type", "application/json")
-                .content(requestParams.toString())).andExpect(status().isOk())
+                .content(requestParams.toJSONString())).andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(),
             Token.class);
 
