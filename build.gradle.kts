@@ -70,5 +70,5 @@ tasks.jacocoTestReport {
 }
 
 tasks.bootJar {
-    mainClass.set("com.blackcowmoo.moomark.auth.AuthApplication")
+    mainClass.set("com.blackcowmoo.moomark.auth.AuthApplicationKt")
 }
