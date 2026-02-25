@@ -18,6 +18,8 @@ import com.blackcowmoo.moomark.auth.model.entity.User;
 import com.blackcowmoo.moomark.auth.model.oauth2.Token;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 public class PssportControllerTest {
