@@ -2,6 +2,7 @@ package com.blackcowmoo.moomark.auth.configuration.oauth2
 
 import com.blackcowmoo.moomark.auth.model.entity.User
 import com.blackcowmoo.moomark.auth.service.PassportService
+import lombok.RequiredArgsConstructor
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
