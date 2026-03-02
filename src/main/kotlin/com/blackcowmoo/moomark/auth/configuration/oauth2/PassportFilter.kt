@@ -29,8 +29,10 @@ class PassportFilter(private val passportService: PassportService) : GenericFilt
 
         if (passport != null && key != null) {
             val user = passportService.parsePassport(passport, key)
-            val auth = getAuthentication(user)
-            SecurityContextHolder.getContext().authentication = auth
+            if (user != null) {
+                val auth = getAuthentication(user)
+                SecurityContextHolder.getContext().authentication = auth
+            }
         }
 
         chain.doFilter(request, response)
