@@ -15,7 +15,6 @@ configurations {
     compileOnly {
         extendsFrom(configurations.annotationProcessor.get())
     }
-    create("kotlinAnnotationProcessor")
 }
 
 repositories {
@@ -42,7 +41,6 @@ dependencies {
     runtimeOnly("com.h2database:h2")
     runtimeOnly("mysql:mysql-connector-java:8.0.27")
     annotationProcessor("org.projectlombok:lombok")
-    "kotlinAnnotationProcessor"("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
     implementation("io.jsonwebtoken:jjwt-api:0.11.2")
