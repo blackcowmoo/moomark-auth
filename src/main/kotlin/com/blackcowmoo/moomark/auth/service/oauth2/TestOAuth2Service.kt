@@ -34,6 +34,6 @@ class TestOAuth2Service {
                 "https://www.gravatar.com/avatar/HASH")
         }
 
-        return tokenService.generateToken(user.getId(), user.getAuthProvider(), user.getRole())
+        return tokenService.generateToken(user.id, user.authProvider, user.role)
     }
 }
