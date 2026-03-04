@@ -80,10 +80,6 @@ tasks.bootJar {
     mainClass.set("com.blackcowmoo.moomark.auth.AuthApplicationKt")
 }
 
-kotlin {
-    sourceDirs = listOf(file("src/main/java"), file("src/main/kotlin"))
-}
-
 noArg {
     annotation("lombok.Data")
 }
