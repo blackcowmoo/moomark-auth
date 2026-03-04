@@ -15,8 +15,10 @@ import com.blackcowmoo.moomark.auth.model.Role;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 @Data
+@Accessors(fluent = true)
 @EqualsAndHashCode
 @Entity
 @IdClass(UserId.class)
