@@ -2,13 +2,9 @@ package com.blackcowmoo.moomark.auth.model.oauth2;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Data;
 
-@Getter
-@NoArgsConstructor
-@ToString
+@Data
 public class GoogleTokenResponse {
   @JsonProperty("access_token")
   private String accessToken;
