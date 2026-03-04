@@ -56,7 +56,7 @@ class GoogleOAuth2Service {
             throw RuntimeException("ExpiredGoogleCode")
         }
 
-        return result?.idToken ?: ""
+        return result?.idToken() ?: ""
     }
 
     fun parseIdToken(idToken: String): GoogleTokenResult? {
@@ -70,11 +70,11 @@ class GoogleOAuth2Service {
     }
 
     fun login(googleUser: GoogleTokenResult): Token {
-        var user = userService.getUserById(AuthProvider.GOOGLE, googleUser.sub)
+        var user = userService.getUserById(AuthProvider.GOOGLE, googleUser.sub())
         if (user == null) {
-            user = userService.signUp(googleUser.sub, AuthProvider.GOOGLE, googleUser.name, googleUser.email, googleUser.picture)
+            user = userService.signUp(googleUser.sub(), AuthProvider.GOOGLE, googleUser.name(), googleUser.email(), googleUser.picture())
         }
 
-        return tokenService.generateToken(user.id, user.authProvider, user.role)
+        return tokenService.generateToken(user.id(), user.authProvider(), user.role())
     }
 }
