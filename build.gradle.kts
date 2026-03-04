@@ -2,6 +2,8 @@ plugins {
     id("org.springframework.boot") version "2.6.2"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("org.jetbrains.kotlin.jvm") version "1.6.10"
+    id("org.jetbrains.kotlin.plugin.noarg") version "1.6.10"
+    id("org.jetbrains.kotlin.plugin.allopen") version "1.6.10"
     id("java")
     id("jacoco")
     id("checkstyle")
@@ -23,9 +25,11 @@ repositories {
 
 sourceSets {
     main {
+        java.srcDir(file("src/main/java"))
         java.srcDir(file("src/main/kotlin"))
     }
     test {
+        java.srcDir(file("src/test/java"))
         java.srcDir(file("src/test/kotlin"))
     }
 }
@@ -37,6 +41,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlin:kotlin-noarg")
+    implementation("org.jetbrains.kotlin:kotlin-allopen")
     compileOnly("org.projectlombok:lombok:1.18.30")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("com.h2database:h2")
@@ -72,4 +78,12 @@ tasks.jacocoTestReport {
 
 tasks.bootJar {
     mainClass.set("com.blackcowmoo.moomark.auth.AuthApplicationKt")
+}
+
+kotlin {
+    sourceDirs = listOf(file("src/main/java"), file("src/main/kotlin"))
+}
+
+noArg {
+    annotation("lombok.Data")
 }
