@@ -1,6 +1,7 @@
 package com.blackcowmoo.moomark.auth.util
 
 import lombok.extern.slf4j.Slf4j
+import org.slf4j.LoggerFactory
 import java.security.KeyFactory
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -14,6 +15,10 @@ class RsaUtil(
     publicKeyBase64String: String,
     privateKeyBase64String: String
 ) {
+    companion object {
+        private val log = LoggerFactory.getLogger(RsaUtil::class.java)
+    }
+
     private val keyFactory: KeyFactory
     private val cipher: Cipher
     private val publicKey: PublicKey

@@ -1,6 +1,7 @@
 package com.blackcowmoo.moomark.auth.util
 
 import lombok.extern.slf4j.Slf4j
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -11,6 +12,9 @@ import java.security.SecureRandom
 @Component
 @Slf4j
 class AesUtil {
+    companion object {
+        private val log = LoggerFactory.getLogger(AesUtil::class.java)
+    }
     private val cipher = "AES"
     private val secureRandom = SecureRandom()
 
