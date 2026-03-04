@@ -3,10 +3,8 @@ package com.blackcowmoo.moomark.auth.model.oauth2;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 @Data
-@Accessors(fluent = true)
 public class GoogleTokenResult {
   private String iss;
   private String azp;

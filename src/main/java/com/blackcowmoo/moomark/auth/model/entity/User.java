@@ -15,11 +15,9 @@ import com.blackcowmoo.moomark.auth.model.Role;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 @Data
 @EqualsAndHashCode
-@Accessors(fluent = true)
 @Entity
 @IdClass(UserId.class)
 public class User implements Serializable {
