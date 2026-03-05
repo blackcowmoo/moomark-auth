@@ -26,14 +26,14 @@ class SecurityConfig(
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .sessionManagement { sessionManagement ->
-                sessionManagement.sessionCreationPolicy = SessionCreationPolicy.STATELESS
+                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
             .csrf { csrf -> csrf.disable() }
             .formLogin { formLogin -> formLogin.disable() }
             .httpBasic { httpBasic -> httpBasic.disable() }
             .logout { logout -> logout.disable() }
             .exceptionHandling { exceptionHandling ->
-                exceptionHandling.authenticationEntryPoint = HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
+                exceptionHandling.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
             }
             .authorizeRequests { authorizeRequests ->
                 authorizeRequests
