@@ -39,6 +39,10 @@ class OAuth2Controller(
 
     @PostMapping("/refresh")
     fun refreshToken(@RequestBody body: RefreshTokenRequestBody, response: HttpServletResponse): Token? {
+        if (body.refreshToken == null) {
+            response.status = 400
+            return null
+        }
         val tokenResponse = tokenService.verifyRefreshToken(body.refreshToken)
         if (tokenResponse != null) {
             val id = tokenResponse.id ?: ""
