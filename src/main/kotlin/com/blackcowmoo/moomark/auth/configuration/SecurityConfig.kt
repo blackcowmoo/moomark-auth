@@ -24,27 +24,28 @@ class SecurityConfig(
 ) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        http {
-            sessionManagement {
-                sessionCreationPolicy = SessionCreationPolicy.STATELESS
+        http
+            .sessionManagement { sessionManagement ->
+                sessionManagement.sessionCreationPolicy = SessionCreationPolicy.STATELESS
             }
-            csrf { disable() }
-            formLogin { disable() }
-            httpBasic { disable() }
-            logout { disable() }
-            exceptionHandling {
-                authenticationEntryPoint = HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
+            .csrf { csrf -> csrf.disable() }
+            .formLogin { formLogin -> formLogin.disable() }
+            .httpBasic { httpBasic -> httpBasic.disable() }
+            .logout { logout -> logout.disable() }
+            .exceptionHandling { exceptionHandling ->
+                exceptionHandling.authenticationEntryPoint = HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
             }
-            authorizeRequests {
-                antMatchers("/api/v1/oauth2/refresh").permitAll()
-                antMatchers("/api/v1/oauth2/google").permitAll()
-                antMatchers("/api/v1/user/{provider}/{userId}").permitAll()
-                antMatchers("/api/v1/passport/verify").permitAll()
-                antMatchers("/api/v1/passport/verify/public").permitAll()
-                antMatchers("/actuator/health").permitAll()
-                anyRequest().authenticated()
+            .authorizeRequests { authorizeRequests ->
+                authorizeRequests
+                    .antMatchers("/api/v1/oauth2/refresh").permitAll()
+                    .antMatchers("/api/v1/oauth2/google").permitAll()
+                    .antMatchers("/api/v1/user/{provider}/{userId}").permitAll()
+                    .antMatchers("/api/v1/passport/verify").permitAll()
+                    .antMatchers("/api/v1/passport/verify/public").permitAll()
+                    .antMatchers("/actuator/health").permitAll()
+                    .anyRequest().authenticated()
             }
-        }
+
         http.addFilterBefore(JwtAuthFilter(tokenService, userService), UsernamePasswordAuthenticationFilter::class.java)
         http.addFilterBefore(PassportFilter(passportService), UsernamePasswordAuthenticationFilter::class.java)
 
