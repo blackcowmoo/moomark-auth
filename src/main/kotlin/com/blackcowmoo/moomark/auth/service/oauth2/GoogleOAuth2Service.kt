@@ -76,7 +76,7 @@ class GoogleOAuth2Service {
     }
 
     fun login(googleUser: GoogleTokenResult): Token {
-        val user = userService.getUserById(AuthProvider.GOOGLE, googleUser.sub)
+        val user = userService.getUserById(AuthProvider.GOOGLE, googleUser.sub ?: "")
         val userToLogin = user ?: userService.signUp(
             googleUser.sub ?: "",
             AuthProvider.GOOGLE,

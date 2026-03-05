@@ -21,7 +21,6 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
 import javax.xml.bind.DatatypeConverter
 
-@Slf4j
 @Service
 class PassportService {
     private val log = LoggerFactory.getLogger(javaClass)
@@ -58,7 +57,8 @@ class PassportService {
         return try {
             val passportResult = decryptPassport(passportKey)
             val currentTimestamp = Timestamp.valueOf(LocalDateTime.now())
-            if (passportResult.exp != null && passportResult.exp.after(currentTimestamp)) {
+            val exp = passportResult.exp
+            if (exp != null && exp.after(currentTimestamp)) {
                 val hash = passportResult.hash
                 val key = SecretKeySpec(decoder.decode(passportResult.key ?: ""), "AES")
                 val userBody = aesUtil.decrypt(decoder.decode(passport), key)
