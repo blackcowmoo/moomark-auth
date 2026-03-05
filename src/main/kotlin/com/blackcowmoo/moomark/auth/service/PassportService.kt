@@ -7,7 +7,7 @@ import com.blackcowmoo.moomark.auth.model.entity.User
 import com.blackcowmoo.moomark.auth.util.AesUtil
 import com.blackcowmoo.moomark.auth.util.RsaUtil
 import com.fasterxml.jackson.databind.ObjectMapper
-import lombok.extern.slf4j.Slf4j
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -24,6 +24,7 @@ import javax.xml.bind.DatatypeConverter
 @Slf4j
 @Service
 class PassportService {
+    private val log = LoggerFactory.getLogger(javaClass)
 
     @Value("\${passport.public-key}")
     private lateinit var publicKeyString: String
@@ -56,7 +57,8 @@ class PassportService {
     fun parsePassport(passport: String, passportKey: String): User? {
         return try {
             val passportResult = decryptPassport(passportKey)
-            if (passportResult.exp != null && passportResult.exp.after(Timestamp.valueOf(LocalDateTime.now()))) {
+            val currentTimestamp = Timestamp.valueOf(LocalDateTime.now())
+            if (passportResult.exp != null && passportResult.exp.after(currentTimestamp)) {
                 val hash = passportResult.hash
                 val key = SecretKeySpec(decoder.decode(passportResult.key ?: ""), "AES")
                 val userBody = aesUtil.decrypt(decoder.decode(passport), key)

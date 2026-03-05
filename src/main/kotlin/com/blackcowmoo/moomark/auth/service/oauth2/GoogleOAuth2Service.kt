@@ -1,6 +1,7 @@
 package com.blackcowmoo.moomark.auth.service.oauth2
 
 import com.blackcowmoo.moomark.auth.model.AuthProvider
+import com.blackcowmoo.moomark.auth.model.Role
 import com.blackcowmoo.moomark.auth.model.entity.User
 import com.blackcowmoo.moomark.auth.model.oauth2.GoogleTokenResponse
 import com.blackcowmoo.moomark.auth.model.oauth2.GoogleTokenResult
@@ -61,7 +62,7 @@ class GoogleOAuth2Service {
             throw RuntimeException("ExpiredGoogleCode")
         }
 
-        return result!!.idToken!!
+        return result.idToken!!
     }
 
     fun parseIdToken(idToken: String): GoogleTokenResult? {
