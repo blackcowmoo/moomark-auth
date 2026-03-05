@@ -56,9 +56,9 @@ class PassportService {
     fun parsePassport(passport: String, passportKey: String): User? {
         return try {
             val passportResult = decryptPassport(passportKey)
-            if (passportResult.exp.after(Timestamp.valueOf(LocalDateTime.now()))) {
+            if (passportResult.exp != null && passportResult.exp.after(Timestamp.valueOf(LocalDateTime.now()))) {
                 val hash = passportResult.hash
-                val key = SecretKeySpec(decoder.decode(passportResult.key), "AES")
+                val key = SecretKeySpec(decoder.decode(passportResult.key ?: ""), "AES")
                 val userBody = aesUtil.decrypt(decoder.decode(passport), key)
                 if (getHash(userBody) == hash) {
                     mapper.readValue(decoder.decode(userBody), User::class.java)
@@ -76,7 +76,7 @@ class PassportService {
 
     fun generatePassport(user: User): PassportResponse? {
         return try {
-            val key = getAesKey(user.authProvider, user.id)
+            val key = getAesKey(user.authProvider ?: AuthProvider.EMPTY, user.id ?: "")
             val userBody = encoder.encodeToString(mapper.writeValueAsString(user).toByteArray())
 
             val passport = Passport()
@@ -109,6 +109,6 @@ class PassportService {
     }
 
     private fun getAesKey(provider: AuthProvider, id: String): SecretKey {
-        return aesUtil.generateNewKey()
+        return aesUtil.generateNewKey()!!
     }
 }

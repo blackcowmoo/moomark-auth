@@ -77,13 +77,13 @@ class GoogleOAuth2Service {
     fun login(googleUser: GoogleTokenResult): Token {
         val user = userService.getUserById(AuthProvider.GOOGLE, googleUser.sub)
         val userToLogin = user ?: userService.signUp(
-            googleUser.sub,
+            googleUser.sub ?: "",
             AuthProvider.GOOGLE,
-            googleUser.name,
-            googleUser.email,
-            googleUser.picture
+            googleUser.name ?: "",
+            googleUser.email ?: "",
+            googleUser.picture ?: ""
         )
 
-        return tokenService.generateToken(userToLogin.id, userToLogin.authProvider, userToLogin.role)
+        return tokenService.generateToken(userToLogin.id ?: "", userToLogin.authProvider ?: AuthProvider.EMPTY, userToLogin.role ?: Role.USER)
     }
 }

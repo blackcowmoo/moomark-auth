@@ -30,13 +30,13 @@ class TestOAuth2Service {
         val id = tokenStrings[1]
         val user = userService.getUserById(AuthProvider.TEST, id)
         val userToLogin = user ?: userService.signUp(
-            id,
+            id ?: "",
             AuthProvider.TEST,
             "test",
             "test@blackcowmoo.com",
             "https://www.gravatar.com/avatar/HASH"
         )
 
-        return tokenService.generateToken(userToLogin.id, userToLogin.authProvider, userToLogin.role)
+        return tokenService.generateToken(userToLogin.id ?: "", userToLogin.authProvider ?: AuthProvider.EMPTY, userToLogin.role ?: Role.USER)
     }
 }
