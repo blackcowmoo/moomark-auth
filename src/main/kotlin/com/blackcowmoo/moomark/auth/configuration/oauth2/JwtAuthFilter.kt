@@ -32,8 +32,10 @@ open class JwtAuthFilter(
             val id = tokenService.getUid(token)
             val provider = tokenService.getProvider(token)
             val user = userService.getUserById(provider, id)
-            val auth = getAuthentication(user)
-            SecurityContextHolder.getContext().authentication = auth
+            if (user != null) {
+                val auth = getAuthentication(user)
+                SecurityContextHolder.getContext().authentication = auth
+            }
         }
 
         chain.doFilter(request, response)
