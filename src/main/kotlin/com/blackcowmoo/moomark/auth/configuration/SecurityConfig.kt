@@ -23,7 +23,7 @@ open class SecurityConfig(
     private val passportService: PassportService
 ) {
     @Bean
-    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    open fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .sessionManagement { sessionManagement ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
