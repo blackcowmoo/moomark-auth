@@ -2,6 +2,7 @@ package com.blackcowmoo.moomark.auth.model.entity
 
 import com.blackcowmoo.moomark.auth.model.AuthProvider
 import com.blackcowmoo.moomark.auth.model.Role
+import java.io.Serializable
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.EnumType
@@ -34,7 +35,6 @@ class User : Serializable {
 
     constructor() {}
 
-    @JvmName("constructorWithParams")
     constructor(id: String?, authProvider: AuthProvider?, email: String?, nickname: String?, picture: String?, role: Role?) {
         this.id = id
         this.email = email
