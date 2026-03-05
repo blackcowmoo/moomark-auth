@@ -17,7 +17,6 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 class SecurityConfig(
     private val tokenService: TokenService,
     private val userService: UserService,
