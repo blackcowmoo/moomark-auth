@@ -39,11 +39,12 @@ class OAuth2Controller(
 
     @PostMapping("/refresh")
     fun refreshToken(@RequestBody body: RefreshTokenRequestBody, response: HttpServletResponse): Token? {
-        if (body.refreshToken == null) {
+        val refreshToken = body.refreshToken
+        if (refreshToken == null) {
             response.status = 400
             return null
         }
-        val tokenResponse = tokenService.verifyRefreshToken(body.refreshToken)
+        val tokenResponse = tokenService.verifyRefreshToken(refreshToken)
         if (tokenResponse != null) {
             val id = tokenResponse.id ?: ""
             val provider = tokenResponse.provider ?: com.blackcowmoo.moomark.auth.model.AuthProvider.EMPTY
