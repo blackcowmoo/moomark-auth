@@ -61,7 +61,7 @@ class GoogleOAuth2Service {
             throw RuntimeException("ExpiredGoogleCode")
         }
 
-        return result!!.idToken
+        return result!!.idToken!!
     }
 
     fun parseIdToken(idToken: String): GoogleTokenResult? {
