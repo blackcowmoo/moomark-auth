@@ -3,6 +3,7 @@ package com.blackcowmoo.moomark.auth.controller
 import com.blackcowmoo.moomark.auth.model.dto.PassportResponse
 import com.blackcowmoo.moomark.auth.model.entity.User
 import com.blackcowmoo.moomark.auth.service.PassportService
+import lombok.RequiredArgsConstructor
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestHeader
@@ -20,6 +21,10 @@ class PassportController(
         return SecurityContextHolder.getContext().authentication.principal as User
     }
 
+    private fun getUserOrNull(): User? {
+        return SecurityContextHolder.getContext().authentication.principal as? User
+    }
+
     @GetMapping("/verify/public")
     fun getMyInfo(): String {
         return passportService.getPublicKeyString()
@@ -29,7 +34,7 @@ class PassportController(
     fun verifyPassport(
         @RequestHeader("x-moom-passport-user") passport: String,
         @RequestHeader("x-moom-passport-key") key: String
-    ): User {
+    ): User? {
         return passportService.parsePassport(passport, key)
     }
 

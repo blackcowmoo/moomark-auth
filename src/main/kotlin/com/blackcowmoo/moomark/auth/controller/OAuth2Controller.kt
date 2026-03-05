@@ -6,6 +6,7 @@ import com.blackcowmoo.moomark.auth.model.oauth2.Token
 import com.blackcowmoo.moomark.auth.service.TokenService
 import com.blackcowmoo.moomark.auth.service.oauth2.GoogleOAuth2Service
 import com.blackcowmoo.moomark.auth.service.oauth2.TestOAuth2Service
+import lombok.RequiredArgsConstructor
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -33,14 +34,17 @@ class OAuth2Controller(
         }
         val token = googleOAuth2Service.getToken(code)
         val googleUserInfo = googleOAuth2Service.parseIdToken(token)
-        return googleOAuth2Service.login(googleUserInfo)
+        return googleOAuth2Service.login(googleUserInfo!!)
     }
 
     @PostMapping("/refresh")
     fun refreshToken(@RequestBody body: RefreshTokenRequestBody, response: HttpServletResponse): Token? {
         val tokenResponse = tokenService.verifyRefreshToken(body.refreshToken)
         if (tokenResponse != null) {
-            return tokenService.generateToken(tokenResponse.id, tokenResponse.provider, tokenResponse.role)
+            val id = tokenResponse.id ?: ""
+            val provider = tokenResponse.provider ?: com.blackcowmoo.moomark.auth.model.AuthProvider.EMPTY
+            val role = tokenResponse.role ?: com.blackcowmoo.moomark.auth.model.Role.USER
+            return tokenService.generateToken(id, provider, role)
         }
         response.status = 401
         return null
