@@ -17,7 +17,7 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig(
+open class SecurityConfig(
     private val tokenService: TokenService,
     private val userService: UserService,
     private val passportService: PassportService
