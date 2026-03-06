@@ -7,5 +7,5 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 open class AuthApplication
 
 fun main(args: Array<String>) {
-    SpringApplication.run(arrayOf(AuthApplication::class.java), args)
+  SpringApplication.run(arrayOf(AuthApplication::class.java), args)
 }

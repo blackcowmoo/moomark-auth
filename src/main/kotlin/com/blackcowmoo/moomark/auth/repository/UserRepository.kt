@@ -6,5 +6,5 @@ import com.blackcowmoo.moomark.auth.model.entity.UserId
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface UserRepository : JpaRepository<User, UserId> {
-    fun findByIdAndAuthProvider(id: String, authProvider: AuthProvider): User?
+  fun findByIdAndAuthProvider(id: String, authProvider: AuthProvider): User?
 }

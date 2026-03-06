@@ -6,8 +6,8 @@ import org.springframework.web.client.RestTemplate
 
 @Configuration
 open class RestTemplateConfig {
-    @Bean
-    open fun restTemplate(): RestTemplate {
-        return RestTemplate()
-    }
+  @Bean
+  open fun restTemplate(): RestTemplate {
+    return RestTemplate()
+  }
 }

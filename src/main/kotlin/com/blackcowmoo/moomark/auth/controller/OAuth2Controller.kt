@@ -1,7 +1,5 @@
 package com.blackcowmoo.moomark.auth.controller
 
-import com.blackcowmoo.moomark.auth.model.dto.TokenResponse
-import com.blackcowmoo.moomark.auth.model.oauth2.GoogleTokenResult
 import com.blackcowmoo.moomark.auth.model.oauth2.Token
 import com.blackcowmoo.moomark.auth.service.TokenService
 import com.blackcowmoo.moomark.auth.service.oauth2.GoogleOAuth2Service
@@ -19,39 +17,39 @@ import javax.servlet.http.HttpServletResponse
 @RestController
 @RequestMapping("/api/v1/oauth2")
 class OAuth2Controller(
-    private val tokenService: TokenService,
-    private val googleOAuth2Service: GoogleOAuth2Service,
-    private val testOAuth2Service: TestOAuth2Service
+  private val tokenService: TokenService,
+  private val googleOAuth2Service: GoogleOAuth2Service,
+  private val testOAuth2Service: TestOAuth2Service
 ) {
-    class RefreshTokenRequestBody {
-        var refreshToken: String? = null
-    }
+  class RefreshTokenRequestBody {
+    var refreshToken: String? = null
+  }
 
-    @GetMapping("/google")
-    fun googleCode(@RequestParam code: String): Token {
-        if (testOAuth2Service.isTest(code)) {
-            return testOAuth2Service.login(code)
-        }
-        val token = googleOAuth2Service.getToken(code)
-        val googleUserInfo = googleOAuth2Service.parseIdToken(token)
-        return googleOAuth2Service.login(googleUserInfo!!)
+  @GetMapping("/google")
+  fun googleCode(@RequestParam code: String): Token {
+    if (testOAuth2Service.isTest(code)) {
+      return testOAuth2Service.login(code)
     }
+    val token = googleOAuth2Service.getToken(code)
+    val googleUserInfo = googleOAuth2Service.parseIdToken(token)
+    return googleOAuth2Service.login(googleUserInfo!!)
+  }
 
-    @PostMapping("/refresh")
-    fun refreshToken(@RequestBody body: RefreshTokenRequestBody, response: HttpServletResponse): Token? {
-        val refreshToken = body.refreshToken
-        if (refreshToken == null) {
-            response.status = 400
-            return null
-        }
-        val tokenResponse = tokenService.verifyRefreshToken(refreshToken)
-        if (tokenResponse != null) {
-            val id = tokenResponse.id ?: ""
-            val provider = tokenResponse.provider ?: com.blackcowmoo.moomark.auth.model.AuthProvider.EMPTY
-            val role = tokenResponse.role ?: com.blackcowmoo.moomark.auth.model.Role.USER
-            return tokenService.generateToken(id, provider, role)
-        }
-        response.status = 401
-        return null
+  @PostMapping("/refresh")
+  fun refreshToken(@RequestBody body: RefreshTokenRequestBody, response: HttpServletResponse): Token? {
+    val refreshToken = body.refreshToken
+    if (refreshToken == null) {
+      response.status = 400
+      return null
     }
+    val tokenResponse = tokenService.verifyRefreshToken(refreshToken)
+    if (tokenResponse != null) {
+      val id = tokenResponse.id ?: ""
+      val provider = tokenResponse.provider ?: com.blackcowmoo.moomark.auth.model.AuthProvider.EMPTY
+      val role = tokenResponse.role ?: com.blackcowmoo.moomark.auth.model.Role.USER
+      return tokenService.generateToken(id, provider, role)
+    }
+    response.status = 401
+    return null
+  }
 }

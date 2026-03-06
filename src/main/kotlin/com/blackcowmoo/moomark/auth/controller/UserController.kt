@@ -18,44 +18,44 @@ import javax.servlet.http.HttpServletResponse
 @RestController
 @RequestMapping("/api/v1/user")
 class UserController(
-    private val userService: UserService
+  private val userService: UserService
 ) {
-    class ModifyUserBody {
-        var nickname: String? = null
-        var picture: String? = null
-    }
+  class ModifyUserBody {
+    var nickname: String? = null
+    var picture: String? = null
+  }
 
-    private fun getUser(): User {
-        return SecurityContextHolder.getContext().authentication.principal as User
-    }
+  private fun getUser(): User {
+    return SecurityContextHolder.getContext().authentication.principal as User
+  }
 
-    @GetMapping
-    fun getMyInfo(): User {
-        return getUser()
-    }
+  @GetMapping
+  fun getMyInfo(): User {
+    return getUser()
+  }
 
-    @GetMapping("/{provider}/{userId}")
-    fun getUserInfo(
-        @PathVariable("provider") provider: String,
-        @PathVariable("userId") userId: String,
-        response: HttpServletResponse
-    ): User? {
-        val user = userService.getUserById(AuthProvider.getAuthProviderValue(provider), userId)
-        if (user != null) {
-            return user
-        }
-        response.status = 404
-        return null
+  @GetMapping("/{provider}/{userId}")
+  fun getUserInfo(
+    @PathVariable("provider") provider: String,
+    @PathVariable("userId") userId: String,
+    response: HttpServletResponse
+  ): User? {
+    val user = userService.getUserById(AuthProvider.getAuthProviderValue(provider), userId)
+    if (user != null) {
+      return user
     }
+    response.status = 404
+    return null
+  }
 
-    @DeleteMapping
-    fun deleteUser() {
-        userService.withdraw(getUser())
-    }
+  @DeleteMapping
+  fun deleteUser() {
+    userService.withdraw(getUser())
+  }
 
-    @PutMapping
-    fun modifyUser(@RequestBody body: ModifyUserBody): User {
-        val user = getMyInfo()
-        return userService.updateUser(user, body.nickname, body.picture)
-    }
+  @PutMapping
+  fun modifyUser(@RequestBody body: ModifyUserBody): User {
+    val user = getMyInfo()
+    return userService.updateUser(user, body.nickname, body.picture)
+  }
 }
