@@ -5,6 +5,7 @@ plugins {
     id("java")
     id("jacoco")
     id("checkstyle")
+    id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
 }
 
 group = "com.blackcowmoo.moomark"
