@@ -19,10 +19,10 @@ class AesUtilTest {
     assertNotNull(key)
 
     val originalText = "Hello, World!"
-    val encrypted = aesUtil.encrypt(originalText, key)
+    val encrypted = aesUtil.encrypt(originalText, key!!)
     assertNotNull(encrypted)
 
-    val decrypted = aesUtil.decrypt(encrypted, key)
+    val decrypted = aesUtil.decrypt(encrypted, key!!)
     assertEquals(originalText, decrypted)
   }
 
@@ -32,10 +32,10 @@ class AesUtilTest {
     assertNotNull(key)
 
     val originalText = "Test encryption/decryption"
-    val encrypted = aesUtil.encrypt(originalText, key)
+    val encrypted = aesUtil.encrypt(originalText, key!!)
     assertNotNull(encrypted)
 
-    val decrypted = aesUtil.decrypt(encrypted, key)
+    val decrypted = aesUtil.decrypt(encrypted, key!!)
     assertEquals(originalText, decrypted)
   }
 
@@ -48,9 +48,9 @@ class AesUtilTest {
     assertNotNull(key2)
 
     val originalText = "Test with different keys"
-    val encrypted = aesUtil.encrypt(originalText, key1)
+    val encrypted = aesUtil.encrypt(originalText, key1!!)
 
-    val decrypted = aesUtil.decrypt(encrypted, key2)
+    val decrypted = aesUtil.decrypt(encrypted, key2!!)
     assertNotEquals(originalText, decrypted)
   }
 
