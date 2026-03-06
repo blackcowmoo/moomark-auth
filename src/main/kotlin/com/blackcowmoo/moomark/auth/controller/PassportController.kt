@@ -15,36 +15,36 @@ import javax.servlet.http.HttpServletResponse
 @RestController
 @RequestMapping("/api/v1/passport")
 class PassportController(
-    private val passportService: PassportService
+  private val passportService: PassportService
 ) {
-    private fun getUser(): User {
-        return SecurityContextHolder.getContext().authentication.principal as User
-    }
+  private fun getUser(): User {
+    return SecurityContextHolder.getContext().authentication.principal as User
+  }
 
-    private fun getUserOrNull(): User? {
-        return SecurityContextHolder.getContext().authentication.principal as? User
-    }
+  private fun getUserOrNull(): User? {
+    return SecurityContextHolder.getContext().authentication.principal as? User
+  }
 
-    @GetMapping("/verify/public")
-    fun getMyInfo(): String {
-        return passportService.getPublicKeyString()
-    }
+  @GetMapping("/verify/public")
+  fun getMyInfo(): String {
+    return passportService.getPublicKeyString()
+  }
 
-    @GetMapping("/verify")
-    fun verifyPassport(
-        @RequestHeader("x-moom-passport-user") passport: String,
-        @RequestHeader("x-moom-passport-key") key: String
-    ): User? {
-        return passportService.parsePassport(passport, key)
-    }
+  @GetMapping("/verify")
+  fun verifyPassport(
+    @RequestHeader("x-moom-passport-user") passport: String,
+    @RequestHeader("x-moom-passport-key") key: String
+  ): User? {
+    return passportService.parsePassport(passport, key)
+  }
 
-    @GetMapping
-    fun generatePassport(response: HttpServletResponse): PassportResponse? {
-        val passport = passportService.generatePassport(getUser())
-        if (passport == null) {
-            response.status = 401
-            return null
-        }
-        return passport
+  @GetMapping
+  fun generatePassport(response: HttpServletResponse): PassportResponse? {
+    val passport = passportService.generatePassport(getUser())
+    if (passport == null) {
+      response.status = 401
+      return null
     }
+    return passport
+  }
 }

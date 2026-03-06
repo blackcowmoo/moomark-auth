@@ -2,7 +2,6 @@ package com.blackcowmoo.moomark.auth.service.oauth2
 
 import com.blackcowmoo.moomark.auth.model.AuthProvider
 import com.blackcowmoo.moomark.auth.model.Role
-import com.blackcowmoo.moomark.auth.model.entity.User
 import com.blackcowmoo.moomark.auth.model.oauth2.Token
 import com.blackcowmoo.moomark.auth.service.TokenService
 import com.blackcowmoo.moomark.auth.service.UserService
@@ -13,31 +12,31 @@ import org.springframework.stereotype.Service
 @Service
 class TestOAuth2Service {
 
-    @Value("\${environment}")
-    private lateinit var environment: String
+  @Value("\${environment}")
+  private lateinit var environment: String
 
-    @Autowired
-    private lateinit var userService: UserService
+  @Autowired
+  private lateinit var userService: UserService
 
-    @Autowired
-    private lateinit var tokenService: TokenService
+  @Autowired
+  private lateinit var tokenService: TokenService
 
-    fun isTest(code: String): Boolean {
-        return environment == "dev" && code.startsWith("test-")
-    }
+  fun isTest(code: String): Boolean {
+    return environment == "dev" && code.startsWith("test-")
+  }
 
-    fun login(testCode: String): Token {
-        val tokenStrings = testCode.split("-")
-        val id = tokenStrings[1]
-        val user = userService.getUserById(AuthProvider.TEST, id)
-        val userToLogin = user ?: userService.signUp(
-            id ?: "",
-            AuthProvider.TEST,
-            "test",
-            "test@blackcowmoo.com",
-            "https://www.gravatar.com/avatar/HASH"
-        )
+  fun login(testCode: String): Token {
+    val tokenStrings = testCode.split("-")
+    val id = tokenStrings[1]
+    val user = userService.getUserById(AuthProvider.TEST, id)
+    val userToLogin = user ?: userService.signUp(
+      id ?: "",
+      AuthProvider.TEST,
+      "test",
+      "test@blackcowmoo.com",
+      "https://www.gravatar.com/avatar/HASH"
+    )
 
-        return tokenService.generateToken(userToLogin.id ?: "", userToLogin.authProvider ?: AuthProvider.EMPTY, userToLogin.role ?: Role.USER)
-    }
+    return tokenService.generateToken(userToLogin.id ?: "", userToLogin.authProvider ?: AuthProvider.EMPTY, userToLogin.role ?: Role.USER)
+  }
 }

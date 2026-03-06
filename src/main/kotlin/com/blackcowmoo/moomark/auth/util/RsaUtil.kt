@@ -12,78 +12,78 @@ import javax.crypto.Cipher
 
 @Slf4j
 class RsaUtil(
-    publicKeyBase64String: String,
-    privateKeyBase64String: String
+  publicKeyBase64String: String,
+  privateKeyBase64String: String
 ) {
-    companion object {
-        private val log = LoggerFactory.getLogger(RsaUtil::class.java)
-    }
+  companion object {
+    private val log = LoggerFactory.getLogger(RsaUtil::class.java)
+  }
 
-    private val keyFactory: KeyFactory
-    private val cipher: Cipher
-    private val publicKey: PublicKey
-    private val privateKey: PrivateKey
+  private val keyFactory: KeyFactory
+  private val cipher: Cipher
+  private val publicKey: PublicKey
+  private val privateKey: PrivateKey
 
-    init {
-        keyFactory = KeyFactory.getInstance("RSA")
-        cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
-        publicKey = buildPublicKey(publicKeyBase64String)
-        privateKey = buildPrivateKey(privateKeyBase64String)
-    }
+  init {
+    keyFactory = KeyFactory.getInstance("RSA")
+    cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+    publicKey = buildPublicKey(publicKeyBase64String)
+    privateKey = buildPrivateKey(privateKeyBase64String)
+  }
 
-    @Throws(Exception::class)
-    fun buildPublicKey(publicKeyBase64String: String): PublicKey {
-        val ukeySpec = X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyBase64String))
-        return keyFactory.generatePublic(ukeySpec)
-    }
+  @Throws(Exception::class)
+  fun buildPublicKey(publicKeyBase64String: String): PublicKey {
+    val ukeySpec = X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyBase64String))
+    return keyFactory.generatePublic(ukeySpec)
+  }
 
-    @Throws(Exception::class)
-    fun buildPrivateKey(privateKeyBase64String: String): PrivateKey {
-        val rkeySpec = PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyBase64String))
-        return keyFactory.generatePrivate(rkeySpec)
-    }
+  @Throws(Exception::class)
+  fun buildPrivateKey(privateKeyBase64String: String): PrivateKey {
+    val rkeySpec = PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyBase64String))
+    return keyFactory.generatePrivate(rkeySpec)
+  }
 
-    fun encryptByPublicKey(data: String): ByteArray? {
-        return try {
-            cipher.init(Cipher.ENCRYPT_MODE, publicKey)
-            cipher.doFinal(data.toByteArray())
-        } catch (e: Exception) {
-            log.error("encryptByPublicKey: ", e)
-            null
-        }
+  fun encryptByPublicKey(data: String): ByteArray? {
+    return try {
+      cipher.init(Cipher.ENCRYPT_MODE, publicKey)
+      cipher.doFinal(data.toByteArray())
+    } catch (e: Exception) {
+      log.error("encryptByPublicKey: ", e)
+      null
     }
+  }
 
-    fun decryptByPublicKey(data: ByteArray): String? {
-        return try {
-            cipher.init(Cipher.DECRYPT_MODE, publicKey)
-            String(cipher.doFinal(data), Charsets.UTF_8)
-        } catch (e: Exception) {
-            log.error("decryptByPublicKey: ", e)
-            null
-        }
+  fun decryptByPublicKey(data: ByteArray): String? {
+    return try {
+      cipher.init(Cipher.DECRYPT_MODE, publicKey)
+      String(cipher.doFinal(data), Charsets.UTF_8)
+    } catch (e: Exception) {
+      log.error("decryptByPublicKey: ", e)
+      null
     }
+  }
 
-    fun encryptByPrivateKey(data: String): ByteArray? {
-        return encryptByPrivateKey(data.toByteArray())
-    }
+  fun encryptByPrivateKey(data: String): ByteArray? {
+    return encryptByPrivateKey(data.toByteArray())
+  }
 
-    fun encryptByPrivateKey(data: ByteArray): ByteArray? {
-        return try {
-            cipher.init(Cipher.ENCRYPT_MODE, privateKey)
-            cipher.doFinal(data)
-        } catch (e: Exception) {
-            log.error("encryptByPrivateKey: ", e)
-            null
-        }
+  fun encryptByPrivateKey(data: ByteArray): ByteArray? {
+    return try {
+      cipher.init(Cipher.ENCRYPT_MODE, privateKey)
+      cipher.doFinal(data)
+    } catch (e: Exception) {
+      log.error("encryptByPrivateKey: ", e)
+      null
     }
+  }
 
-    fun decryptByPrivateKey(data: ByteArray): String? {
-        return try {
-            cipher.init(Cipher.DECRYPT_MODE, privateKey)
-            String(cipher.doFinal(data), Charsets.UTF_8)
-        } catch (e: Exception) {
-            log.error("decryptByPrivateKey: ", e)
-            null
-        }
+  fun decryptByPrivateKey(data: ByteArray): String? {
+    return try {
+      cipher.init(Cipher.DECRYPT_MODE, privateKey)
+      String(cipher.doFinal(data), Charsets.UTF_8)
+    } catch (e: Exception) {
+      log.error("decryptByPrivateKey: ", e)
+      null
     }
+  }
 }

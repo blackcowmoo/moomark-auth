@@ -18,79 +18,83 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @AutoConfigureMockMvc
 class OAuth2ControllerTest {
 
-    @Autowired
-    private lateinit var mvc: MockMvc
+  @Autowired
+  private lateinit var mvc: MockMvc
 
-    @Autowired
-    private lateinit var mapper: ObjectMapper
+  @Autowired
+  private lateinit var mapper: ObjectMapper
 
-    @Test
-    fun testGoogleCode() {
-        val token = mapper.readValue(
-            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
-                .andExpect(status().isOk())
-                .andReturn().response.contentAsString,
-            Token::class.java
-        )
+  @Test
+  fun testGoogleCode() {
+    val token = mapper.readValue(
+      mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
+        .andExpect(status().isOk())
+        .andReturn().response.contentAsString,
+      Token::class.java
+    )
 
-        assertThat(token.token).isNotNull()
-        assertThat(token.refreshToken).isNotNull()
-    }
+    assertThat(token.token).isNotNull()
+    assertThat(token.refreshToken).isNotNull()
+  }
 
-    @Test
-    fun failRefreshToken() {
-        val token = mapper.readValue(
-            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
-                .andExpect(status().isOk())
-                .andReturn().response.contentAsString,
-            Token::class.java
-        )
+  @Test
+  fun failRefreshToken() {
+    val token = mapper.readValue(
+      mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
+        .andExpect(status().isOk())
+        .andReturn().response.contentAsString,
+      Token::class.java
+    )
 
-        assertThat(token.token).isNotNull()
-        assertThat(token.refreshToken).isNotNull()
-        assertThat(token.token).isNotEmpty()
-        assertThat(token.refreshToken).isNotEmpty()
+    assertThat(token.token).isNotNull()
+    assertThat(token.refreshToken).isNotNull()
+    assertThat(token.token).isNotEmpty()
+    assertThat(token.refreshToken).isNotEmpty()
 
-        val requestParams = JSONObject()
-        requestParams.put("refreshToken", token.token)
+    val requestParams = JSONObject()
+    requestParams.put("refreshToken", token.token)
 
-        mvc.perform(post("/api/v1/oauth2/refresh").header("Content-Type", "application/json")
-            .content(requestParams.toString()))
-            .andExpect(status().`is`(401))
-    }
+    mvc.perform(
+      post("/api/v1/oauth2/refresh").header("Content-Type", "application/json")
+        .content(requestParams.toString())
+    )
+      .andExpect(status().`is`(401))
+  }
 
-    @Test
-    fun refreshToken() {
-        val token = mapper.readValue(
-            mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
-                .andExpect(status().isOk())
-                .andReturn().response.contentAsString,
-            Token::class.java
-        )
+  @Test
+  fun refreshToken() {
+    val token = mapper.readValue(
+      mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
+        .andExpect(status().isOk())
+        .andReturn().response.contentAsString,
+      Token::class.java
+    )
 
-        assertThat(token.token).isNotNull()
-        assertThat(token.refreshToken).isNotNull()
-        assertThat(token.token).isNotEmpty()
-        assertThat(token.refreshToken).isNotEmpty()
+    assertThat(token.token).isNotNull()
+    assertThat(token.refreshToken).isNotNull()
+    assertThat(token.token).isNotEmpty()
+    assertThat(token.refreshToken).isNotEmpty()
 
-        Thread.sleep(1000)
+    Thread.sleep(1000)
 
-        val requestParams = JSONObject()
-        requestParams.put("refreshToken", token.refreshToken)
+    val requestParams = JSONObject()
+    requestParams.put("refreshToken", token.refreshToken)
 
-        val newToken = mapper.readValue(
-            mvc.perform(post("/api/v1/oauth2/refresh").header("Content-Type", "application/json")
-                .content(requestParams.toString()))
-                .andExpect(status().isOk())
-                .andReturn().response.contentAsString,
-            Token::class.java
-        )
+    val newToken = mapper.readValue(
+      mvc.perform(
+        post("/api/v1/oauth2/refresh").header("Content-Type", "application/json")
+          .content(requestParams.toString())
+      )
+        .andExpect(status().isOk())
+        .andReturn().response.contentAsString,
+      Token::class.java
+    )
 
-        assertThat(newToken.token).isNotNull()
-        assertThat(newToken.refreshToken).isNotNull()
-        assertThat(newToken.token).isNotEmpty()
-        assertThat(newToken.refreshToken).isNotEmpty()
-        assertThat(newToken.token).isNotEqualTo(token.token)
-        assertThat(newToken.refreshToken).isNotEqualTo(token.refreshToken)
-    }
+    assertThat(newToken.token).isNotNull()
+    assertThat(newToken.refreshToken).isNotNull()
+    assertThat(newToken.token).isNotEmpty()
+    assertThat(newToken.refreshToken).isNotEmpty()
+    assertThat(newToken.token).isNotEqualTo(token.token)
+    assertThat(newToken.refreshToken).isNotEqualTo(token.refreshToken)
+  }
 }
