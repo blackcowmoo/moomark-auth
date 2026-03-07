@@ -77,7 +77,6 @@ class OAuth2ControllerTest {
   fun refreshToken() {
     val token = Token("test-jwt-token", "test-refresh-token")
     val newToken = Token("new-jwt-token", "new-refresh-token")
-    
     `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
     `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(newToken)
 
