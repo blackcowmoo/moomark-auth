@@ -26,12 +26,11 @@ class AesUtil {
     return encrypted
   }
 
-  @Throws(Exception::class)
   fun decrypt(body: ByteArray, key: SecretKey): String {
     val cipher = Cipher.getInstance("AES")
     cipher.init(Cipher.DECRYPT_MODE, key)
     val decrypted = cipher.doFinal(body)
-    return decrypted.toString(Charsets.UTF_8)
+    return String(decrypted, Charsets.UTF_8)
   }
 
   fun generateNewKey(): SecretKey? {
