@@ -3,6 +3,7 @@ package com.blackcowmoo.moomark.auth.util
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -50,8 +51,10 @@ class AesUtilTest {
     val originalText = "Test with different keys"
     val encrypted = aesUtil.encrypt(originalText, key1!!)
 
-    val decrypted = aesUtil.decrypt(encrypted, key2!!)
-    assertNotEquals(originalText, decrypted)
+    val exception = assertThrows<javax.crypto.BadPaddingException> {
+      aesUtil.decrypt(encrypted, key2!!)
+    }
+    assertNotNull(exception)
   }
 
   @Test
