@@ -1,6 +1,7 @@
 package com.blackcowmoo.moomark.auth.util
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -63,5 +64,16 @@ class AesUtilTest {
 
     assertNotNull(key1)
     assertNotNull(key2)
+  }
+
+  @Test
+  fun `encrypted value should not equal original value`() {
+    val key = aesUtil.generateNewKey()
+    assertNotNull(key)
+
+    val originalText = "Hello, World!"
+    val encrypted = aesUtil.encrypt(originalText, key!!)
+
+    assertNotEquals(originalText, encrypted)
   }
 }
