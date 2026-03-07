@@ -1,10 +1,12 @@
 package com.blackcowmoo.moomark.auth.controller
 
+import com.blackcowmoo.moomark.auth.model.AuthProvider
+import com.blackcowmoo.moomark.auth.model.Role
 import com.blackcowmoo.moomark.auth.model.oauth2.Token
 import com.blackcowmoo.moomark.auth.service.TokenService
 import com.blackcowmoo.moomark.auth.service.oauth2.GoogleOAuth2Service
-import com.blackcowmoo.moomark.auth.service.oauth2.TestOAuth2Service
 import lombok.RequiredArgsConstructor
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -18,17 +20,21 @@ import javax.servlet.http.HttpServletResponse
 @RequestMapping("/api/v1/oauth2")
 class OAuth2Controller(
   private val tokenService: TokenService,
-  private val googleOAuth2Service: GoogleOAuth2Service,
-  private val testOAuth2Service: TestOAuth2Service
+  private val googleOAuth2Service: GoogleOAuth2Service
 ) {
   class RefreshTokenRequestBody {
     var refreshToken: String? = null
   }
 
+  @Value("\${environment}")
+  private lateinit var environment: String
+
   @GetMapping("/google")
   fun googleCode(@RequestParam code: String): Token {
-    if (testOAuth2Service.isTest(code)) {
-      return testOAuth2Service.login(code)
+    if (environment == "dev" && code.startsWith("test-")) {
+      val tokenStrings = code.split("-")
+      val id = tokenStrings[1]
+      return tokenService.generateToken(id, AuthProvider.TEST, Role.USER)
     }
     val token = googleOAuth2Service.getToken(code)
     val googleUserInfo = googleOAuth2Service.parseIdToken(token)
