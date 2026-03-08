@@ -16,7 +16,7 @@ import javax.annotation.PostConstruct
 import javax.crypto.SecretKey
 
 @Service
-class TokenService {
+open class TokenService {
 
   @Value("\${jwt.secret}")
   private var jwtSecret: String? = null

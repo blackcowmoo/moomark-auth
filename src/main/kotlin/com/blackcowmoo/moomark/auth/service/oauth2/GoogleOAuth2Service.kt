@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate
 import java.util.Base64
 
 @Service
-class GoogleOAuth2Service {
+open class GoogleOAuth2Service {
 
   @Autowired
   private lateinit var restTemplate: RestTemplate
