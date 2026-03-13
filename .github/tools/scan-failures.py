@@ -10,6 +10,8 @@ import sys
 from pathlib import Path
 
 
+import html
+
 def extract_failures_from_html(file_path):
     """Extract test failures from an HTML file using multiple parsing strategies."""
     failures = []
@@ -33,10 +35,13 @@ def extract_failures_from_html(file_path):
             filename = path_parts[-1] if path_parts else 'Unknown'
             class_name = filename.replace('.html', '') if filename.endswith('.html') else filename
             
+            # Decode HTML entities in the error log
+            decoded_error = html.unescape(error_log)
+            
             failures.append({
                 'class': class_name,
                 'test': method_name,
-                'message': error_log.strip()
+                'message': decoded_error.strip()
             })
     
     # Strategy 2: JUnit XML style (common in test reports)
