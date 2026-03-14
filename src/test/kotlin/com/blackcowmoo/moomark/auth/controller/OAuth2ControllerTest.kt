@@ -3,6 +3,7 @@ package com.blackcowmoo.moomark.auth.controller
 import com.blackcowmoo.moomark.auth.model.AuthProvider
 import com.blackcowmoo.moomark.auth.model.Role
 import com.blackcowmoo.moomark.auth.model.entity.User
+import com.blackcowmoo.moomark.auth.model.oauth2.Token
 import com.blackcowmoo.moomark.auth.service.TokenService
 import com.blackcowmoo.moomark.auth.service.UserService
 import com.blackcowmoo.moomark.auth.service.oauth2.GoogleOAuth2Service

@@ -51,13 +51,13 @@ class UserControllerTest {
   @Order(1)
   fun me() {
     val token = Token("test-jwt-token", "test-refresh-token")
-    val user = User("1234", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+    val user1 = User("1234", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
     `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
     `when`(tokenService.verifyToken(any())).thenReturn(true)
     `when`(tokenService.getUid(any())).thenReturn("1234")
     `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
-    `when`(userService.getUserById(AuthProvider.TEST, "1234")).thenReturn(user)
+    `when`(userService.getUserById(AuthProvider.TEST, "1234")).thenReturn(user1)
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
@@ -68,28 +68,28 @@ class UserControllerTest {
 
     assertThat(tokenResult.token).isNotNull()
 
-    val user = mapper.readValue(
+    val user2 = mapper.readValue(
       mvc.perform(get("/api/v1/user").header("Authorization", tokenResult.token))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       User::class.java
     )
 
-    assertThat(user.authProvider).isEqualTo(AuthProvider.TEST)
-    assertThat(user.id).isEqualTo("1234")
+    assertThat(user2.authProvider).isEqualTo(AuthProvider.TEST)
+    assertThat(user2.id).isEqualTo("1234")
   }
 
   @Test
   @Order(2)
   fun user() {
     val token = Token("test-jwt-token", "test-refresh-token")
-    val user = User("test", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+    val user3 = User("test", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
     `when`(tokenService.generateToken("test", AuthProvider.TEST, Role.USER)).thenReturn(token)
     `when`(tokenService.verifyToken(any())).thenReturn(true)
     `when`(tokenService.getUid(any())).thenReturn("test")
     `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
-    `when`(userService.getUserById(AuthProvider.TEST, "test")).thenReturn(user)
+    `when`(userService.getUserById(AuthProvider.TEST, "test")).thenReturn(user3)
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-test"))
@@ -100,15 +100,15 @@ class UserControllerTest {
 
     assertThat(tokenResult.token).isNotNull()
 
-    val user = mapper.readValue(
+    val user4 = mapper.readValue(
       mvc.perform(get("/api/v1/user/TEST/test").header("Content-Type", "application/json"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       User::class.java
     )
 
-    assertThat(user.authProvider).isEqualTo(AuthProvider.TEST)
-    assertThat(user.id).isEqualTo("test")
+    assertThat(user4.authProvider).isEqualTo(AuthProvider.TEST)
+    assertThat(user4.id).isEqualTo("test")
   }
 
   @Test
@@ -116,13 +116,13 @@ class UserControllerTest {
   fun modifyUser() {
     val id = "test"
     val token = Token("test-jwt-token", "test-refresh-token")
-    val user = User(id, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+    val user5 = User(id, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
     `when`(tokenService.generateToken(id, AuthProvider.TEST, Role.USER)).thenReturn(token)
     `when`(tokenService.verifyToken(any())).thenReturn(true)
     `when`(tokenService.getUid(any())).thenReturn(id)
     `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
-    `when`(userService.getUserById(AuthProvider.TEST, id)).thenReturn(user)
+    `when`(userService.getUserById(AuthProvider.TEST, id)).thenReturn(user5)
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$id"))
@@ -149,7 +149,7 @@ class UserControllerTest {
     requestParams1.put("nickname", null)
     requestParams1.put("picture", null)
 
-    val user1 = mapper.readValue(
+    val user7 = mapper.readValue(
       mvc.perform(
         put("/api/v1/user")
           .header("Content-Type", "application/json")
@@ -161,16 +161,16 @@ class UserControllerTest {
       User::class.java
     )
 
-    assertThat(user1.authProvider).isEqualTo(AuthProvider.TEST)
-    assertThat(user1.id).isEqualTo(id)
-    assertThat(user1.nickname).isEqualTo(beforeUser.nickname)
-    assertThat(user1.picture).isEqualTo(beforeUser.picture)
+    assertThat(user6.authProvider).isEqualTo(AuthProvider.TEST)
+    assertThat(user6.id).isEqualTo(id)
+    assertThat(user6.nickname).isEqualTo(beforeUser.nickname)
+    assertThat(user6.picture).isEqualTo(beforeUser.picture)
 
     val requestParams2 = JSONObject()
     requestParams2.put("nickname", "")
     requestParams2.put("picture", "")
 
-    val user2 = mapper.readValue(
+    val user8 = mapper.readValue(
       mvc.perform(
         put("/api/v1/user")
           .header("Content-Type", "application/json")
@@ -182,10 +182,10 @@ class UserControllerTest {
       User::class.java
     )
 
-    assertThat(user2.authProvider).isEqualTo(AuthProvider.TEST)
-    assertThat(user2.id).isEqualTo(id)
-    assertThat(user2.nickname).isEqualTo(beforeUser.nickname)
-    assertThat(user2.picture).isEqualTo(defaultPicture)
+    assertThat(user8.authProvider).isEqualTo(AuthProvider.TEST)
+    assertThat(user8.id).isEqualTo(id)
+    assertThat(user8.nickname).isEqualTo(beforeUser.nickname)
+    assertThat(user8.picture).isEqualTo(defaultPicture)
 
     val newNickname = "testNewNickname"
     val newPicture = "https://i.pravatar.cc/300"
@@ -194,7 +194,7 @@ class UserControllerTest {
     requestParams3.put("nickname", newNickname)
     requestParams3.put("picture", newPicture)
 
-    val user3 = mapper.readValue(
+    val user9 = mapper.readValue(
       mvc.perform(
         put("/api/v1/user")
           .header("Content-Type", "application/json")
@@ -206,10 +206,10 @@ class UserControllerTest {
       User::class.java
     )
 
-    assertThat(user3.authProvider).isEqualTo(AuthProvider.TEST)
-    assertThat(user3.id).isEqualTo(id)
-    assertThat(user3.nickname).isEqualTo(newNickname)
-    assertThat(user3.picture).isEqualTo(newPicture)
+    assertThat(user9.authProvider).isEqualTo(AuthProvider.TEST)
+    assertThat(user9.id).isEqualTo(id)
+    assertThat(user9.nickname).isEqualTo(newNickname)
+    assertThat(user9.picture).isEqualTo(newPicture)
   }
 
   @Test
