@@ -53,13 +53,13 @@ class PssportControllerTest {
     val userId = "1234"
     val token = Token("test-jwt-token", "test-refresh-token")
     val user = User(userId, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
-    
+
     `when`(tokenService.generateToken(userId, AuthProvider.TEST, Role.USER)).thenReturn(token)
     `when`(tokenService.verifyToken(any())).thenReturn(true)
     `when`(tokenService.getUid(any())).thenReturn(userId)
     `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user)
-    
+
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
         .andExpect(status().isOk())
@@ -95,13 +95,13 @@ class PssportControllerTest {
     val userId = "1234"
     val token = Token("test-jwt-token", "test-refresh-token")
     val user = User(userId, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
-    
+
     `when`(tokenService.generateToken(userId, AuthProvider.TEST, Role.USER)).thenReturn(token)
     `when`(tokenService.verifyToken(any())).thenReturn(true)
     `when`(tokenService.getUid(any())).thenReturn(userId)
     `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user)
-    
+
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
         .andExpect(status().isOk())
