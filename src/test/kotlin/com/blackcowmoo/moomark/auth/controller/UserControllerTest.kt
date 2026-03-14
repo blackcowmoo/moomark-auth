@@ -161,10 +161,10 @@ class UserControllerTest {
       User::class.java
     )
 
-    assertThat(user6.authProvider).isEqualTo(AuthProvider.TEST)
-    assertThat(user6.id).isEqualTo(id)
-    assertThat(user6.nickname).isEqualTo(beforeUser.nickname)
-    assertThat(user6.picture).isEqualTo(beforeUser.picture)
+    assertThat(user7.authProvider).isEqualTo(AuthProvider.TEST)
+    assertThat(user7.id).isEqualTo(id)
+    assertThat(user7.nickname).isEqualTo(beforeUser.nickname)
+    assertThat(user7.picture).isEqualTo(beforeUser.picture)
 
     val requestParams2 = JSONObject()
     requestParams2.put("nickname", "")
