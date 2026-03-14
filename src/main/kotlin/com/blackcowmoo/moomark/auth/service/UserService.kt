@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
-class UserService {
+open class UserService {
 
   @Value("\${resources.user.default-picture}")
   private lateinit var defaultPicture: String
