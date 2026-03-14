@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest(
-    classes = [AuthApplication::class],
-    properties = [
-        "spring.jpa.hibernate.ddl-auto=update"
-    ]
+  classes = [AuthApplication::class],
+  properties = [
+    "spring.jpa.hibernate.ddl-auto=update"
+  ]
 )
 class AuthApplicationTests {
 
