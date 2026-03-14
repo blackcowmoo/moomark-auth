@@ -58,7 +58,7 @@ jobs:
           distribution: temurin
 
       - name: Build with Gradle
-        run: ./gradlew compileKotlin compileTestKotlin
+        run: ./gradlew assemble
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
