@@ -1,15 +1,22 @@
 package com.blackcowmoo.moomark.auth.controller
 
+import com.blackcowmoo.moomark.auth.model.AuthProvider
+import com.blackcowmoo.moomark.auth.model.Role
 import com.blackcowmoo.moomark.auth.model.dto.PassportResponse
 import com.blackcowmoo.moomark.auth.model.entity.User
 import com.blackcowmoo.moomark.auth.model.oauth2.Token
+import com.blackcowmoo.moomark.auth.service.TokenService
+import com.blackcowmoo.moomark.auth.service.UserService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -35,20 +42,35 @@ class PssportControllerTest {
   @Autowired
   private lateinit var mapper: ObjectMapper
 
+  @MockBean
+  private lateinit var tokenService: TokenService
+
+  @MockBean
+  private lateinit var userService: UserService
+
   @Test
   fun generatePassport() {
     val userId = "1234"
-    val token = mapper.readValue(
+    val token = Token("test-jwt-token", "test-refresh-token")
+    val user = User(userId, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+    
+    `when`(tokenService.generateToken(userId, AuthProvider.TEST, Role.USER)).thenReturn(token)
+    `when`(tokenService.verifyToken(any())).thenReturn(true)
+    `when`(tokenService.getUid(any())).thenReturn(userId)
+    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+    `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user)
+    
+    val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       Token::class.java
     )
 
-    assertThat(token.token).isNotNull()
+    assertThat(tokenResult.token).isNotNull()
 
     val passport = mapper.readValue(
-      mvc.perform(get("/api/v1/passport").header("Authorization", token.token))
+      mvc.perform(get("/api/v1/passport").header("Authorization", tokenResult.token))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       PassportResponse::class.java
@@ -71,14 +93,23 @@ class PssportControllerTest {
   @Test
   fun verifyPassport() {
     val userId = "1234"
-    val token = mapper.readValue(
+    val token = Token("test-jwt-token", "test-refresh-token")
+    val user = User(userId, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+    
+    `when`(tokenService.generateToken(userId, AuthProvider.TEST, Role.USER)).thenReturn(token)
+    `when`(tokenService.verifyToken(any())).thenReturn(true)
+    `when`(tokenService.getUid(any())).thenReturn(userId)
+    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+    `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user)
+    
+    val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       Token::class.java
     )
 
-    assertThat(token.token).isNotNull()
+    assertThat(tokenResult.token).isNotNull()
 
     val passport = mapper.readValue(
       mvc.perform(get("/api/v1/passport").header("Authorization", token.token))

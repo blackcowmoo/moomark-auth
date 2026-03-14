@@ -2,13 +2,15 @@ package com.blackcowmoo.moomark.auth.controller
 
 import com.blackcowmoo.moomark.auth.model.AuthProvider
 import com.blackcowmoo.moomark.auth.model.Role
-import com.blackcowmoo.moomark.auth.model.oauth2.Token
+import com.blackcowmoo.moomark.auth.model.entity.User
 import com.blackcowmoo.moomark.auth.service.TokenService
+import com.blackcowmoo.moomark.auth.service.UserService
 import com.blackcowmoo.moomark.auth.service.oauth2.GoogleOAuth2Service
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -37,11 +39,20 @@ class OAuth2ControllerTest {
   @MockBean
   private lateinit var tokenService: TokenService
 
+  @MockBean
+  private lateinit var userService: UserService
+
   @Test
   fun testGoogleCode() {
     val token = Token("test-jwt-token", "test-refresh-token")
+    val user = User("1234", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+    
     `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
-
+    `when`(tokenService.verifyToken(any())).thenReturn(true)
+    `when`(tokenService.getUid(any())).thenReturn("1234")
+    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+    `when`(userService.getUserById(AuthProvider.TEST, "1234")).thenReturn(user)
+    
     val responseToken = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
         .andExpect(status().isOk())
@@ -56,9 +67,15 @@ class OAuth2ControllerTest {
   @Test
   fun failRefreshToken() {
     val token = Token("test-jwt-token", "test-refresh-token")
+    val user = User("1234", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+    
     `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
-
-    mapper.readValue(
+    `when`(tokenService.verifyToken(any())).thenReturn(true)
+    `when`(tokenService.getUid(any())).thenReturn("1234")
+    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+    `when`(userService.getUserById(AuthProvider.TEST, "1234")).thenReturn(user)
+    
+    val responseToken = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
@@ -79,10 +96,16 @@ class OAuth2ControllerTest {
   fun refreshToken() {
     val token = Token("test-jwt-token", "test-refresh-token")
     val newToken = Token("new-jwt-token", "new-refresh-token")
+    val user = User("1234", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+    
     `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
     `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(newToken)
-
-    mapper.readValue(
+    `when`(tokenService.verifyToken(any())).thenReturn(true)
+    `when`(tokenService.getUid(any())).thenReturn("1234")
+    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+    `when`(userService.getUserById(AuthProvider.TEST, "1234")).thenReturn(user)
+    
+    val responseToken = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
@@ -92,7 +115,7 @@ class OAuth2ControllerTest {
     val requestParams = JSONObject()
     requestParams.put("refreshToken", "test-refresh-token")
 
-    val responseToken = mapper.readValue(
+    val newTokenResult = mapper.readValue(
       mvc.perform(
         post("/api/v1/oauth2/refresh").header("Content-Type", "application/json")
           .content(requestParams.toString())
@@ -102,7 +125,7 @@ class OAuth2ControllerTest {
       Token::class.java
     )
 
-    assertThat(responseToken.token).isEqualTo("new-jwt-token")
-    assertThat(responseToken.refreshToken).isEqualTo("new-refresh-token")
+    assertThat(newTokenResult.token).isEqualTo("new-jwt-token")
+    assertThat(newTokenResult.refreshToken).isEqualTo("new-refresh-token")
   }
 }

@@ -1,8 +1,11 @@
 package com.blackcowmoo.moomark.auth.controller
 
 import com.blackcowmoo.moomark.auth.model.AuthProvider
+import com.blackcowmoo.moomark.auth.model.Role
 import com.blackcowmoo.moomark.auth.model.entity.User
 import com.blackcowmoo.moomark.auth.model.oauth2.Token
+import com.blackcowmoo.moomark.auth.service.TokenService
+import com.blackcowmoo.moomark.auth.service.UserService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
@@ -10,10 +13,13 @@ import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -35,20 +41,35 @@ class UserControllerTest {
   @Autowired
   private lateinit var mapper: ObjectMapper
 
+  @MockBean
+  private lateinit var tokenService: TokenService
+
+  @MockBean
+  private lateinit var userService: UserService
+
   @Test
   @Order(1)
   fun me() {
-    val token = mapper.readValue(
+    val token = Token("test-jwt-token", "test-refresh-token")
+    val user = User("1234", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+    
+    `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
+    `when`(tokenService.verifyToken(any())).thenReturn(true)
+    `when`(tokenService.getUid(any())).thenReturn("1234")
+    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+    `when`(userService.getUserById(AuthProvider.TEST, "1234")).thenReturn(user)
+    
+    val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       Token::class.java
     )
 
-    assertThat(token.token).isNotNull()
+    assertThat(tokenResult.token).isNotNull()
 
     val user = mapper.readValue(
-      mvc.perform(get("/api/v1/user").header("Authorization", token.token))
+      mvc.perform(get("/api/v1/user").header("Authorization", tokenResult.token))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       User::class.java
@@ -61,14 +82,23 @@ class UserControllerTest {
   @Test
   @Order(2)
   fun user() {
-    val token = mapper.readValue(
+    val token = Token("test-jwt-token", "test-refresh-token")
+    val user = User("test", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+    
+    `when`(tokenService.generateToken("test", AuthProvider.TEST, Role.USER)).thenReturn(token)
+    `when`(tokenService.verifyToken(any())).thenReturn(true)
+    `when`(tokenService.getUid(any())).thenReturn("test")
+    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+    `when`(userService.getUserById(AuthProvider.TEST, "test")).thenReturn(user)
+    
+    val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-test"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       Token::class.java
     )
 
-    assertThat(token.token).isNotNull()
+    assertThat(tokenResult.token).isNotNull()
 
     val user = mapper.readValue(
       mvc.perform(get("/api/v1/user/TEST/test").header("Content-Type", "application/json"))
@@ -85,14 +115,23 @@ class UserControllerTest {
   @Order(3)
   fun modifyUser() {
     val id = "test"
-    val token = mapper.readValue(
+    val token = Token("test-jwt-token", "test-refresh-token")
+    val user = User(id, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+    
+    `when`(tokenService.generateToken(id, AuthProvider.TEST, Role.USER)).thenReturn(token)
+    `when`(tokenService.verifyToken(any())).thenReturn(true)
+    `when`(tokenService.getUid(any())).thenReturn(id)
+    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+    `when`(userService.getUserById(AuthProvider.TEST, id)).thenReturn(user)
+    
+    val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$id"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       Token::class.java
     )
 
-    assertThat(token.token).isNotNull()
+    assertThat(tokenResult.token).isNotNull()
 
     val beforeUser = mapper.readValue(
       mvc.perform(get("/api/v1/user/TEST/test").header("Content-Type", "application/json"))
@@ -176,14 +215,18 @@ class UserControllerTest {
   @Test
   @Order(Int.MAX_VALUE)
   fun withdraw() {
-    val token = mapper.readValue(
+    val token = Token("test-jwt-token", "test-refresh-token")
+    
+    `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
+    
+    val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       Token::class.java
     )
 
-    assertThat(token.token).isNotNull()
-    assertThat(token.refreshToken).isNotNull()
+    assertThat(tokenResult.token).isNotNull()
+    assertThat(tokenResult.refreshToken).isNotNull()
   }
 }
