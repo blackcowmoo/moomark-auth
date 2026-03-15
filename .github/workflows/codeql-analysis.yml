@@ -41,13 +41,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Build project
-        run: ./gradlew build -x test
-
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
+
+      - name: Build project
+        run: ./gradlew build -x test
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
