@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ["java", "kotlin"]
+        language: ["java-kotlin"]
         # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'kotlin', 'python' ]
         # Learn more:
         # https://docs.github.com/en/free-pro-team@latest/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#changing-the-languages-that-are-analyzed
@@ -56,12 +56,21 @@ jobs:
           java-version: 17
           distribution: temurin
 
-      - name: Build with Gradle
-        run: ./gradlew compileKotlin compileJava
+      # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
+      # If this step fails, then you should remove it and run the build manually (see below)
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v4
+
+      # ℹ️ Command-line programs to run using the OS shell.
+      # 📚 https://git.io/JvXDl
+
+      # ✏️ If the Autobuild fails above, remove it and uncomment the following three lines
+      #    and modify them (or add more) to build your code if your project
+      #    uses a compiled language
+
+      #- run: |
+      #   make bootstrap
+      #   make release
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
-        with:
-          languages: ${{ matrix.language }}
-          build-mode: manual
-          commands: ./gradlew compileKotlin compileJava
