@@ -51,13 +51,5 @@ jobs:
           # Prefix the list here with "+" to use these queries and those in a config file.
           # queries: ./path/to/local/query, your-org/your-repo/queries@main
 
-      - uses: actions/setup-java@v5
-        with:
-          java-version: 17
-          distribution: temurin
-
-      - name: Build with Gradle
-        run: ./gradlew compileKotlin compileJava
-
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
