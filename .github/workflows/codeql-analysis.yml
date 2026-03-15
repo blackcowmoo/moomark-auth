@@ -45,9 +45,7 @@ jobs:
         uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
-
-      - name: Build Kotlin/Java project
-        run: ./gradlew compileKotlin compileJava
+          build-mode: autobuild
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
