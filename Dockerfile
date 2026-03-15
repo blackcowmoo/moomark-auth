@@ -1,9 +1,10 @@
 FROM gradle:8.5-jdk17 AS builder
 WORKDIR /build
 COPY gradle/ gradle/
+COPY gradlew ./
 COPY build.gradle.kts settings.gradle.kts ./
 COPY src/ src/
-RUN gradle bootJar --no-daemon
+RUN chmod +x gradlew && ./gradlew bootJar --no-daemon
 
 FROM eclipse-temurin:17-jre
 WORKDIR /app
