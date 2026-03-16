@@ -46,7 +46,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
       - name: Short sha
         id: sha
-        run: echo "::set-output name=sha_short::$(echo ${GITHUB_HEAD_SHA:0:7})"
+        run: echo "sha_short=$(echo ${GITHUB_HEAD_SHA:0:7})" >> $GITHUB_OUTPUT
         env:
           GITHUB_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Extract Docker metadata
@@ -59,7 +59,7 @@ jobs:
         run: |
           echo "Checking registry connectivity: $DOCKER_REGISTRY"
           for i in {1..5}; do
-            if curl -s -o /dev/null -w "%{http_code}" "$DOCKER_REGISTRY/v2/" | grep -q "200\|401"; then
+            if curl -s -o /dev/null -w "%{http_code}" "https://$DOCKER_REGISTRY/v2/" | grep -q "200\|401"; then
               echo "Registry is reachable"
               exit 0
             fi
