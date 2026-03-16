@@ -45,7 +45,10 @@ jobs:
         uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
-          build-command: ./gradlew build -x test
+          build-mode: none
+
+      - name: Build project
+        run: ./gradlew build -x test
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
