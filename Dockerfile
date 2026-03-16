@@ -1,10 +1,22 @@
+FROM eclipse-temurin:17-jdk AS builder
+WORKDIR /build
+COPY gradle/ gradle/
+COPY gradlew ./
+COPY build.gradle.kts settings.gradle.kts ./
+COPY src/ src/
+RUN chmod +x gradlew && ./gradlew bootJar --no-daemon \
+    && rm -rf /build/.gradle \
+    && find /build -name "*.class" -delete
+
 FROM eclipse-temurin:17-jre
+ARG BUILD_DATE
+ARG VCS_REF
 
-COPY ./build/libs/*.jar /spring/
-WORKDIR /spring
-RUN mv /spring/*.jar /spring/moomark.jar
+LABEL org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.revision="${VCS_REF}"
 
+WORKDIR /app
+COPY --from=builder /build/build/libs/*.jar /app/moomark.jar
 EXPOSE 8080
 STOPSIGNAL SIGINT
-
 CMD ["java", "-jar", "moomark.jar"]

@@ -21,19 +21,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-java@v5
-        with:
-          java-version: 17
-          distribution: temurin
-
-      - uses: actions/cache@v5
-        with:
-          path: ~/.gradle
-          key: java-${{ hashFiles('.gradle') }}
-
-      - name: Run build
-        run: ./gradlew build -x checkstyleMain -x test -x checkstyleTest --stacktrace -Pprofile=production
-
       - name: Set docker registry (PR)
         run: echo "DOCKER_REGISTRY=$REGISTRY/pr" >> $GITHUB_ENV
         if: contains(github.event.pull_request.labels.*.name, 'deploy')
