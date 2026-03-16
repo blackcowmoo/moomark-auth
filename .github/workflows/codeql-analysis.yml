@@ -53,6 +53,7 @@ jobs:
         uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
+          source-root: src/main/kotlin,src/main/java,src/test/kotlin,src/test/java
   
       - name: Build
         run: ./gradlew build -x test
