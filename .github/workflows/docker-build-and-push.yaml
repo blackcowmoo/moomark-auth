@@ -21,19 +21,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-java@v5
-        with:
-          java-version: 17
-          distribution: temurin
-
-      - uses: actions/cache@v5
-        with:
-          path: ~/.gradle
-          key: java-${{ hashFiles('.gradle') }}
-
-      - name: Run build
-        run: ./gradlew build -x checkstyleMain -x test -x checkstyleTest --stacktrace -Pprofile=production
-
       - name: Set docker registry (PR)
         run: echo "DOCKER_REGISTRY=$REGISTRY/pr" >> $GITHUB_ENV
         if: contains(github.event.pull_request.labels.*.name, 'deploy')
@@ -44,17 +31,6 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        with:
-          driver-opts: |
-            image=moby/buildkit:latest
-            network=host
-      - name: Cache Docker layers
-        uses: actions/cache@v5
-        with:
-          path: /tmp/.buildx-cache
-          key: docker-${{ runner.os }}-${{ github.sha }}
-          restore-keys: |
-            docker-${{ runner.os }}-
       - name: Short sha
         id: sha
         run: echo "::set-output name=sha_short::$(echo ${GITHUB_HEAD_SHA:0:7})"
@@ -80,12 +56,5 @@ jobs:
           push: ${{ contains(github.event.pull_request.labels.*.name, 'deploy') || github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: |
-            type=local,src=/tmp/.buildx-cache
-            type=gha
-          cache-to: |
-            type=local,dest=/tmp/.buildx-cache-new,mode=max
-            type=gha,mode=max
-          build-args: |
-            BUILD_DATE=${{ github.sha }}
-            VCS_REF=${{ steps.sha.outputs.sha_short }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
