@@ -54,10 +54,8 @@ jobs:
         with:
           languages: ${{ matrix.language }}
   
-      # 빌드 단계 (Autobuild는 대부분의 프로젝트에서 작동)
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v4
+      - name: Build
+        run: ./gradlew assemble
   
-      # 코드 분석 수행
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
