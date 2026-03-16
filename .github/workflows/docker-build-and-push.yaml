@@ -57,7 +57,6 @@ jobs:
           tags: type=raw,value=${{ steps.sha.outputs.sha_short }}
       - name: Check registry connectivity
         run: |
-          set -e
           echo "Checking registry connectivity: $DOCKER_REGISTRY"
           for i in {1..5}; do
             if curl -s -o /dev/null -w "%{http_code}" "$DOCKER_REGISTRY/v2/" | grep -q "200\|401"; then
