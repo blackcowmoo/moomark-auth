@@ -1,7 +1,4 @@
-ARG BUILD_DATE
-ARG VCS_REF
-
-FROM gradle:8.5-jdk17 AS builder
+FROM eclipse-temurin:17-jdk AS builder
 WORKDIR /build
 COPY gradle/ gradle/
 COPY gradlew ./
@@ -16,8 +13,7 @@ ARG BUILD_DATE
 ARG VCS_REF
 
 LABEL org.opencontainers.image.created="${BUILD_DATE}" \
-      org.opencontainers.image.revision="${VCS_REF}" \
-      org.opencontainers.image.version="1.0.0"
+      org.opencontainers.image.revision="${VCS_REF}"
 
 WORKDIR /app
 COPY --from=builder /build/build/libs/*.jar /app/moomark.jar
