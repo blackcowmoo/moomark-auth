@@ -29,7 +29,7 @@ passport:
   private-key: ${RSA_PRIVATE_KEY}
 
 jwt:
-  secret: ${JWT_SECRET:change-me-default-secret-key}
+  secret: change-me-default-secret-key
 
 resources:
   user:
