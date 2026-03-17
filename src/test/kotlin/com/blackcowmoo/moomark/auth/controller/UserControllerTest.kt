@@ -54,9 +54,9 @@ class UserControllerTest {
     val user1 = User("1234", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
     `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
-    `when`(tokenService.verifyToken(any<String>())).thenReturn(true)
-    `when`(tokenService.getUid(any<String>())).thenReturn("1234")
-    `when`(tokenService.getProvider(any<String>())).thenReturn(AuthProvider.TEST)
+    `when`(tokenService.verifyToken(any<String> { true })).thenReturn(true)
+    `when`(tokenService.getUid(any<String> { true })).thenReturn("1234")
+    `when`(tokenService.getProvider(any<String> { true })).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, "1234")).thenReturn(user1)
 
     val tokenResult = mapper.readValue(
@@ -86,9 +86,9 @@ class UserControllerTest {
     val user3 = User("test", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
     `when`(tokenService.generateToken("test", AuthProvider.TEST, Role.USER)).thenReturn(token)
-    `when`(tokenService.verifyToken(any<String>())).thenReturn(true)
-    `when`(tokenService.getUid(any<String>())).thenReturn("test")
-    `when`(tokenService.getProvider(any<String>())).thenReturn(AuthProvider.TEST)
+    `when`(tokenService.verifyToken(any<String> { true })).thenReturn(true)
+    `when`(tokenService.getUid(any<String> { true })).thenReturn("test")
+    `when`(tokenService.getProvider(any<String> { true })).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, "test")).thenReturn(user3)
 
     val tokenResult = mapper.readValue(
@@ -119,9 +119,9 @@ class UserControllerTest {
     val user5 = User(id, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
     `when`(tokenService.generateToken(id, AuthProvider.TEST, Role.USER)).thenReturn(token)
-    `when`(tokenService.verifyToken(any<String>())).thenReturn(true)
-    `when`(tokenService.getUid(any<String>())).thenReturn(id)
-    `when`(tokenService.getProvider(any<String>())).thenReturn(AuthProvider.TEST)
+    `when`(tokenService.verifyToken(any<String> { true })).thenReturn(true)
+    `when`(tokenService.getUid(any<String> { true })).thenReturn(id)
+    `when`(tokenService.getProvider(any<String> { true })).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, id)).thenReturn(user5)
 
     val tokenResult = mapper.readValue(

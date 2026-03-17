@@ -55,9 +55,9 @@ class PssportControllerTest {
     val user1 = User(userId, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
     `when`(tokenService.generateToken(userId, AuthProvider.TEST, Role.USER)).thenReturn(token)
-    `when`(tokenService.verifyToken(any<String>())).thenReturn(true)
-    `when`(tokenService.getUid(any<String>())).thenReturn(userId)
-    `when`(tokenService.getProvider(any<String>())).thenReturn(AuthProvider.TEST)
+    `when`(tokenService.verifyToken(any<String> { true })).thenReturn(true)
+    `when`(tokenService.getUid(any<String> { true })).thenReturn(userId)
+    `when`(tokenService.getProvider(any<String> { true })).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user1)
 
     val tokenResult = mapper.readValue(
@@ -97,9 +97,9 @@ class PssportControllerTest {
     val user3 = User(userId, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
     `when`(tokenService.generateToken(userId, AuthProvider.TEST, Role.USER)).thenReturn(token)
-    `when`(tokenService.verifyToken(any<String>())).thenReturn(true)
-    `when`(tokenService.getUid(any<String>())).thenReturn(userId)
-    `when`(tokenService.getProvider(any<String>())).thenReturn(AuthProvider.TEST)
+    `when`(tokenService.verifyToken(any<String> { true })).thenReturn(true)
+    `when`(tokenService.getUid(any<String> { true })).thenReturn(userId)
+    `when`(tokenService.getProvider(any<String> { true })).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user3)
 
     val tokenResult = mapper.readValue(
