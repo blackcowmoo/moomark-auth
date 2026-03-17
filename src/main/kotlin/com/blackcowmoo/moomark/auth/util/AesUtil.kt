@@ -11,7 +11,7 @@ import javax.crypto.SecretKey
 
 @Component
 @Slf4j
-class AesUtil {
+open class AesUtil {
   companion object {
     private val log = LoggerFactory.getLogger(AesUtil::class.java)
   }
@@ -19,21 +19,21 @@ class AesUtil {
   private val secureRandom = SecureRandom()
 
   @Throws(Exception::class)
-  fun encrypt(body: String, key: SecretKey): ByteArray {
+  open fun encrypt(body: String, key: SecretKey): ByteArray {
     val cipher = Cipher.getInstance("AES")
     cipher.init(Cipher.ENCRYPT_MODE, key)
     val encrypted = cipher.doFinal(body.toByteArray())
     return encrypted
   }
 
-  fun decrypt(body: ByteArray, key: SecretKey): String {
+  open fun decrypt(body: ByteArray, key: SecretKey): String {
     val cipher = Cipher.getInstance("AES")
     cipher.init(Cipher.DECRYPT_MODE, key)
     val decrypted = cipher.doFinal(body)
     return String(decrypted, Charsets.UTF_8)
   }
 
-  fun generateNewKey(): SecretKey? {
+  open fun generateNewKey(): SecretKey? {
     return getRandomKey(cipher, 128)
   }
 

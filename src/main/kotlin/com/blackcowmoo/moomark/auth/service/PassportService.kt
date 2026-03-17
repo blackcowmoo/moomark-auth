@@ -22,7 +22,7 @@ import javax.crypto.spec.SecretKeySpec
 import javax.xml.bind.DatatypeConverter
 
 @Service
-class PassportService {
+open class PassportService {
   private val log = LoggerFactory.getLogger(javaClass)
 
   @Value("\${passport.public-key}")
@@ -49,11 +49,11 @@ class PassportService {
     rsaUtil = RsaUtil(publicKeyString, privateKeyString)
   }
 
-  fun getPublicKeyString(): String {
+  open fun getPublicKeyString(): String {
     return publicKeyString
   }
 
-  fun parsePassport(passport: String, passportKey: String): User? {
+  open fun parsePassport(passport: String, passportKey: String): User? {
     return try {
       val passportResult = decryptPassport(passportKey)
       val currentTimestamp = Timestamp.valueOf(LocalDateTime.now())
@@ -76,7 +76,7 @@ class PassportService {
     }
   }
 
-  fun generatePassport(user: User): PassportResponse? {
+  open fun generatePassport(user: User): PassportResponse? {
     return try {
       val key = getAesKey(user.authProvider ?: AuthProvider.EMPTY, user.id ?: "")
       val userBody = encoder.encodeToString(mapper.writeValueAsString(user).toByteArray())

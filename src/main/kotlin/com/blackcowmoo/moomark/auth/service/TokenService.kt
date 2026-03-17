@@ -37,7 +37,7 @@ open class TokenService {
     key = Keys.hmacShaKeyFor(jwtSecret?.toByteArray(StandardCharsets.UTF_8))
   }
 
-  fun generateToken(id: String, provider: AuthProvider, role: Role): Token {
+  open fun generateToken(id: String, provider: AuthProvider, role: Role): Token {
     val claims = Jwts.claims()
     claims.subject = id
     claims[PROVIDER_KEY] = provider
@@ -64,7 +64,7 @@ open class TokenService {
     return Token(token, refreshToken)
   }
 
-  fun verifyToken(token: String): Boolean {
+  open fun verifyToken(token: String): Boolean {
     return try {
       val claims: Jws<Claims> = Jwts.parserBuilder()
         .setSigningKey(key)
@@ -76,7 +76,7 @@ open class TokenService {
     }
   }
 
-  fun verifyRefreshToken(refreshToken: String): TokenResponse? {
+  open fun verifyRefreshToken(refreshToken: String): TokenResponse? {
     return try {
       val claims: Jws<Claims> = Jwts.parserBuilder()
         .setSigningKey(key)
@@ -98,7 +98,7 @@ open class TokenService {
     }
   }
 
-  fun getUid(token: String): String {
+  open fun getUid(token: String): String {
     return Jwts.parserBuilder()
       .setSigningKey(key)
       .build()
@@ -107,7 +107,7 @@ open class TokenService {
       .subject
   }
 
-  fun getProvider(token: String): AuthProvider {
+  open fun getProvider(token: String): AuthProvider {
     return AuthProvider.getAuthProviderValue(
       Jwts.parserBuilder()
         .setSigningKey(key)
@@ -118,7 +118,7 @@ open class TokenService {
     )
   }
 
-  fun getTokenType(token: String): String {
+  open fun getTokenType(token: String): String {
     return Jwts.parserBuilder()
       .setSigningKey(key)
       .build()

@@ -42,7 +42,7 @@ open class GoogleOAuth2Service {
   @Value("\${spring.security.oauth2.client.registration.google.authorization-grant-type}")
   private lateinit var grantType: String
 
-  fun getToken(code: String): String {
+  open fun getToken(code: String): String {
     val parameters = mapOf(
       "client_id" to clientId,
       "client_secret" to clientSecret,
@@ -64,7 +64,7 @@ open class GoogleOAuth2Service {
     return result.idToken!!
   }
 
-  fun parseIdToken(idToken: String): GoogleTokenResult? {
+  open fun parseIdToken(idToken: String): GoogleTokenResult? {
     val body = String(Base64.getDecoder().decode(idToken.split("\\.".toRegex())[1]))
     return try {
       mapper.readValue(body, GoogleTokenResult::class.java)
@@ -74,7 +74,7 @@ open class GoogleOAuth2Service {
     }
   }
 
-  fun login(googleUser: GoogleTokenResult): Token {
+  open fun login(googleUser: GoogleTokenResult): Token {
     val user = userService.getUserById(AuthProvider.GOOGLE, googleUser.sub ?: "")
     val userToLogin = user ?: userService.signUp(
       googleUser.sub ?: "",

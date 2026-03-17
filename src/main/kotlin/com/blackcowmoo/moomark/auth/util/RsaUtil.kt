@@ -11,7 +11,7 @@ import java.util.Base64
 import javax.crypto.Cipher
 
 @Slf4j
-class RsaUtil(
+open class RsaUtil(
   publicKeyBase64String: String,
   privateKeyBase64String: String
 ) {
@@ -32,18 +32,18 @@ class RsaUtil(
   }
 
   @Throws(Exception::class)
-  fun buildPublicKey(publicKeyBase64String: String): PublicKey {
+  open fun buildPublicKey(publicKeyBase64String: String): PublicKey {
     val ukeySpec = X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyBase64String))
     return keyFactory.generatePublic(ukeySpec)
   }
 
   @Throws(Exception::class)
-  fun buildPrivateKey(privateKeyBase64String: String): PrivateKey {
+  open fun buildPrivateKey(privateKeyBase64String: String): PrivateKey {
     val rkeySpec = PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyBase64String))
     return keyFactory.generatePrivate(rkeySpec)
   }
 
-  fun encryptByPublicKey(data: String): ByteArray? {
+  open fun encryptByPublicKey(data: String): ByteArray? {
     return try {
       cipher.init(Cipher.ENCRYPT_MODE, publicKey)
       cipher.doFinal(data.toByteArray())
@@ -53,7 +53,7 @@ class RsaUtil(
     }
   }
 
-  fun decryptByPublicKey(data: ByteArray): String? {
+  open fun decryptByPublicKey(data: ByteArray): String? {
     return try {
       cipher.init(Cipher.DECRYPT_MODE, publicKey)
       String(cipher.doFinal(data), Charsets.UTF_8)
@@ -63,11 +63,11 @@ class RsaUtil(
     }
   }
 
-  fun encryptByPrivateKey(data: String): ByteArray? {
+  open fun encryptByPrivateKey(data: String): ByteArray? {
     return encryptByPrivateKey(data.toByteArray())
   }
 
-  fun encryptByPrivateKey(data: ByteArray): ByteArray? {
+  open fun encryptByPrivateKey(data: ByteArray): ByteArray? {
     return try {
       cipher.init(Cipher.ENCRYPT_MODE, privateKey)
       cipher.doFinal(data)
@@ -77,7 +77,7 @@ class RsaUtil(
     }
   }
 
-  fun decryptByPrivateKey(data: ByteArray): String? {
+  open fun decryptByPrivateKey(data: ByteArray): String? {
     return try {
       cipher.init(Cipher.DECRYPT_MODE, privateKey)
       String(cipher.doFinal(data), Charsets.UTF_8)
