@@ -52,11 +52,11 @@ class OAuth2ControllerTest {
     val token = Token("test-jwt-token", "test-refresh-token")
     val user = User("1234", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
-    `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
-    `when`(tokenService.verifyToken(any())).thenReturn(true)
-    `when`(tokenService.getUid(any())).thenReturn("1234")
-    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
-    `when`(userService.getUserById(AuthProvider.TEST, "1234")).thenReturn(user)
+  `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
+  `when`(tokenService.verifyToken(any())).thenReturn(true)
+  `when`(tokenService.getUid(any())).thenReturn("1234")
+  `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+  `when`(userService.getUserById(AuthProvider.TEST, "1234")).thenReturn(user)
 
     val responseToken = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
@@ -70,17 +70,17 @@ class OAuth2ControllerTest {
   }
 
   @Test
-   fun failRefreshToken() {
-     val token = Token("test-jwt-token", "test-refresh-token")
-     val user = User("1234", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+  fun failRefreshToken() {
+    val token = Token("test-jwt-token", "test-refresh-token")
+    val user = User("1234", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
-     `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
-     `when`(tokenService.verifyToken(any())).thenReturn(true)
-     `when`(tokenService.getUid(any())).thenReturn("1234")
-     `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
-     `when`(userService.getUserById(AuthProvider.TEST, "1234")).thenReturn(user)
+  `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
+  `when`(tokenService.verifyToken(any())).thenReturn(true)
+  `when`(tokenService.getUid(any())).thenReturn("1234")
+  `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+  `when`(userService.getUserById(AuthProvider.TEST, "1234")).thenReturn(user)
 
-     val responseToken = mapper.readValue(
+    val responseToken = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
@@ -97,20 +97,20 @@ class OAuth2ControllerTest {
       .andExpect(status().`is`(401))
   }
 
- @Test
-   fun refreshToken() {
-     val token = Token("test-jwt-token", "test-refresh-token")
-     val newToken = Token("new-jwt-token", "new-refresh-token")
-     val user = User("1234", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+  @Test
+  fun refreshToken() {
+    val token = Token("test-jwt-token", "test-refresh-token")
+    val newToken = Token("new-jwt-token", "new-refresh-token")
+    val user = User("1234", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
-     `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
-     `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(newToken)
-     `when`(tokenService.verifyToken(any())).thenReturn(true)
-     `when`(tokenService.getUid(any())).thenReturn("1234")
-     `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
-     `when`(userService.getUserById(AuthProvider.TEST, "1234")).thenReturn(user)
+  `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
+  `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(newToken)
+  `when`(tokenService.verifyToken(any())).thenReturn(true)
+  `when`(tokenService.getUid(any())).thenReturn("1234")
+  `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+  `when`(userService.getUserById(AuthProvider.TEST, "1234")).thenReturn(user)
 
-     val responseToken = mapper.readValue(
+    val responseToken = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
