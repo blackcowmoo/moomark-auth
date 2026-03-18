@@ -10,7 +10,7 @@ import com.blackcowmoo.moomark.auth.service.UserService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.any
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -48,6 +48,9 @@ class PssportControllerTest {
   @MockBean
   private lateinit var userService: UserService
 
+  @MockBean
+  private lateinit var passportService: PassportService
+
   @Test
   fun generatePassport() {
     val userId = "1234"
@@ -55,10 +58,11 @@ class PssportControllerTest {
     val user1 = User(userId, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
     `when`(tokenService.generateToken(userId, AuthProvider.TEST, Role.USER)).thenReturn(token)
-    `when`(tokenService.verifyToken(any())).thenReturn(true)
-    `when`(tokenService.getUid(any())).thenReturn(userId)
-    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+    `when`(tokenService.verifyToken(any<String>())).thenReturn(true)
+    `when`(tokenService.getUid(any<String>())).thenReturn(userId)
+    `when`(tokenService.getProvider(any<String>())).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user1)
+    `when`(passportService.generatePassport(any<User>())).thenReturn(null)
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
@@ -97,9 +101,9 @@ class PssportControllerTest {
     val user3 = User(userId, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
     `when`(tokenService.generateToken(userId, AuthProvider.TEST, Role.USER)).thenReturn(token)
-    `when`(tokenService.verifyToken(any())).thenReturn(true)
-    `when`(tokenService.getUid(any())).thenReturn(userId)
-    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+    `when`(tokenService.verifyToken(any<String>())).thenReturn(true)
+    `when`(tokenService.getUid(any<String>())).thenReturn(userId)
+    `when`(tokenService.getProvider(any<String>())).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user3)
 
     val tokenResult = mapper.readValue(
