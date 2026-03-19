@@ -21,7 +21,11 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContext
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
@@ -31,6 +35,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@TestPropertySource(locations = ["classpath:application-test.yaml"])
 class UserControllerTest {
 
   @Value("\${resources.user.default-picture}")
@@ -51,11 +56,21 @@ class UserControllerTest {
   @MockBean
   private lateinit var passportService: PassportService
 
+  private fun mockSecurityContext(user: User) {
+    val auth = UsernamePasswordAuthenticationToken(user, "", listOf())
+    val context: SecurityContext = org.mockito.Mockito.mock(SecurityContext::class.java)
+    org.mockito.Mockito.`when`(context.authentication).thenReturn(auth)
+    org.mockito.Mockito.`when`(auth.principal).thenReturn(user)
+    SecurityContextHolder.setContext(context)
+  }
+
   @Test
   @Order(1)
   fun me() {
     val token = Token("test-jwt-token", "test-refresh-token")
     val user1 = User("1234", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+
+    mockSecurityContext(user1)
 
     `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
     `when`(tokenService.verifyToken(any())).thenReturn(true)
@@ -89,6 +104,8 @@ class UserControllerTest {
     val token = Token("test-jwt-token", "test-refresh-token")
     val user3 = User("test", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
+    mockSecurityContext(user3)
+
     `when`(tokenService.generateToken("test", AuthProvider.TEST, Role.USER)).thenReturn(token)
     `when`(tokenService.verifyToken(any())).thenReturn(true)
     `when`(tokenService.getUid(any())).thenReturn("test")
@@ -121,6 +138,8 @@ class UserControllerTest {
     val id = "test"
     val token = Token("test-jwt-token", "test-refresh-token")
     val user5 = User(id, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+
+    mockSecurityContext(user5)
 
     `when`(tokenService.generateToken(id, AuthProvider.TEST, Role.USER)).thenReturn(token)
     `when`(tokenService.verifyToken(any())).thenReturn(true)
