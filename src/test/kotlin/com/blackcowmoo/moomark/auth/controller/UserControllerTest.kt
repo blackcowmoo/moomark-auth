@@ -35,7 +35,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@TestPropertySource(locations = ["classpath:application-test.yaml"])
+@TestPropertySource(properties = [
+  "jwt.secret=test-jwt-secret-for-testing-purposes-only",
+  "environment=dev",
+  "passport.public-key=test-public-key",
+  "passport.private-key=test-private-key",
+  "passport.test.token.expired.user=expired-user",
+  "passport.test.token.expired.key=expired-key",
+  "resources.user.default-picture=https://test.com/default.png"
+])
 class UserControllerTest {
 
   @Value("\${resources.user.default-picture}")
@@ -145,6 +153,12 @@ class UserControllerTest {
     `when`(tokenService.getUid(anyString())).thenReturn(id)
     `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, id)).thenReturn(user5)
+    `when`(userService.updateUser(any(), anyString(), anyString())).thenAnswer { invocation ->
+      val user = invocation.getArgument<User>(0)
+      val nickname = invocation.getArgument<String>(1)
+      val picture = invocation.getArgument<String>(2)
+      User(user.id, user.authProvider, user.email, nickname ?: user.nickname, picture ?: user.picture, user.role)
+    }
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$id"))

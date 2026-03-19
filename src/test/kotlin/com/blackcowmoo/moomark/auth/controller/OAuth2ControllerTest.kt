@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.any
 import org.mockito.Mockito.anyString
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,7 +29,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@TestPropertySource(locations = ["classpath:application-test.yaml"])
+@TestPropertySource(properties = [
+  "jwt.secret=test-jwt-secret-for-testing-purposes-only",
+  "environment=dev",
+  "passport.public-key=test-public-key",
+  "passport.private-key=test-private-key",
+  "passport.test.token.expired.user=expired-user",
+  "passport.test.token.expired.key=expired-key",
+  "resources.user.default-picture=https://test.com/default.png"
+])
 class OAuth2ControllerTest {
 
   @Autowired
@@ -105,12 +114,18 @@ class OAuth2ControllerTest {
     val newToken = Token("new-jwt-token", "new-refresh-token")
     val user = User("1234", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
-    `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
-    `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(newToken)
+    `when`(tokenService.generateToken(anyString(), any(), any())).thenReturn(token, newToken)
     `when`(tokenService.verifyToken(anyString())).thenReturn(true)
     `when`(tokenService.getUid(anyString())).thenReturn("1234")
     `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, "1234")).thenReturn(user)
+    `when`(tokenService.verifyRefreshToken("test-refresh-token")).thenReturn(
+      com.blackcowmoo.moomark.auth.model.dto.TokenResponse().apply {
+        id = "1234"
+        provider = AuthProvider.TEST
+        role = Role.USER
+      }
+    )
 
     val responseToken = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))

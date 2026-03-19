@@ -11,9 +11,8 @@ import com.blackcowmoo.moomark.auth.service.UserService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.any
-import org.mockito.Mockito.anyString
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.doReturn
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -29,7 +28,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@TestPropertySource(locations = ["classpath:application-test.yaml"])
+@TestPropertySource(properties = [
+  "jwt.secret=test-jwt-secret-for-testing-purposes-only",
+  "environment=dev",
+  "passport.public-key=test-public-key",
+  "passport.private-key=test-private-key",
+  "passport.test.token.expired.user=expired-user",
+  "passport.test.token.expired.key=expired-key",
+  "resources.user.default-picture=https://test.com/default.png"
+])
 class PssportControllerTest {
 
   @Value("\${passport.public-key}")
@@ -80,7 +87,7 @@ class PssportControllerTest {
       passport = "test-passport"
       key = "test-key"
     }
-    `when`(passportService.generatePassport(any<User>())).thenReturn(passportResponse)
+    doReturn(passportResponse).`when`(passportService).generatePassport(any())
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
@@ -129,7 +136,7 @@ class PssportControllerTest {
       passport = "test-passport"
       key = "test-key"
     }
-    `when`(passportService.generatePassport(any<User>())).thenReturn(passportResponse)
+    doReturn(passportResponse).`when`(passportService).generatePassport(any())
     `when`(passportService.parsePassport(any<String>(), any<String>())).thenReturn(user3)
 
     val tokenResult = mapper.readValue(
