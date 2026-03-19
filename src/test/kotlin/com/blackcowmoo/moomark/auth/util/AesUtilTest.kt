@@ -29,7 +29,7 @@ class AesUtilTest {
 
   @Test
   fun `encrypt and decrypt with another generated key`() {
-   val key = aesUtil.generateNewKey()!!
+    val key = aesUtil.generateNewKey()!!
     assertNotNull(key)
 
     val originalText = "Hello, World!"
