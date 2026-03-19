@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.security.core.context.SecurityContextImpl
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
@@ -28,7 +29,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@TestPropertySource(locations = ["classpath:application-test.yaml"])
+@TestPropertySource(properties = [
+  "jwt.secret=test-jwt-secret-for-testing-purposes-only",
+  "environment=dev",
+  "passport.public-key=test-public-key",
+  "passport.private-key=test-private-key",
+  "passport.test.token.expired.user=expired-user",
+  "passport.test.token.expired.key=expired-key",
+  "resources.user.default-picture=https://test.com/default.png"
+])
 class PssportControllerTest {
 
   @Value("\${passport.public-key}")
@@ -55,18 +64,31 @@ class PssportControllerTest {
   @MockBean
   private lateinit var passportService: PassportService
 
+  private fun setupSecurityContext(user: User) {
+    val auth = org.springframework.security.authentication.UsernamePasswordAuthenticationToken(user, "", listOf())
+    val context = SecurityContextImpl()
+    context.authentication = auth
+    org.springframework.security.core.context.SecurityContextHolder.setContext(context)
+  }
+
   @Test
   fun generatePassport() {
     val userId = "1234"
     val token = Token("test-jwt-token", "test-refresh-token")
     val user1 = User(userId, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
+    setupSecurityContext(user1)
+
     `when`(tokenService.generateToken(userId, AuthProvider.TEST, Role.USER)).thenReturn(token)
     `when`(tokenService.verifyToken(anyString())).thenReturn(true)
     `when`(tokenService.getUid(anyString())).thenReturn(userId)
     `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user1)
-    `when`(passportService.generatePassport(any<User>())).thenReturn(null)
+    val passportResponse = PassportResponse().apply {
+      passport = "test-passport"
+      key = "test-key"
+    }
+    `when`(passportService.generatePassport(any<User>())).thenReturn(passportResponse)
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
@@ -104,11 +126,19 @@ class PssportControllerTest {
     val token = Token("test-jwt-token", "test-refresh-token")
     val user3 = User(userId, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
+    setupSecurityContext(user3)
+
     `when`(tokenService.generateToken(userId, AuthProvider.TEST, Role.USER)).thenReturn(token)
     `when`(tokenService.verifyToken(anyString())).thenReturn(true)
     `when`(tokenService.getUid(anyString())).thenReturn(userId)
     `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user3)
+    val passportResponse = PassportResponse().apply {
+      passport = "test-passport"
+      key = "test-key"
+    }
+    `when`(passportService.generatePassport(any<User>())).thenReturn(passportResponse)
+    `when`(passportService.parsePassport(any<String>(), any<String>())).thenReturn(user3)
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))

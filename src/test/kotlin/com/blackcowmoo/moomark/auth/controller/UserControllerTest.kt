@@ -22,7 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.context.SecurityContext
+import org.springframework.security.core.context.SecurityContextImpl
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
@@ -35,7 +35,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@TestPropertySource(locations = ["classpath:application-test.yaml"])
+@TestPropertySource(properties = [
+  "jwt.secret=test-jwt-secret-for-testing-purposes-only",
+  "environment=dev",
+  "passport.public-key=test-public-key",
+  "passport.private-key=test-private-key",
+  "passport.test.token.expired.user=expired-user",
+  "passport.test.token.expired.key=expired-key",
+  "resources.user.default-picture=https://test.com/default.png"
+])
 class UserControllerTest {
 
   @Value("\${resources.user.default-picture}")
@@ -58,9 +66,8 @@ class UserControllerTest {
 
   private fun mockSecurityContext(user: User) {
     val auth = UsernamePasswordAuthenticationToken(user, "", listOf())
-    val context: SecurityContext = org.mockito.Mockito.mock(SecurityContext::class.java)
-    org.mockito.Mockito.`when`(context.authentication).thenReturn(auth)
-    org.mockito.Mockito.`when`(auth.principal).thenReturn(user)
+    val context = SecurityContextImpl()
+    context.authentication = auth
     SecurityContextHolder.setContext(context)
   }
 

@@ -28,7 +28,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@TestPropertySource(locations = ["classpath:application-test.yaml"])
+@TestPropertySource(properties = [
+  "jwt.secret=test-jwt-secret-for-testing-purposes-only",
+  "environment=dev",
+  "passport.public-key=test-public-key",
+  "passport.private-key=test-private-key",
+  "passport.test.token.expired.user=expired-user",
+  "passport.test.token.expired.key=expired-key",
+  "resources.user.default-picture=https://test.com/default.png"
+])
 class OAuth2ControllerTest {
 
   @Autowired
