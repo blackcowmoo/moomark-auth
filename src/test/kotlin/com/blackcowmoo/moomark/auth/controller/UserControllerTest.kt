@@ -27,10 +27,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-  @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-  @SpringBootTest
-  @AutoConfigureMockMvc
-  @ActiveProfiles("test")
+@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
 class UserControllerTest {
 
   @Value("\${resources.user.default-picture}")
@@ -57,11 +57,11 @@ class UserControllerTest {
     val token = Token("test-jwt-token", "test-refresh-token")
     val user1 = User("1234", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
-  `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
-  `when`(tokenService.verifyToken(any())).thenReturn(true)
-  `when`(tokenService.getUid(any())).thenReturn("1234")
-  `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
-  `when`(userService.getUserById(AuthProvider.TEST, "1234")).thenReturn(user1)
+    `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
+    `when`(tokenService.verifyToken(any())).thenReturn(true)
+    `when`(tokenService.getUid(any())).thenReturn("1234")
+    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+    `when`(userService.getUserById(AuthProvider.TEST, "1234")).thenReturn(user1)
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
@@ -89,11 +89,11 @@ class UserControllerTest {
     val token = Token("test-jwt-token", "test-refresh-token")
     val user3 = User("test", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
-  `when`(tokenService.generateToken("test", AuthProvider.TEST, Role.USER)).thenReturn(token)
-  `when`(tokenService.verifyToken(any())).thenReturn(true)
-  `when`(tokenService.getUid(any())).thenReturn("test")
-  `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
-  `when`(userService.getUserById(AuthProvider.TEST, "test")).thenReturn(user3)
+    `when`(tokenService.generateToken("test", AuthProvider.TEST, Role.USER)).thenReturn(token)
+    `when`(tokenService.verifyToken(any())).thenReturn(true)
+    `when`(tokenService.getUid(any())).thenReturn("test")
+    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+    `when`(userService.getUserById(AuthProvider.TEST, "test")).thenReturn(user3)
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-test"))
@@ -122,11 +122,11 @@ class UserControllerTest {
     val token = Token("test-jwt-token", "test-refresh-token")
     val user5 = User(id, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
-  `when`(tokenService.generateToken(id, AuthProvider.TEST, Role.USER)).thenReturn(token)
-  `when`(tokenService.verifyToken(any())).thenReturn(true)
-  `when`(tokenService.getUid(any())).thenReturn(id)
-  `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
-  `when`(userService.getUserById(AuthProvider.TEST, id)).thenReturn(user5)
+    `when`(tokenService.generateToken(id, AuthProvider.TEST, Role.USER)).thenReturn(token)
+    `when`(tokenService.verifyToken(any())).thenReturn(true)
+    `when`(tokenService.getUid(any())).thenReturn(id)
+    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+    `when`(userService.getUserById(AuthProvider.TEST, id)).thenReturn(user5)
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$id"))
@@ -221,7 +221,7 @@ class UserControllerTest {
   fun withdraw() {
     val token = Token("test-jwt-token", "test-refresh-token")
 
-  `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
+    `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))

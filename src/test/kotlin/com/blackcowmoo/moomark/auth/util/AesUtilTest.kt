@@ -8,7 +8,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
-  @SpringBootTest
+@SpringBootTest
 class AesUtilTest {
 
   @Autowired
@@ -16,7 +16,7 @@ class AesUtilTest {
 
   @Test
   fun `encrypt and decrypt with generated key`() {
-  val key = aesUtil.generateNewKey()
+    val key = aesUtil.generateNewKey()
     assertNotNull(key)
 
     val originalText = "Hello, World!"
@@ -29,7 +29,7 @@ class AesUtilTest {
 
   @Test
   fun `encrypt and decrypt with another generated key`() {
-  val key = aesUtil.generateNewKey()
+    val key = aesUtil.generateNewKey()
     assertNotNull(key)
 
     val originalText = "Test encryption/decryption"
@@ -42,7 +42,7 @@ class AesUtilTest {
 
   @Test
   fun `encrypt with one key and decrypt with another key should fail`() {
-val key1 = aesUtil.generateNewKey()
+    val key1 = aesUtil.generateNewKey()
     val key2 = aesUtil.generateNewKey()
 
     assertNotNull(key1)

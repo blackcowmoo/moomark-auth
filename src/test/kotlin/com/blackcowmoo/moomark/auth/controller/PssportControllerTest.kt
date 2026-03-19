@@ -23,9 +23,9 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-  @SpringBootTest
-  @AutoConfigureMockMvc
-  @ActiveProfiles("test")
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
 class PssportControllerTest {
 
   @Value("\${passport.public-key}")
@@ -58,12 +58,12 @@ class PssportControllerTest {
     val token = Token("test-jwt-token", "test-refresh-token")
     val user1 = User(userId, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
-  `when`(tokenService.generateToken(userId, AuthProvider.TEST, Role.USER)).thenReturn(token)
-  `when`(tokenService.verifyToken(any())).thenReturn(true)
-  `when`(tokenService.getUid(any())).thenReturn(userId)
-  `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
-  `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user1)
-  `when`(passportService.generatePassport(any())).thenReturn(null)
+    `when`(tokenService.generateToken(userId, AuthProvider.TEST, Role.USER)).thenReturn(token)
+    `when`(tokenService.verifyToken(any())).thenReturn(true)
+    `when`(tokenService.getUid(any())).thenReturn(userId)
+    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+    `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user1)
+    `when`(passportService.generatePassport(any())).thenReturn(null)
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
@@ -101,11 +101,11 @@ class PssportControllerTest {
     val token = Token("test-jwt-token", "test-refresh-token")
     val user3 = User(userId, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
-  `when`(tokenService.generateToken(userId, AuthProvider.TEST, Role.USER)).thenReturn(token)
-  `when`(tokenService.verifyToken(any())).thenReturn(true)
-  `when`(tokenService.getUid(any())).thenReturn(userId)
-  `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
-  `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user3)
+    `when`(tokenService.generateToken(userId, AuthProvider.TEST, Role.USER)).thenReturn(token)
+    `when`(tokenService.verifyToken(any())).thenReturn(true)
+    `when`(tokenService.getUid(any())).thenReturn(userId)
+    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+    `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user3)
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
