@@ -14,7 +14,7 @@ import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.anyString
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -25,7 +25,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.context.SecurityContextImpl
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
@@ -35,17 +34,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@TestPropertySource(
-  properties = [
-    "jwt.secret=test-jwt-secret-for-testing-purposes-only",
-    "environment=dev",
-    "passport.public-key=test-public-key",
-    "passport.private-key=test-private-key",
-    "passport.test.token.expired.user=expired-user",
-    "passport.test.token.expired.key=expired-key",
-    "resources.user.default-picture=https://test.com/default.png"
-  ]
-)
+@TestPropertySource(locations = ["classpath:application-test.yaml"])
 class UserControllerTest {
 
   @Value("\${resources.user.default-picture}")
@@ -82,9 +71,9 @@ class UserControllerTest {
     mockSecurityContext(user1)
 
     `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
-    `when`(tokenService.verifyToken(any())).thenReturn(true)
-    `when`(tokenService.getUid(any())).thenReturn("1234")
-    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+    `when`(tokenService.verifyToken(anyString())).thenReturn(true)
+    `when`(tokenService.getUid(anyString())).thenReturn("1234")
+    `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, "1234")).thenReturn(user1)
 
     val tokenResult = mapper.readValue(
@@ -116,9 +105,9 @@ class UserControllerTest {
     mockSecurityContext(user3)
 
     `when`(tokenService.generateToken("test", AuthProvider.TEST, Role.USER)).thenReturn(token)
-    `when`(tokenService.verifyToken(any())).thenReturn(true)
-    `when`(tokenService.getUid(any())).thenReturn("test")
-    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+    `when`(tokenService.verifyToken(anyString())).thenReturn(true)
+    `when`(tokenService.getUid(anyString())).thenReturn("test")
+    `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, "test")).thenReturn(user3)
 
     val tokenResult = mapper.readValue(
@@ -151,9 +140,9 @@ class UserControllerTest {
     mockSecurityContext(user5)
 
     `when`(tokenService.generateToken(id, AuthProvider.TEST, Role.USER)).thenReturn(token)
-    `when`(tokenService.verifyToken(any())).thenReturn(true)
-    `when`(tokenService.getUid(any())).thenReturn(id)
-    `when`(tokenService.getProvider(any())).thenReturn(AuthProvider.TEST)
+    `when`(tokenService.verifyToken(anyString())).thenReturn(true)
+    `when`(tokenService.getUid(anyString())).thenReturn(id)
+    `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, id)).thenReturn(user5)
 
     val tokenResult = mapper.readValue(
