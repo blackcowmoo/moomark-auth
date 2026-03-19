@@ -24,8 +24,8 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.mockito.Mockito.any
 import org.mockito.Mockito.anyString
+import org.mockito.Mockito.any
 
 @SpringBootTest
 @AutoConfigureMockMvc
