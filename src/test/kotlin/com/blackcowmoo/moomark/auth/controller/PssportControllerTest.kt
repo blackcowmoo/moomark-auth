@@ -11,8 +11,8 @@ import com.blackcowmoo.moomark.auth.service.UserService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.doReturn
+import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -28,15 +28,17 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@TestPropertySource(properties = [
-  "jwt.secret=test-jwt-secret-for-testing-purposes-only",
-  "environment=dev",
-  "passport.public-key=test-public-key",
-  "passport.private-key=test-private-key",
-  "passport.test.token.expired.user=expired-user",
-  "passport.test.token.expired.key=expired-key",
-  "resources.user.default-picture=https://test.com/default.png"
-])
+@TestPropertySource(
+  properties = [
+    "jwt.secret=test-jwt-secret-for-testing-purposes-only",
+    "environment=dev",
+    "passport.public-key=test-public-key",
+    "passport.private-key=test-private-key",
+    "passport.test.token.expired.user=expired-user",
+    "passport.test.token.expired.key=expired-key",
+    "resources.user.default-picture=https://test.com/default.png"
+  ]
+)
 class PssportControllerTest {
 
   @Value("\${passport.public-key}")
