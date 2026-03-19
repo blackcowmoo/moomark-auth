@@ -65,7 +65,7 @@ class PssportControllerTest {
     `when`(tokenService.getUid(anyString())).thenReturn(userId)
     `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user1)
-    `when`(passportService.generatePassport(any())).thenReturn(null)
+    `when`(passportService.generatePassport(any<User>())).thenReturn(null)
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
