@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+
 import com.blackcowmoo.moomark.auth.model.AuthProvider
 import com.blackcowmoo.moomark.auth.model.Role
 import com.blackcowmoo.moomark.auth.model.entity.User
