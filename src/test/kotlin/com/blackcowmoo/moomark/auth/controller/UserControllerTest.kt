@@ -1,12 +1,5 @@
 package com.blackcowmoo.moomark.auth.controller
 
-import com.blackcowmoo.moomark.auth.model.AuthProvider
-import com.blackcowmoo.moomark.auth.model.Role
-import com.blackcowmoo.moomark.auth.model.entity.User
-import com.blackcowmoo.moomark.auth.model.oauth2.Token
-import com.blackcowmoo.moomark.auth.service.PassportService
-import com.blackcowmoo.moomark.auth.service.TokenService
-import com.blackcowmoo.moomark.auth.service.UserService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
@@ -32,6 +25,13 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import com.blackcowmoo.moomark.auth.model.AuthProvider
+import com.blackcowmoo.moomark.auth.model.Role
+import com.blackcowmoo.moomark.auth.model.entity.User
+import com.blackcowmoo.moomark.auth.model.oauth2.Token
+import com.blackcowmoo.moomark.auth.service.PassportService
+import com.blackcowmoo.moomark.auth.service.TokenService
+import com.blackcowmoo.moomark.auth.service.UserService
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @SpringBootTest

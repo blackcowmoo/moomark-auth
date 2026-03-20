@@ -135,7 +135,7 @@ class PssportControllerTest {
     `when`(tokenService.verifyToken(anyString())).thenReturn(true)
     `when`(tokenService.getUid(anyString())).thenReturn(userId)
     `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
-      `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user3)
+    `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user3)
     val passportResponse = PassportResponse().apply {
       passport = "test-passport"
       key = "test-key"
