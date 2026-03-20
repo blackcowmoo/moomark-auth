@@ -116,7 +116,7 @@ class OAuth2ControllerTest {
     val newToken = Token("new-jwt-token", "new-refresh-token")
     val user = User("1234", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
 
-    `when`(tokenService.generateToken(anyString(), any(), any())).thenReturn(token, newToken)
+    `when`(tokenService.generateToken(anyString(), any<AuthProvider>(), any<Role>())).thenReturn(token, newToken)
     `when`(tokenService.verifyToken(anyString())).thenReturn(true)
     `when`(tokenService.getUid(anyString())).thenReturn("1234")
     `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)

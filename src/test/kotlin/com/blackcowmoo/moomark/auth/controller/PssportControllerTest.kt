@@ -91,9 +91,9 @@ class PssportControllerTest {
       passport = "test-passport"
       key = "test-key"
     }
-    doReturn(passportResponse).`when`(passportService).generatePassport(any<User>())
+    doReturn(passportResponse).`when`(passportService).generatePassport(any())
 
-    val tokenResult = mapper.readValue(
+      val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
@@ -135,15 +135,15 @@ class PssportControllerTest {
     `when`(tokenService.verifyToken(anyString())).thenReturn(true)
     `when`(tokenService.getUid(anyString())).thenReturn(userId)
     `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
-    `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user3)
+       `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user3)
     val passportResponse = PassportResponse().apply {
       passport = "test-passport"
       key = "test-key"
     }
-    doReturn(passportResponse).`when`(passportService).generatePassport(any<User>())
-    `when`(passportService.parsePassport(any<String>(), any<String>())).thenReturn(user3)
+    doReturn(passportResponse).`when`(passportService).generatePassport(any())
+    doReturn(user3).`when`(passportService).parsePassport(any(), any())
 
-    val tokenResult = mapper.readValue(
+     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
@@ -176,7 +176,7 @@ class PssportControllerTest {
   @Test
   fun checkPublicKey() {
     val publicKey = passportPublicKey
-    `when`(passportService.getPublicKeyString()).thenReturn(publicKey)
+    doReturn(publicKey).`when`(passportService).getPublicKeyString()
     val testPublicKey = mvc.perform(get("/api/v1/passport/verify/public"))
       .andExpect(status().isOk())
       .andReturn().response.contentAsString
@@ -188,7 +188,7 @@ class PssportControllerTest {
 
   @Test
   fun expiredPassport() {
-    `when`(passportService.parsePassport(any<String>(), any<String>())).thenReturn(null)
+    doReturn(null as User?).`when`(passportService).parsePassport(any(), any())
     val response = mvc.perform(
       get("/api/v1/passport/verify")
         .header("x-moom-passport-user", expiredTestPassportUser)

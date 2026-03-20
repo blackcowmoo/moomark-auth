@@ -17,6 +17,7 @@ import org.junit.jupiter.api.TestMethodOrder
 import org.mockito.Mockito.any
 import org.mockito.Mockito.anyString
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.doAnswer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -156,12 +157,12 @@ class UserControllerTest {
     `when`(tokenService.getUid(anyString())).thenReturn(id)
     `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, id)).thenReturn(user5)
-    `when`(userService.updateUser(any<User>(), any<String>(), any<String>())).thenAnswer { invocation ->
+    doAnswer { invocation ->
       val user = invocation.getArgument<User>(0)
       val nickname = invocation.getArgument<String>(1)
       val picture = invocation.getArgument<String>(2)
       User(user.id, user.authProvider, user.email, nickname ?: user.nickname, picture ?: user.picture, user.role)
-    }
+    }.`when`(userService).updateUser(any(), any(), any())
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$id"))
