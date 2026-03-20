@@ -14,6 +14,7 @@ import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
+import org.mockito.Mockito.any
 import org.mockito.Mockito.anyString
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
@@ -155,7 +156,7 @@ class UserControllerTest {
     `when`(tokenService.getUid(anyString())).thenReturn(id)
     `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
     `when`(userService.getUserById(AuthProvider.TEST, id)).thenReturn(user5)
-    `when`(userService.updateUser(any(), anyString(), anyString())).thenAnswer { invocation ->
+    `when`(userService.updateUser(any<User>(), anyString(), anyString())).thenAnswer { invocation ->
       val user = invocation.getArgument<User>(0)
       val nickname = invocation.getArgument<String>(1)
       val picture = invocation.getArgument<String>(2)
