@@ -93,7 +93,7 @@ class PssportControllerTest {
     }
     doReturn(passportResponse).`when`(passportService).generatePassport(any())
 
-      val tokenResult = mapper.readValue(
+    val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
@@ -135,7 +135,7 @@ class PssportControllerTest {
     `when`(tokenService.verifyToken(anyString())).thenReturn(true)
     `when`(tokenService.getUid(anyString())).thenReturn(userId)
     `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
-       `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user3)
+      `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user3)
     val passportResponse = PassportResponse().apply {
       passport = "test-passport"
       key = "test-key"
@@ -143,7 +143,7 @@ class PssportControllerTest {
     doReturn(passportResponse).`when`(passportService).generatePassport(any())
     doReturn(user3).`when`(passportService).parsePassport(any(), any())
 
-     val tokenResult = mapper.readValue(
+    val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
