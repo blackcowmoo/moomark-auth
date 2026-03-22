@@ -187,7 +187,7 @@ class PssportControllerTest {
 
   @Test
   fun expiredPassport() {
-     `when`(passportService.parsePassport(any<String>(), any<String>())).thenReturn(null)
+    `when`(passportService.parsePassport(any<String>(), any<String>())).thenReturn(null)
     val response = mvc.perform(
       get("/api/v1/passport/verify")
         .header("x-moom-passport-user", expiredTestPassportUser)
