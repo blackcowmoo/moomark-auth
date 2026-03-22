@@ -90,7 +90,7 @@ class PssportControllerTest {
       passport = "test-passport"
       key = "test-key"
     }
-    `when`(passportService.generatePassport(any())).thenReturn(passportResponse)
+    `when`(passportService.generatePassport(any<User>())).thenReturn(passportResponse)
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
@@ -139,8 +139,8 @@ class PssportControllerTest {
       passport = "test-passport"
       key = "test-key"
     }
-    `when`(passportService.generatePassport(any())).thenReturn(passportResponse)
-    `when`(passportService.parsePassport(any(), any())).thenReturn(user3)
+    `when`(passportService.generatePassport(any<User>())).thenReturn(passportResponse)
+    `when`(passportService.parsePassport(any<String>(), any<String>())).thenReturn(user3)
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
@@ -187,7 +187,7 @@ class PssportControllerTest {
 
   @Test
   fun expiredPassport() {
-    `when`(passportService.parsePassport(any(), any())).thenReturn(null)
+     `when`(passportService.parsePassport(any<String>(), any<String>())).thenReturn(null)
     val response = mvc.perform(
       get("/api/v1/passport/verify")
         .header("x-moom-passport-user", expiredTestPassportUser)
