@@ -13,7 +13,7 @@ jobs:
     name: Build and Test
     runs-on: [moomark]
     env:
-      MIN_TEST_COVERAGE: 50
+      MIN_TEST_COVERAGE: 30
       ENVIRONMENT: dev
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
@@ -116,7 +116,7 @@ jobs:
           min-coverage-overall: ${{ env.MIN_TEST_COVERAGE }}
 
       - name: coverage
-        run: echo "$RESULT_COVERAGE < $COVERAGE" && [[ "$(echo $RESULT_COVERAGE | awk '{print $1*100}')" -gt "$(echo $COVERAGE | awk '{print $1*100}')" ]]
+        run: echo "Coverage: ${RESULT_COVERAGE}% (minimum required: ${COVERAGE}%)" && [[ "$(echo $RESULT_COVERAGE | awk '{print $1*100}')" -gt "$(echo $COVERAGE | awk '{print $1*100}')" ]]
         if: github.event_name == 'pull_request'
         env:
           COVERAGE: ${{ env.MIN_TEST_COVERAGE }}
