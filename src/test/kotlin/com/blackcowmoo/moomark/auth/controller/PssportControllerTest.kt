@@ -157,6 +157,8 @@ class PssportControllerTest {
       PassportResponse::class.java
     )
 
+    `when`(passportService.parsePassport(passport.passport, passport.key)).thenReturn(user3)
+
     val user4 = mapper.readValue(
       mvc.perform(
         get("/api/v1/user")
