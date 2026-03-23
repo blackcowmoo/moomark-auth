@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.any
 import org.mockito.Mockito.anyString
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.doReturn
+import org.mockito.Mockito.argThat
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -90,7 +92,8 @@ class PssportControllerTest {
       passport = "test-passport"
       key = "test-key"
     }
-    `when`(passportService.generatePassport(any<User>())).thenReturn(passportResponse)
+    `when`(passportService.generatePassport(user1)).thenReturn(passportResponse)
+    `when`(passportService.parsePassport("test-passport", "test-key")).thenReturn(user1)
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
@@ -139,8 +142,7 @@ class PssportControllerTest {
       passport = "test-passport"
       key = "test-key"
     }
-    `when`(passportService.generatePassport(any<User>())).thenReturn(passportResponse)
-    `when`(passportService.parsePassport(any<String>(), any<String>())).thenReturn(user3)
+    `when`(passportService.generatePassport(user3)).thenReturn(passportResponse)
 
     val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
@@ -187,7 +189,7 @@ class PssportControllerTest {
 
   @Test
   fun expiredPassport() {
-    `when`(passportService.parsePassport(any<String>(), any<String>())).thenReturn(null)
+    `when`(passportService.parsePassport(expiredTestPassportUser, expiredTestPassportKey)).thenReturn(null)
     val response = mvc.perform(
       get("/api/v1/passport/verify")
         .header("x-moom-passport-user", expiredTestPassportUser)

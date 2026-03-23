@@ -17,6 +17,11 @@ import org.junit.jupiter.api.TestMethodOrder
 import org.mockito.Mockito.any
 import org.mockito.Mockito.anyString
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.doAnswer
+import org.mockito.Mockito.doReturn
+import org.mockito.Mockito.doThrow
+import org.mockito.Mockito.spy
+import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -61,7 +66,7 @@ class UserControllerTest {
   @MockBean
   private lateinit var tokenService: TokenService
 
-  @MockBean
+  @SpyBean
   private lateinit var userService: UserService
 
   @MockBean
@@ -155,12 +160,20 @@ class UserControllerTest {
     `when`(tokenService.verifyToken(anyString())).thenReturn(true)
     `when`(tokenService.getUid(anyString())).thenReturn(id)
     `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
-    `when`(userService.getUserById(AuthProvider.TEST, id)).thenReturn(user5)
-    `when`(userService.updateUser(any<User>(), any<String>(), any<String>())).thenAnswer { invocation ->
-      val user = invocation.getArgument<User>(0)
+    doAnswer { invocation ->
+      user5
+    }.`when`(userService).getUserById(AuthProvider.TEST, id)
+    `when`(userService.updateUser(user5, null, null)).thenReturn(user5)
+    `when`(userService.updateUser(user5, "", "")).thenAnswer { invocation ->
+      val user = user5
+      val picture = invocation.getArgument<String>(2)
+      User(user.id, user.authProvider, user.email, user.nickname, if (picture.isEmpty()) defaultPicture else picture, user.role)
+    }
+    `when`(userService.updateUser(user5, "newNickname", "https://test.com/pic.jpg")).thenAnswer { invocation ->
+      val user = user5
       val nickname = invocation.getArgument<String>(1)
       val picture = invocation.getArgument<String>(2)
-      User(user.id, user.authProvider, user.email, nickname ?: user.nickname, picture ?: user.picture, user.role)
+      User(user.id, user.authProvider, user.email, nickname, picture, user.role)
     }
 
     val tokenResult = mapper.readValue(
