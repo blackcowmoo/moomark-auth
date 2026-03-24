@@ -19,24 +19,20 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.security.core.context.SecurityContextImpl
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
+
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
 @TestPropertySource(
   properties = [
-    "jwt.secret=test-jwt-secret-for-testing-purposes-only",
-    "environment=dev",
     "passport.public-key=test-public-key",
     "passport.private-key=test-private-key",
     "passport.test.token.expired.user=expired-user",
-    "passport.test.token.expired.key=expired-key",
-    "resources.user.default-picture=https://test.com/default.png"
+    "passport.test.token.expired.key=expired-key"
   ]
 )
 class PssportControllerTest {
