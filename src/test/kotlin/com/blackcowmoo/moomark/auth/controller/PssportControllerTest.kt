@@ -26,14 +26,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource(
-  properties = [
-    "passport.public-key=test-public-key",
-    "passport.private-key=test-private-key",
-    "passport.test.token.expired.user=expired-user",
-    "passport.test.token.expired.key=expired-key"
-  ]
-)
 class PssportControllerTest {
 
   @Value("\${passport.public-key}")
