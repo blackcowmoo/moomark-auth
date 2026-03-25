@@ -4,10 +4,16 @@ import com.blackcowmoo.moomark.auth.model.AuthProvider
 import com.blackcowmoo.moomark.auth.model.Role
 import com.blackcowmoo.moomark.auth.model.entity.User
 import com.blackcowmoo.moomark.auth.repository.UserRepository
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.*
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.doNothing
+import org.mockito.Mockito.any
 
 class UserServiceTest {
 
@@ -18,12 +24,12 @@ class UserServiceTest {
   fun setUp() {
     userRepository = mock(UserRepository::class.java)
     userService = UserService()
-    
+
     val defaultPicture = "https://default.com/picture.jpg"
     val field = UserService::class.java.getDeclaredField("defaultPicture")
     field.isAccessible = true
     field.set(userService, defaultPicture)
-    
+
     val userRepositoryField = UserService::class.java.getDeclaredField("userRepository")
     userRepositoryField.isAccessible = true
     userRepositoryField.set(userService, userRepository)

@@ -2,20 +2,16 @@ package com.blackcowmoo.moomark.auth.service
 
 import com.blackcowmoo.moomark.auth.model.AuthProvider
 import com.blackcowmoo.moomark.auth.model.Role
-import com.blackcowmoo.moomark.auth.model.dto.Passport
 import com.blackcowmoo.moomark.auth.model.entity.User
-import com.blackcowmoo.moomark.auth.util.AesUtil
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
-import java.nio.charset.StandardCharsets
-import java.security.MessageDigest
-import java.util.Base64
-import javax.crypto.spec.SecretKeySpec
 
 @SpringBootTest
 class TokenServiceTest {
