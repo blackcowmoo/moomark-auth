@@ -3,17 +3,13 @@ package com.blackcowmoo.moomark.auth.service
 import com.blackcowmoo.moomark.auth.model.AuthProvider
 import com.blackcowmoo.moomark.auth.model.Role
 import com.blackcowmoo.moomark.auth.repository.UserRepository
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNotEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.mockito.Mockito.any
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.doNothing
+import org.mockito.Mockito.verify
 
 class UserServiceTest {
 
