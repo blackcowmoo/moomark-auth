@@ -16,51 +16,51 @@ class AesUtilTest {
 
   @Test
   fun `encrypt and decrypt with generated key`() {
-    val key = aesUtil.generateNewKey()
+    val key = aesUtil.generateNewKey()!!
     assertNotNull(key)
 
     val originalText = "Hello, World!"
-    val encrypted = aesUtil.encrypt(originalText, key!!)
+    val encrypted = aesUtil.encrypt(originalText, key)
     assertNotNull(encrypted)
 
-    val decrypted = aesUtil.decrypt(encrypted, key!!)
+    val decrypted = aesUtil.decrypt(encrypted, key)
     assertEquals(originalText, decrypted)
   }
 
   @Test
   fun `encrypt and decrypt with another generated key`() {
-    val key = aesUtil.generateNewKey()
+    val key = aesUtil.generateNewKey()!!
     assertNotNull(key)
 
-    val originalText = "Test encryption/decryption"
-    val encrypted = aesUtil.encrypt(originalText, key!!)
+    val originalText = "Hello, World!"
+    val encrypted = aesUtil.encrypt(originalText, key)
     assertNotNull(encrypted)
 
-    val decrypted = aesUtil.decrypt(encrypted, key!!)
+    val decrypted = aesUtil.decrypt(encrypted, key)
     assertEquals(originalText, decrypted)
   }
 
   @Test
   fun `encrypt with one key and decrypt with another key should fail`() {
-    val key1 = aesUtil.generateNewKey()
-    val key2 = aesUtil.generateNewKey()
+    val key1 = aesUtil.generateNewKey()!!
+    val key2 = aesUtil.generateNewKey()!!
 
     assertNotNull(key1)
     assertNotNull(key2)
 
     val originalText = "Test with different keys"
-    val encrypted = aesUtil.encrypt(originalText, key1!!)
+    val encrypted = aesUtil.encrypt(originalText, key1)
 
     val exception = assertThrows<javax.crypto.BadPaddingException> {
-      aesUtil.decrypt(encrypted, key2!!)
+      aesUtil.decrypt(encrypted, key2)
     }
     assertNotNull(exception)
   }
 
   @Test
   fun `generateNewKey returns different keys`() {
-    val key1 = aesUtil.generateNewKey()
-    val key2 = aesUtil.generateNewKey()
+    val key1 = aesUtil.generateNewKey()!!
+    val key2 = aesUtil.generateNewKey()!!
 
     assertNotNull(key1)
     assertNotNull(key2)
@@ -68,11 +68,11 @@ class AesUtilTest {
 
   @Test
   fun `encrypted value should not equal original value`() {
-    val key = aesUtil.generateNewKey()
+    val key = aesUtil.generateNewKey()!!
     assertNotNull(key)
 
     val originalText = "Hello, World!"
-    val encrypted = aesUtil.encrypt(originalText, key!!)
+    val encrypted = aesUtil.encrypt(originalText, key)
 
     assertNotEquals(originalText, encrypted)
   }

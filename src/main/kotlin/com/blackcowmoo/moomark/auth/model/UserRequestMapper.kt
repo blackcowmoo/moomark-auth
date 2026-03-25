@@ -5,8 +5,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.stereotype.Component
 
 @Component
-class UserRequestMapper {
-  fun toDto(oAuth2User: OAuth2User): UserDto {
+open class UserRequestMapper {
+  open fun toDto(oAuth2User: OAuth2User): UserDto {
     val attributes = oAuth2User.attributes
     return UserDto.builder()
       .id(attributes["id"] as String?)

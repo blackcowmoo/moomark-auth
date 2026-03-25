@@ -28,6 +28,9 @@ passport:
   public-key: ${RSA_PUBLIC_KEY}
   private-key: ${RSA_PRIVATE_KEY}
 
+jwt:
+  secret: ${JWT_SECRET}
+
 resources:
   user:
     default-picture: https://avatars.githubusercontent.com/u/60027496?v=4

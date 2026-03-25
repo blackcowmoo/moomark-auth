@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
-class UserService {
+open class UserService {
 
   @Value("\${resources.user.default-picture}")
   private lateinit var defaultPicture: String
@@ -17,23 +17,23 @@ class UserService {
   @Autowired
   private lateinit var userRepository: UserRepository
 
-  fun getUserById(authProvider: AuthProvider, id: String): User? {
+  open fun getUserById(authProvider: AuthProvider, id: String): User? {
     return userRepository.findByIdAndAuthProvider(id, authProvider)
   }
 
-  fun signUp(id: String, authProvider: AuthProvider, nickname: String, email: String, picture: String): User {
+  open fun signUp(id: String, authProvider: AuthProvider, nickname: String, email: String, picture: String): User {
     return userRepository.save(User(id, authProvider, email, nickname, picture, Role.USER))
   }
 
-  fun withdraw(id: String, authProvider: AuthProvider) {
+  open fun withdraw(id: String, authProvider: AuthProvider) {
     userRepository.delete(userRepository.findByIdAndAuthProvider(id, authProvider))
   }
 
-  fun withdraw(user: User) {
+  open fun withdraw(user: User) {
     userRepository.delete(user)
   }
 
-  fun updateUser(user: User, nickname: String?, picture: String?): User {
+  open fun updateUser(user: User, nickname: String?, picture: String?): User {
     if (nickname != null && nickname.isNotEmpty()) {
       user.updateNickname(nickname)
     }

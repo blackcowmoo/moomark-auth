@@ -1,8 +1,12 @@
 package com.blackcowmoo.moomark.auth.controller
 
 import com.blackcowmoo.moomark.auth.model.AuthProvider
+import com.blackcowmoo.moomark.auth.model.Role
 import com.blackcowmoo.moomark.auth.model.entity.User
 import com.blackcowmoo.moomark.auth.model.oauth2.Token
+import com.blackcowmoo.moomark.auth.service.PassportService
+import com.blackcowmoo.moomark.auth.service.TokenService
+import com.blackcowmoo.moomark.auth.service.UserService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
@@ -10,10 +14,18 @@ import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
+import org.mockito.Mockito.anyString
+import org.mockito.Mockito.doAnswer
+import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.boot.test.mock.mockito.SpyBean
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.context.SecurityContextImpl
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
@@ -33,64 +45,127 @@ class UserControllerTest {
   @Autowired
   private lateinit var mapper: ObjectMapper
 
+  @MockBean
+  private lateinit var tokenService: TokenService
+
+  @SpyBean
+  private lateinit var userService: UserService
+
+  @MockBean
+  private lateinit var passportService: PassportService
+
+  private fun mockSecurityContext(user: User) {
+    val auth = UsernamePasswordAuthenticationToken(user, "", listOf())
+    val context = SecurityContextImpl()
+    context.authentication = auth
+    SecurityContextHolder.setContext(context)
+  }
+
   @Test
   @Order(1)
   fun me() {
-    val token = mapper.readValue(
+    val token = Token("test-jwt-token", "test-refresh-token")
+    val user1 = User("1234", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+
+    mockSecurityContext(user1)
+
+    `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
+    `when`(tokenService.verifyToken(anyString())).thenReturn(true)
+    `when`(tokenService.getUid(anyString())).thenReturn("1234")
+    `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
+    `when`(userService.getUserById(AuthProvider.TEST, "1234")).thenReturn(user1)
+
+    val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       Token::class.java
     )
 
-    assertThat(token.token).isNotNull()
+    assertThat(tokenResult.token).isNotNull()
 
-    val user = mapper.readValue(
-      mvc.perform(get("/api/v1/user").header("Authorization", token.token))
+    val user2 = mapper.readValue(
+      mvc.perform(get("/api/v1/user").header("Authorization", tokenResult.token))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       User::class.java
     )
 
-    assertThat(user.authProvider).isEqualTo(AuthProvider.TEST)
-    assertThat(user.id).isEqualTo("1234")
+    assertThat(user2.authProvider).isEqualTo(AuthProvider.TEST)
+    assertThat(user2.id).isEqualTo("1234")
   }
 
   @Test
   @Order(2)
   fun user() {
-    val token = mapper.readValue(
+    val token = Token("test-jwt-token", "test-refresh-token")
+    val user3 = User("test", AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+
+    mockSecurityContext(user3)
+
+    `when`(tokenService.generateToken("test", AuthProvider.TEST, Role.USER)).thenReturn(token)
+    `when`(tokenService.verifyToken(anyString())).thenReturn(true)
+    `when`(tokenService.getUid(anyString())).thenReturn("test")
+    `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
+    `when`(userService.getUserById(AuthProvider.TEST, "test")).thenReturn(user3)
+
+    val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-test"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       Token::class.java
     )
 
-    assertThat(token.token).isNotNull()
+    assertThat(tokenResult.token).isNotNull()
 
-    val user = mapper.readValue(
+    val user4 = mapper.readValue(
       mvc.perform(get("/api/v1/user/TEST/test").header("Content-Type", "application/json"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       User::class.java
     )
 
-    assertThat(user.authProvider).isEqualTo(AuthProvider.TEST)
-    assertThat(user.id).isEqualTo("test")
+    assertThat(user4.authProvider).isEqualTo(AuthProvider.TEST)
+    assertThat(user4.id).isEqualTo("test")
   }
 
   @Test
   @Order(3)
   fun modifyUser() {
     val id = "test"
-    val token = mapper.readValue(
+    val token = Token("test-jwt-token", "test-refresh-token")
+    val user5 = User(id, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+
+    mockSecurityContext(user5)
+
+    `when`(tokenService.generateToken(id, AuthProvider.TEST, Role.USER)).thenReturn(token)
+    `when`(tokenService.verifyToken(anyString())).thenReturn(true)
+    `when`(tokenService.getUid(anyString())).thenReturn(id)
+    `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
+    doAnswer { invocation ->
+      user5
+    }.`when`(userService).getUserById(AuthProvider.TEST, id)
+    `when`(userService.updateUser(user5, null, null)).thenReturn(user5)
+    `when`(userService.updateUser(user5, "", "")).thenAnswer { invocation ->
+      val user = user5
+      val picture = invocation.getArgument<String>(2)
+      User(user.id, user.authProvider, user.email, user.nickname, if (picture.isEmpty()) defaultPicture else picture, user.role)
+    }
+    `when`(userService.updateUser(user5, "newNickname", "https://test.com/pic.jpg")).thenAnswer { invocation ->
+      val user = user5
+      val nickname = invocation.getArgument<String>(1)
+      val picture = invocation.getArgument<String>(2)
+      User(user.id, user.authProvider, user.email, nickname, picture, user.role)
+    }
+
+    val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$id"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       Token::class.java
     )
 
-    assertThat(token.token).isNotNull()
+    assertThat(tokenResult.token).isNotNull()
 
     val beforeUser = mapper.readValue(
       mvc.perform(get("/api/v1/user/TEST/test").header("Content-Type", "application/json"))
@@ -108,7 +183,7 @@ class UserControllerTest {
     requestParams1.put("nickname", null)
     requestParams1.put("picture", null)
 
-    val user1 = mapper.readValue(
+    val user7 = mapper.readValue(
       mvc.perform(
         put("/api/v1/user")
           .header("Content-Type", "application/json")
@@ -120,16 +195,16 @@ class UserControllerTest {
       User::class.java
     )
 
-    assertThat(user1.authProvider).isEqualTo(AuthProvider.TEST)
-    assertThat(user1.id).isEqualTo(id)
-    assertThat(user1.nickname).isEqualTo(beforeUser.nickname)
-    assertThat(user1.picture).isEqualTo(beforeUser.picture)
+    assertThat(user7.authProvider).isEqualTo(AuthProvider.TEST)
+    assertThat(user7.id).isEqualTo(id)
+    assertThat(user7.nickname).isEqualTo(beforeUser.nickname)
+    assertThat(user7.picture).isEqualTo(beforeUser.picture)
 
     val requestParams2 = JSONObject()
     requestParams2.put("nickname", "")
     requestParams2.put("picture", "")
 
-    val user2 = mapper.readValue(
+    val user8 = mapper.readValue(
       mvc.perform(
         put("/api/v1/user")
           .header("Content-Type", "application/json")
@@ -141,10 +216,10 @@ class UserControllerTest {
       User::class.java
     )
 
-    assertThat(user2.authProvider).isEqualTo(AuthProvider.TEST)
-    assertThat(user2.id).isEqualTo(id)
-    assertThat(user2.nickname).isEqualTo(beforeUser.nickname)
-    assertThat(user2.picture).isEqualTo(defaultPicture)
+    assertThat(user8.authProvider).isEqualTo(AuthProvider.TEST)
+    assertThat(user8.id).isEqualTo(id)
+    assertThat(user8.nickname).isEqualTo(beforeUser.nickname)
+    assertThat(user8.picture).isEqualTo(defaultPicture)
 
     val newNickname = "testNewNickname"
     val newPicture = "https://i.pravatar.cc/300"
@@ -153,7 +228,7 @@ class UserControllerTest {
     requestParams3.put("nickname", newNickname)
     requestParams3.put("picture", newPicture)
 
-    val user3 = mapper.readValue(
+    val user9 = mapper.readValue(
       mvc.perform(
         put("/api/v1/user")
           .header("Content-Type", "application/json")
@@ -165,23 +240,27 @@ class UserControllerTest {
       User::class.java
     )
 
-    assertThat(user3.authProvider).isEqualTo(AuthProvider.TEST)
-    assertThat(user3.id).isEqualTo(id)
-    assertThat(user3.nickname).isEqualTo(newNickname)
-    assertThat(user3.picture).isEqualTo(newPicture)
+    assertThat(user9.authProvider).isEqualTo(AuthProvider.TEST)
+    assertThat(user9.id).isEqualTo(id)
+    assertThat(user9.nickname).isEqualTo(newNickname)
+    assertThat(user9.picture).isEqualTo(newPicture)
   }
 
   @Test
   @Order(Int.MAX_VALUE)
   fun withdraw() {
-    val token = mapper.readValue(
+    val token = Token("test-jwt-token", "test-refresh-token")
+
+    `when`(tokenService.generateToken("1234", AuthProvider.TEST, Role.USER)).thenReturn(token)
+
+    val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-1234"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       Token::class.java
     )
 
-    assertThat(token.token).isNotNull()
-    assertThat(token.refreshToken).isNotNull()
+    assertThat(tokenResult.token).isNotNull()
+    assertThat(tokenResult.refreshToken).isNotNull()
   }
 }

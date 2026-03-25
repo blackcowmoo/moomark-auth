@@ -1,15 +1,24 @@
 package com.blackcowmoo.moomark.auth.controller
 
+import com.blackcowmoo.moomark.auth.model.AuthProvider
+import com.blackcowmoo.moomark.auth.model.Role
 import com.blackcowmoo.moomark.auth.model.dto.PassportResponse
 import com.blackcowmoo.moomark.auth.model.entity.User
 import com.blackcowmoo.moomark.auth.model.oauth2.Token
+import com.blackcowmoo.moomark.auth.service.PassportService
+import com.blackcowmoo.moomark.auth.service.TokenService
+import com.blackcowmoo.moomark.auth.service.UserService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.anyString
+import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.security.core.context.SecurityContextImpl
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -33,26 +42,59 @@ class PssportControllerTest {
   @Autowired
   private lateinit var mapper: ObjectMapper
 
+  @MockBean
+  private lateinit var tokenService: TokenService
+
+  @MockBean
+  private lateinit var userService: UserService
+
+  @MockBean
+  private lateinit var passportService: PassportService
+
+  private fun setupSecurityContext(user: User) {
+    val auth = org.springframework.security.authentication.UsernamePasswordAuthenticationToken(user, "", listOf())
+    val context = SecurityContextImpl()
+    context.authentication = auth
+    org.springframework.security.core.context.SecurityContextHolder.setContext(context)
+  }
+
   @Test
   fun generatePassport() {
     val userId = "1234"
-    val token = mapper.readValue(
+    val token = Token("test-jwt-token", "test-refresh-token")
+    val user1 = User(userId, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+
+    setupSecurityContext(user1)
+
+    `when`(tokenService.generateToken(userId, AuthProvider.TEST, Role.USER)).thenReturn(token)
+    `when`(tokenService.verifyToken(anyString())).thenReturn(true)
+    `when`(tokenService.getUid(anyString())).thenReturn(userId)
+    `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
+    `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user1)
+    val passportResponse = PassportResponse().apply {
+      passport = "test-passport"
+      key = "test-key"
+    }
+    `when`(passportService.generatePassport(user1)).thenReturn(passportResponse)
+    `when`(passportService.parsePassport("test-passport", "test-key")).thenReturn(user1)
+
+    val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       Token::class.java
     )
 
-    assertThat(token.token).isNotNull()
+    assertThat(tokenResult.token).isNotNull()
 
     val passport = mapper.readValue(
-      mvc.perform(get("/api/v1/passport").header("Authorization", token.token))
+      mvc.perform(get("/api/v1/passport").header("Authorization", tokenResult.token))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       PassportResponse::class.java
     )
 
-    val user = mapper.readValue(
+    val user2 = mapper.readValue(
       mvc.perform(
         get("/api/v1/passport/verify")
           .header("x-moom-passport-user", passport.passport)
@@ -63,20 +105,36 @@ class PssportControllerTest {
       User::class.java
     )
 
-    assertThat(user.id).isEqualTo(userId)
+    assertThat(user2.id).isEqualTo(userId)
   }
 
   @Test
   fun verifyPassport() {
     val userId = "1234"
-    val token = mapper.readValue(
+    val token = Token("test-jwt-token", "test-refresh-token")
+    val user3 = User(userId, AuthProvider.TEST, "test@test.com", "test", "https://test.com", Role.USER)
+
+    setupSecurityContext(user3)
+
+    `when`(tokenService.generateToken(userId, AuthProvider.TEST, Role.USER)).thenReturn(token)
+    `when`(tokenService.verifyToken(anyString())).thenReturn(true)
+    `when`(tokenService.getUid(anyString())).thenReturn(userId)
+    `when`(tokenService.getProvider(anyString())).thenReturn(AuthProvider.TEST)
+    `when`(userService.getUserById(AuthProvider.TEST, userId)).thenReturn(user3)
+    val passportResponse = PassportResponse().apply {
+      passport = "test-passport"
+      key = "test-key"
+    }
+    `when`(passportService.generatePassport(user3)).thenReturn(passportResponse)
+
+    val tokenResult = mapper.readValue(
       mvc.perform(get("/api/v1/oauth2/google").param("code", "test-$userId"))
         .andExpect(status().isOk())
         .andReturn().response.contentAsString,
       Token::class.java
     )
 
-    assertThat(token.token).isNotNull()
+    assertThat(tokenResult.token).isNotNull()
 
     val passport = mapper.readValue(
       mvc.perform(get("/api/v1/passport").header("Authorization", token.token))
@@ -85,7 +143,9 @@ class PssportControllerTest {
       PassportResponse::class.java
     )
 
-    val user = mapper.readValue(
+    `when`(passportService.parsePassport(passport.passport!!, passport.key!!)).thenReturn(user3)
+
+    val user4 = mapper.readValue(
       mvc.perform(
         get("/api/v1/user")
           .header("x-moom-passport-user", passport.passport)
@@ -96,12 +156,13 @@ class PssportControllerTest {
       User::class.java
     )
 
-    assertThat(user.id).isEqualTo(userId)
+    assertThat(user4.id).isEqualTo(userId)
   }
 
   @Test
   fun checkPublicKey() {
     val publicKey = passportPublicKey
+    `when`(passportService.getPublicKeyString()).thenReturn(publicKey)
     val testPublicKey = mvc.perform(get("/api/v1/passport/verify/public"))
       .andExpect(status().isOk())
       .andReturn().response.contentAsString
@@ -113,6 +174,7 @@ class PssportControllerTest {
 
   @Test
   fun expiredPassport() {
+    `when`(passportService.parsePassport(expiredTestPassportUser, expiredTestPassportKey)).thenReturn(null)
     val response = mvc.perform(
       get("/api/v1/passport/verify")
         .header("x-moom-passport-user", expiredTestPassportUser)
