@@ -71,9 +71,9 @@ class TokenServiceTest {
     val response = tokenService.verifyRefreshToken(token.refreshToken)
 
     assertNotNull(response)
-    assertEquals(id, response.id)
-    assertEquals(provider, response.provider)
-    assertEquals(role, response.role)
+    assertEquals(id, response?.id)
+    assertEquals(provider, response?.provider)
+    assertEquals(role, response?.role)
   }
 
   @Test
