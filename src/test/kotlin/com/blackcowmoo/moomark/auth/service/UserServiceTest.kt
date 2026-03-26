@@ -1,8 +1,5 @@
 package com.blackcowmoo.moomark.auth.service
 
-import com.blackcowmoo.moomark.auth.model.AuthProvider
-import com.blackcowmoo.moomark.auth.model.Role
-import com.blackcowmoo.moomark.auth.repository.UserRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -10,6 +7,9 @@ import org.mockito.Mockito.any
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.verify
+import com.blackcowmoo.moomark.auth.model.AuthProvider
+import com.blackcowmoo.moomark.auth.model.Role
+import com.blackcowmoo.moomark.auth.repository.UserRepository
 
 class UserServiceTest {
 
