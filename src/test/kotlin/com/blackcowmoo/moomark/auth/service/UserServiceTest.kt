@@ -46,8 +46,8 @@ class UserServiceTest {
     val result = userService.getUserById(provider, id)
 
     assertNotNull(result)
-    assertEquals(id, result.id)
-    assertEquals(provider, result.authProvider)
+    assertEquals(id, result!!.id)
+    assertEquals(provider, result!!.authProvider)
   }
 
   @Test
