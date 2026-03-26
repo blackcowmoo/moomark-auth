@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.any
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 
 class UserServiceTest {
 
