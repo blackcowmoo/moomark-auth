@@ -40,7 +40,7 @@ open class UserService {
 
     if (picture != null && picture.isNotEmpty() && picture.startsWith("https://")) {
       user.updatePicture(picture)
-    } else if (picture != null && picture.isEmpty()) {
+    } else if (picture != null && picture.isEmpty() && nickname == null) {
       user.updatePicture(defaultPicture)
     }
 

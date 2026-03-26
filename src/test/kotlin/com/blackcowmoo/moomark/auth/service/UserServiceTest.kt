@@ -159,7 +159,7 @@ class UserServiceTest {
     val updatedUser = userService.updateUser(originalUser, null, newPicture)
 
     assertNotNull(updatedUser)
-    assertEquals("https://old.com", updatedUser.nickname)
+    assertEquals("test", updatedUser.nickname)
     assertEquals(newPicture, updatedUser.picture)
   }
 
@@ -182,7 +182,7 @@ class UserServiceTest {
     val updatedUser = userService.updateUser(originalUser, null, newPicture)
 
     assertNotNull(updatedUser)
-    assertEquals("https://old.com", updatedUser.nickname)
+    assertEquals("test", updatedUser.nickname)
     assertEquals(defaultPicture, updatedUser.picture)
   }
 
