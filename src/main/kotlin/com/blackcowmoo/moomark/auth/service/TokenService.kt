@@ -38,24 +38,29 @@ open class TokenService {
   }
 
   open fun generateToken(id: String, provider: AuthProvider, role: Role): Token {
-    val claims = Jwts.claims()
-    claims.subject = id
-    claims[PROVIDER_KEY] = provider
-    claims[ROKE_KEY] = role
-
     val now = Date()
 
+    val accessClaims = Jwts.claims()
+    accessClaims.subject = id
+    accessClaims[PROVIDER_KEY] = provider
+    accessClaims[ROKE_KEY] = role
+    accessClaims[TOKEN_KEY] = "access"
+
     val token = Jwts.builder()
-      .setClaims(claims)
+      .setClaims(accessClaims)
       .setIssuedAt(now)
       .setExpiration(Date(now.time + tokenPeriod))
       .signWith(key)
       .compact()
 
-    claims[TOKEN_KEY] = REFRESH_TOKEN_VALUE
+    val refreshClaims = Jwts.claims()
+    refreshClaims.subject = id
+    refreshClaims[PROVIDER_KEY] = provider
+    refreshClaims[ROKE_KEY] = role
+    refreshClaims[TOKEN_KEY] = REFRESH_TOKEN_VALUE
 
     val refreshToken = Jwts.builder()
-      .setClaims(claims)
+      .setClaims(refreshClaims)
       .setIssuedAt(now)
       .setExpiration(Date(now.time + refreshPeriod))
       .signWith(key)
